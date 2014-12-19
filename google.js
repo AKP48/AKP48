@@ -88,7 +88,7 @@ Google.prototype.geocode = function(location, region, callback) {
 };
 
 Google.prototype.search = function(query, type, callback) {
-    var url = 'http://ajax.googleapis.com/ajax/services/search/'+type+'?v=1.0&safe=moderate&q='+encodeURIComponent(query);
+    var url = 'http://ajax.googleapis.com/ajax/services/search/'+type+'?v=1.0&safe=high&q='+encodeURIComponent(query);
     var self = this;
     this.client.get(url, function(err, res, body){
         if(body.responseData) {
