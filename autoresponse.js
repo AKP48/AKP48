@@ -44,6 +44,7 @@ AutoResponse.prototype.steamApp = function(appId, callback) {
 
 
         if(body[appId].data.price_overview) {
+            isFree = false;
             currency = body[appId].data.price_overview.currency;
             initialPrice = body[appId].data.price_overview.initial;
             finalPrice = body[appId].data.price_overview['final'];
@@ -80,7 +81,7 @@ AutoResponse.prototype.steamApp = function(appId, callback) {
         outputString += name + " ";
 
         if(isFree) {
-            outputString += c.green("Free");
+            outputString += "("+c.green("Free")+")";
         } else {
             if(body[appId].data.price_overview) {
                 if(discountPercent) {
