@@ -81,7 +81,8 @@ CommandProcessor.prototype.parseMessage = function(msg, client, channel, pm) {
     var steamAppRegEx = /(?:.+)?(?:store\.steampowered\.com\/app\/)([0-9]+)(?:.+)?/gi;
     var steamPkgRegEx = /(?:.+)?(?:store\.steampowered\.com\/sub\/)([0-9]+)(?:.+)?/gi;
     var tempRegEx = /^convert (-?\d+(?:\.\d+)?)°?([cf])$/gi;
-    var diceRegEx = /[ +](\d+|(?=d))(?:d(\d+)(?:x(\d+))?)?(?= *(\+| |$))/gi;
+    var diceRegEx = /^(?:roll(?= *[^+ ]))(?: *(?: |\+) *(?:\d*[1-9]\d*|(?=d))(?:d\d*[1-9]\d*(?:x\d*[1-9]\d*)?)?)+ *$/gi;
+    var diceRollRegEx = /[ +](\d+|(?=d))(?:d(\d+)(?:x(\d+))?)?(?= *(\+| |$))/gi;
 
 
     if(msg.search(youTubeRegEx) != -1) {
@@ -116,9 +117,48 @@ CommandProcessor.prototype.parseMessage = function(msg, client, channel, pm) {
     }
 
     if(msg.search(diceRegEx) != -1) {
-        //var youTubeId = msg.replace(diceRegEx, "$1");
-        client.getIRCClient().say(channel, "Rule 6.");
+
+        var result;
+        var dice = [];
+
+        while((result = diceRollRegEx.exec(msg)) !== null) {
+            var count = (parseInt(result[1]) != 0) ? parseInt(result[1]) : 1;
+            if(isNaN(count)) {count = 1;}
+
+            var maxValue = (parseInt(result[2]) != 0) ? parseInt(result[2]) : 1;
+            if(isNaN(maxValue)) {maxValue = 1;}
+
+            var multiplier = (parseInt(result[3]) != 0) ? parseInt(result[3]) : 1;
+            if(isNaN(multiplier)) {multiplier = 1;}
+
+            dice.push({
+                count: count,
+                maxValue: maxValue,
+                multiplier: multiplier,
+                isFinalValue: !("+" === result[4])
+            });
+        }
+        var rolls = [];
+
+        for (var i = 0; i < dice.length; i++) {
+            var roll = 0;
+            for (var j = 0; j < dice[i].count; j++) {
+                roll += (Math.floor(Math.random() * (dice[i].maxValue)) + 1) * dice[i].multiplier;
+            }
+            rolls.push(roll);
+        }
+
+
+        var outputString = "";
+
+        for (var i = 0; i < rolls.length; i++) {
+            outputString += rolls[i] + " | ";
+        };
+
+        outputString = outputString.substring(0, outputString.length-3);
+
+        client.getIRCClient().say(channel, outputString);
     }
-};
+}
 
 module.exports = CommandProcessor;
