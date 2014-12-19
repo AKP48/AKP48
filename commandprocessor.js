@@ -109,7 +109,7 @@ CommandProcessor.prototype.parseMessage = function(msg, client, channel, pm) {
         var tempTemp = msg.replace(tempRegEx, "$1");
         var temperatureformat = msg.replace(tempRegEx, "$2");
         var places = "0".repeat((tempTemp.indexOf(".") != -1) ? Math.max(tempTemp.length - 1 - tempTemp.indexOf("."), 2) : 2);
-        if(places > 20) {places = 20;}
+        if(places > 10) {places = 10;}
         this.auto.tempConvert(temperatureNum, places, temperatureformat, function(res) {
             client.getIRCClient().say(channel, res);
         });
