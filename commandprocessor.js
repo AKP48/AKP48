@@ -40,6 +40,7 @@ CommandProcessor.prototype.process = function(nick, channel, text, client, pm) {
 
         // Flood protection
         if((!pm || !(channel === client.nick)) && !client.isOp(nickname)) {
+            if(!client.chatters[channel]) {client.chatters[channel] = [];}
             if(client.chatters[channel][nick]) {
                 client.chatters[channel][nick].floodProtect();
                 //if they have been banned

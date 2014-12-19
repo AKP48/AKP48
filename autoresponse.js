@@ -154,11 +154,11 @@ AutoResponse.prototype.steamPkg = function(appId, callback) {
 }
 
 AutoResponse.prototype.f2c = function(f, callback) {
-    callback(f+"°F is "+((f - 32)*5/9)+"°C.");
+    callback(f+"°F is "+n((f - 32)*5/9).format("0.00")+"°C.");
 }
 
 AutoResponse.prototype.c2f = function(c, callback) {
-    callback(c+"°C is "+((c*9/5) + 32)+"°F.");
+    callback(c+"°C is "+n((c*9/5) + 32).format("0.00")+"°F.");
 }
 
 
