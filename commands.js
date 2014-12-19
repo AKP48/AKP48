@@ -1,5 +1,5 @@
 var c = require('irc-colors');
-var config = require('config.json');
+var config = require('./config.json');
 var Google = require('./google');
 var Riot = require('./riot');
 var fs = require('fs');
