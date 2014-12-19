@@ -1,0 +1,25 @@
+{
+    "servers": [
+        {
+            "name": "Default",
+            "server": "kuroi.irc.nolimitzone.com",
+            "password": "PasswordGoesHere",
+            "nick": "IRCBot9000",
+            "channels": [
+                "#botplace"
+            ],
+            "delimiter": ".",
+            "ops": [
+                "YourNickHere"
+            ],
+            "banned": [],
+            "mcBot": "IfYouHaveAnIRCBotForAMinecraftServerItGoesHere"
+        }
+    ],
+    "google": {
+        "apiKey": "PutYourGoogleAPIKeyHere"
+    },
+    "riot": {
+        "apiKey": "PutYourRiotGamesAPIKeyHere"
+    }
+}
