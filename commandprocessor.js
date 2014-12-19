@@ -79,7 +79,6 @@ CommandProcessor.prototype.parseMessage = function(msg, client, channel, pm) {
 
     if(msg.search(youTubeRegEx) != -1) {
         var youTubeId = msg.replace(youTubeRegEx, "$1");
-        console.log(youtubeId);
         this.auto.youtube(youTubeId, function(res) {
             client.getIRCClient().say(channel, res);
         });
@@ -87,7 +86,6 @@ CommandProcessor.prototype.parseMessage = function(msg, client, channel, pm) {
 
     if(msg.search(steamAppRegEx) != -1) {
         var steamId = msg.replace(steamAppRegEx, "$1");
-        console.log(steamId);
         this.auto.steamApp(steamId, function(res) {
             client.getIRCClient().say(channel, res);
         });
@@ -95,7 +93,6 @@ CommandProcessor.prototype.parseMessage = function(msg, client, channel, pm) {
 
     if(msg.search(steamPkgRegEx) != -1) {
         var steamId = msg.replace(steamPkgRegEx, "$1");
-        console.log(steamId);
         this.auto.steamPkg(steamId, function(res) {
             client.getIRCClient().say(channel, res);
         });
