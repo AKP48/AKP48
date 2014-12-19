@@ -80,8 +80,9 @@ CommandProcessor.prototype.parseMessage = function(msg, client, channel, pm) {
     var youTubeRegEx = /(?:.+)(?:https?:\/\/)?(?:[0-9A-Z-]+\.)?(?:youtu\.be\/|youtube(?:-nocookie)?\.com\S*[^\w\s-])([\w-]{11})(?=[^\w-]|$)(?![?=&+%\w.-]*(?:['"][^<>]*>|<\/a>))[?=&+%\w.-]*(?:.+)?/gi;
     var steamAppRegEx = /(?:.+)?(?:store\.steampowered\.com\/app\/)([0-9]+)(?:.+)?/gi;
     var steamPkgRegEx = /(?:.+)?(?:store\.steampowered\.com\/sub\/)([0-9]+)(?:.+)?/gi;
-
     var tempRegEx = /^convert (-?\d+(?:\.\d+)?)°?([cf])$/gi;
+    var diceRegEx = /[ +](\d+|(?=d))(?:d(\d+)(?:x(\d+))?)?(?= *(\+| |$))/gi;
+
 
     if(msg.search(youTubeRegEx) != -1) {
         var youTubeId = msg.replace(youTubeRegEx, "$1");
@@ -112,6 +113,11 @@ CommandProcessor.prototype.parseMessage = function(msg, client, channel, pm) {
         this.auto.tempConvert(temperatureNum, places, temperatureformat, function(res) {
             client.getIRCClient().say(channel, res);
         });
+    }
+
+    if(msg.search(diceRegEx) != -1) {
+        //var youTubeId = msg.replace(diceRegEx, "$1");
+        client.getIRCClient().say(channel, "Rule 6.");
     }
 };
 
