@@ -81,8 +81,8 @@ CommandProcessor.prototype.parseMessage = function(msg, client, channel, pm) {
     var steamAppRegEx = /(?:.+)?(?:store\.steampowered\.com\/app\/)([0-9]+)(?:.+)?/gi;
     var steamPkgRegEx = /(?:.+)?(?:store\.steampowered\.com\/sub\/)([0-9]+)(?:.+)?/gi;
 
-    var fahrenheitRegEx = /(?:(\d+)(?: |°| degrees )?F(?:ahrenheit)?(?: |$))/gi;
-    var celsiusRegEx = /(?:(\d+)(?: |°| degrees )?C(?:elsius)?(?: |$))/gi;
+    var fahrenheitRegEx = /(?:.+)?(?:(\d+)(?: |°| degrees )?F(?:ahrenheit)?(?: |$))/gi;
+    var celsiusRegEx = /(?:.+)?(?:(\d+)(?: |°| degrees )?C(?:elsius)?(?: |$))/gi;
 
     if(msg.search(youTubeRegEx) != -1) {
         var youTubeId = msg.replace(youTubeRegEx, "$1");
