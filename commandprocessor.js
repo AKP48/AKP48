@@ -121,32 +121,43 @@ CommandProcessor.prototype.parseMessage = function(msg, client, channel, pm) {
         var result;
         var dice = [];
 
-        while((result = diceRollRegEx.exec(msg)) !== null) {
-            var count = (parseInt(result[1]) != 0) ? parseInt(result[1]) : 1;
-            if(isNaN(count)) {count = 1;}
+        while((di = diceRegEx.exec(msg)) !== null) {
+            while((result = diceRollRegEx.exec(di)) !== null) {
+                var count = (parseInt(result[1]) != 0) ? parseInt(result[1]) : 1;
+                if(isNaN(count)) {count = 1;}
 
-            var maxValue = (parseInt(result[2]) != 0) ? parseInt(result[2]) : 1;
-            if(isNaN(maxValue)) {maxValue = 1;}
+                var maxValue = (parseInt(result[2]) != 0) ? parseInt(result[2]) : 1;
+                if(isNaN(maxValue)) {maxValue = 1;}
 
-            var multiplier = (parseInt(result[3]) != 0) ? parseInt(result[3]) : 1;
-            if(isNaN(multiplier)) {multiplier = 1;}
+                var multiplier = (parseInt(result[3]) != 0) ? parseInt(result[3]) : 1;
+                if(isNaN(multiplier)) {multiplier = 1;}
 
-            dice.push({
-                count: count,
-                maxValue: maxValue,
-                multiplier: multiplier,
-                isFinalValue: !("+" === result[4])
-            });
+                var isFinalValue = !("+" === result[4]);
+
+                dice.push({
+                    count: count,
+                    maxValue: maxValue,
+                    multiplier: multiplier,
+                    isFinalValue: isFinalValue
+                });
+            }
         }
+
+        console.log(dice);
+
         var rolls = [];
 
+        var roll = 0;
         for (var i = 0; i < dice.length; i++) {
-            var roll = 0;
-            for (var j = 0; j < dice[i].count; j++) {
-                roll += (Math.floor(Math.random() * (dice[i].maxValue)) + 1) * dice[i].multiplier;
+            roll += (Math.floor(Math.random() * (dice[i].maxValue)) + 1) * dice[i].multiplier;
+
+            if(dice[i].isFinalValue) {
+                rolls.push(roll);
+                roll = 0;
             }
-            rolls.push(roll);
         }
+
+        console.log(dice);
 
 
         var outputString = "";
