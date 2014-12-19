@@ -577,12 +577,12 @@ Commands.prototype.nick = function(nick, args, client, channel, op, pm) {
 
 Commands.prototype.reload = function(nick, args, client, channel, op, pm) {
     if(op && pm) {
-        delete require.cache['/root/IRCBot/commandprocessor.js'];
-        delete require.cache['/root/IRCBot/autoresponse.js'];
-        delete require.cache['/root/IRCBot/commands.js'];
-        delete require.cache['/root/IRCBot/chatter.js'];
-        delete require.cache['/root/IRCBot/google.js'];
-        delete require.cache['/root/IRCBot/riot.js'];
+        delete require.cache[__dirname+'/commandprocessor.js'];
+        delete require.cache[__dirname+'/autoresponse.js'];
+        delete require.cache[__dirname+'/commands.js'];
+        delete require.cache[__dirname+'/chatter.js'];
+        delete require.cache[__dirname+'/google.js'];
+        delete require.cache[__dirname+'/riot.js'];
 
         client.getIRCClient().say(nick, "All channels reloading!");
         client.clientManager.reloadAll();
