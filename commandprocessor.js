@@ -81,8 +81,7 @@ CommandProcessor.prototype.parseMessage = function(msg, client, channel, pm) {
     var steamAppRegEx = /(?:.+)?(?:store\.steampowered\.com\/app\/)([0-9]+)(?:.+)?/gi;
     var steamPkgRegEx = /(?:.+)?(?:store\.steampowered\.com\/sub\/)([0-9]+)(?:.+)?/gi;
 
-    var fahrenheitRegEx = /(?:.+)?(?:(\d+)(?: |°| degrees )?F(?:ahrenheit)?(?: |$))/gi;
-    var celsiusRegEx = /(?:.+)?(?:(\d+)(?: |°| degrees )?C(?:elsius)?(?: |$))/gi;
+    var tempRegEx = /^convert (-?\d+(:?\.\d+)?)°?([cf])$/gi;
 
     if(msg.search(youTubeRegEx) != -1) {
         var youTubeId = msg.replace(youTubeRegEx, "$1");
@@ -105,16 +104,10 @@ CommandProcessor.prototype.parseMessage = function(msg, client, channel, pm) {
         });
     }
 
-    if(msg.search(fahrenheitRegEx) != -1) {
-        var temperatureNum = parseInt(msg.replace(fahrenheitRegEx, "$1"));
-        this.auto.f2c(temperatureNum, function(res) {
-            client.getIRCClient().say(channel, res);
-        });
-    }
-
-    if(msg.search(celsiusRegEx) != -1) {
-        var temperatureNum = msg.replace(celsiusRegEx, "$1");
-        this.auto.c2f(temperatureNum, function(res) {
+    if(msg.search(tempRegEx) != -1) {
+        var temperatureNum = parseInt(msg.replace(tempRegEx, "$1"));
+        var temperatureformat = msg.replace(tempRegEx, "$2");
+        this.auto.tempConvert(temperatureNum, temperatureformat, function(res) {
             client.getIRCClient().say(channel, res);
         });
     }

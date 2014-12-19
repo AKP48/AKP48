@@ -153,14 +153,17 @@ AutoResponse.prototype.steamPkg = function(appId, callback) {
     });
 }
 
-AutoResponse.prototype.f2c = function(f, callback) {
-    callback(f+"°F is "+n((f - 32)*5/9).format("0.00")+"°C.");
-}
+AutoResponse.prototype.tempConvert = function(temp, unit, callback) {
+    if(unit === "c") {
+        callback(temp+"°C is "+n((temp*9/5) + 32).format("0.00")+"°F.");
+        return;
+    }
 
-AutoResponse.prototype.c2f = function(c, callback) {
-    callback(c+"°C is "+n((c*9/5) + 32).format("0.00")+"°F.");
-}
-
+    if(unit === "f") {
+        callback(temp+"°F is "+n((temp - 32)*5/9).format("0.00")+"°C.");
+        return;
+    }
+};
 
 //export the module
 module.exports = AutoResponse;
