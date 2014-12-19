@@ -81,7 +81,7 @@ CommandProcessor.prototype.parseMessage = function(msg, client, channel, pm) {
     var steamAppRegEx = /(?:.+)?(?:store\.steampowered\.com\/app\/)([0-9]+)(?:.+)?/gi;
     var steamPkgRegEx = /(?:.+)?(?:store\.steampowered\.com\/sub\/)([0-9]+)(?:.+)?/gi;
 
-    var tempRegEx = /^convert (-?\d+(:?\.\d+)?)°?([cf])$/gi;
+    var tempRegEx = /^convert (-?\d+(?:\.\d+)?)°?([cf])$/gi;
 
     if(msg.search(youTubeRegEx) != -1) {
         var youTubeId = msg.replace(youTubeRegEx, "$1");
