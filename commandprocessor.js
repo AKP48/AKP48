@@ -15,6 +15,9 @@ CommandProcessor.prototype.process = function(nick, channel, text, client, pm) {
     var start = -1;
     var end = -1;
 
+    //ignore ourself
+    if(nick === client.nick) {return;}
+
     if(nick === client.mcBot) {
 
         //find user name
@@ -77,6 +80,9 @@ CommandProcessor.prototype.parseMessage = function(msg, client, channel, pm) {
     var steamAppRegEx = /(?:.+)?(?:store\.steampowered\.com\/app\/)([0-9]+)(?:.+)?/gi;
     var steamPkgRegEx = /(?:.+)?(?:store\.steampowered\.com\/sub\/)([0-9]+)(?:.+)?/gi;
 
+    var fahrenheitRegEx = /(?:(\d+)(?: |°| degrees )?F(?:ahrenheit)?(?: |$))/gi;
+    var celsiusRegEx = /(?:(\d+)(?: |°| degrees )?C(?:elsius)?(?: |$))/gi;
+
     if(msg.search(youTubeRegEx) != -1) {
         var youTubeId = msg.replace(youTubeRegEx, "$1");
         this.auto.youtube(youTubeId, function(res) {
@@ -94,6 +100,20 @@ CommandProcessor.prototype.parseMessage = function(msg, client, channel, pm) {
     if(msg.search(steamPkgRegEx) != -1) {
         var steamId = msg.replace(steamPkgRegEx, "$1");
         this.auto.steamPkg(steamId, function(res) {
+            client.getIRCClient().say(channel, res);
+        });
+    }
+
+    if(msg.search(fahrenheitRegEx) != -1) {
+        var temperatureNum = parseInt(msg.replace(fahrenheitRegEx, "$1"));
+        this.auto.f2c(temperatureNum, function(res) {
+            client.getIRCClient().say(channel, res);
+        });
+    }
+
+    if(msg.search(celsiusRegEx) != -1) {
+        var temperatureNum = msg.replace(celsiusRegEx, "$1");
+        this.auto.c2f(temperatureNum, function(res) {
             client.getIRCClient().say(channel, res);
         });
     }

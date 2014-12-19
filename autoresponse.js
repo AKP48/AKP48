@@ -153,5 +153,14 @@ AutoResponse.prototype.steamPkg = function(appId, callback) {
     });
 }
 
+AutoResponse.prototype.f2c = function(f, callback) {
+    callback(f+"°F is "+((f - 32)*5/9)+"°C.");
+}
+
+AutoResponse.prototype.c2f = function(c, callback) {
+    callback(c+"°C is "+((c*9/5) + 32)+"°F.");
+}
+
+
 //export the module
 module.exports = AutoResponse;
