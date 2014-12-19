@@ -153,14 +153,14 @@ AutoResponse.prototype.steamPkg = function(appId, callback) {
     });
 }
 
-AutoResponse.prototype.tempConvert = function(temp, unit, callback) {
+AutoResponse.prototype.tempConvert = function(temp, places, unit, callback) {
     if(unit === "c") {
-        callback(temp+"°C is "+n((temp*9/5) + 32).format("0.00")+"°F.");
+        callback(temp+"°C is "+n((temp*9/5) + 32).format("0[.]"+places)+"°F.");
         return;
     }
 
     if(unit === "f") {
-        callback(temp+"°F is "+n((temp - 32)*5/9).format("0.00")+"°C.");
+        callback(temp+"°F is "+n((temp - 32)*5/9).format("0[.]"+places)+"°C.");
         return;
     }
 };
