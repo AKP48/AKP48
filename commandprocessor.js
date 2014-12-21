@@ -70,6 +70,8 @@ CommandProcessor.prototype.process = function(nick, channel, text, client, pm) {
 
                 this.cmd[command](nickname, args, client, channel, client.isOp(nickname), pm);
             }
+        } else {
+            this.parseMessage(text, client, channel, pm);
         }
     } else {
         this.parseMessage(text, client, channel, pm);
