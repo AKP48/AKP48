@@ -35,6 +35,14 @@ ClientManager.prototype.reloadAll = function() {
     console.log("All clients reloaded!");
 }
 
+ClientManager.prototype.shutdown = function(msg) {
+    for (var i = 0; i < this.clients.length; i++) {
+        this.clients[i].disconnect(msg);
+    };
+
+    process.exit(0);
+};
+
 ClientManager.prototype.saveConfig = function() {
     var configObject = {
         servers: []
