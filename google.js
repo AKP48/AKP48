@@ -39,15 +39,15 @@ Google.prototype.youtube_video_info = function(video_id, callback) {
                             outputString += " (";
 
                             if(timeString !== "0:00:00") {
-                                outputString += c.bold(timeString+ " ");
+                                outputString += c.bold(timeString);
                             }
 
                             if(dimension === '3d') {
-                                outputString += c.bold("3D");
+                                outputString += c.bold(" 3D");
                             }
 
                             if(definition === 'hd') {
-                                outputString += c.bold("HD");
+                                outputString += c.bold(" HD");
                             }
 
                             outputString += ")";
