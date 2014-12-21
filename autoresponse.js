@@ -154,25 +154,5 @@ AutoResponse.prototype.steamPkg = function(appId, callback) {
     });
 }
 
-AutoResponse.prototype.tempConvert = function(temp, places, unit, callback) {
-    if(unit === "c") {
-        try {
-            callback(temp+"°C is "+n((temp*9/5) + 32).format("0[.]"+places)+"°F.");
-        } catch(e) {
-            callback("Could not convert "+temp+"°C to Fahrenheit!");
-        }
-        return;
-    }
-
-    if(unit === "f") {
-        try {
-            callback(temp+"°F is "+n((temp - 32)*5/9).format("0[.]"+places)+"°C.");
-        } catch(e) {
-            callback("Could not convert "+temp+"°F to Fahrenheit!");
-        }
-        return;
-    }
-}
-
 //export the module
 module.exports = AutoResponse;
