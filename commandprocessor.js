@@ -38,21 +38,6 @@ CommandProcessor.prototype.process = function(nick, channel, text, client, pm) {
     //if we have a command
     if(text.substring(0, client.delimiter.length) === client.delimiter) {
 
-        // Flood protection
-        if((!pm || !(channel === client.nick)) && !client.isOp(nickname)) {
-            if(!client.chatters[channel]) {client.chatters[channel] = [];}
-            if(client.chatters[channel][nick]) {
-                client.chatters[channel][nick].floodProtect();
-                //if they have been banned
-                if(client.chatters[channel][nick].checkBan()) {
-                    //just end here
-                    return;
-                }
-            } else {
-                client.chatters[channel][nick] = new Chatter(nick, client, channel);
-            }
-        }
-
         //find command
         end = text.indexOf(' ');
         command = text.substring(client.delimiter.length,end);
@@ -68,6 +53,21 @@ CommandProcessor.prototype.process = function(nick, channel, text, client, pm) {
 
         if(typeof this.cmd[command] === 'function') {
             if(!client.isBanned(nickname)) {
+                // Flood protection
+                if((!pm || !(channel === client.nick)) && !client.isOp(nickname)) {
+                    if(!client.chatters[channel]) {client.chatters[channel] = [];}
+                    if(client.chatters[channel][nick]) {
+                        client.chatters[channel][nick].floodProtect();
+                        //if they have been banned
+                        if(client.chatters[channel][nick].checkBan()) {
+                            //just end here
+                            return;
+                        }
+                    } else {
+                        client.chatters[channel][nick] = new Chatter(nick, client, channel);
+                    }
+                }
+
                 this.cmd[command](nickname, args, client, channel, client.isOp(nickname), pm);
             }
         }
@@ -83,7 +83,6 @@ CommandProcessor.prototype.parseMessage = function(msg, client, channel, pm) {
     var tempRegEx = /^convert (-?\d+(?:\.\d+)?)°?([cf])$/gi;
     var diceRegEx = /^(?:roll(?= *[^+ ]))(?: *(?: |\+) *(?:\d*[1-9]\d*|(?=d))(?:d\d*[1-9]\d*(?:x\d*[1-9]\d*)?)?)+ *$/gi;
     var diceRollRegEx = /[ +](\d+|(?=d))(?:d(\d+)(?:x(\d+))?)?(?= *(\+| |$))/gi;
-
 
     if(msg.search(youTubeRegEx) != -1) {
         var youTubeId = msg.replace(youTubeRegEx, "$1");
