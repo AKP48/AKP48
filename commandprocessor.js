@@ -107,68 +107,11 @@ CommandProcessor.prototype.parseMessage = function(msg, client, channel, pm) {
     }
 
     if(msg.search(tempRegEx) != -1) {
-        var temperatureNum = parseFloat(msg.replace(tempRegEx, "$1"));
-        var tempTemp = msg.replace(tempRegEx, "$1");
-        var temperatureformat = msg.replace(tempRegEx, "$2");
-        var places = "0".repeat((tempTemp.indexOf(".") != -1) ? Math.min(Math.max(tempTemp.length - 1 - tempTemp.indexOf("."), 2), 20) : 2);
-        this.auto.tempConvert(temperatureNum, places, temperatureformat, function(res) {
-            client.getIRCClient().say(channel, res);
-        });
+        client.getIRCClient().say(channel, "Please use the command delimiter to use that command from now on.");
     }
 
     if(msg.search(diceRegEx) != -1) {
-
-        var result;
-        var dice = [];
-
-        while((di = diceRegEx.exec(msg)) !== null) {
-            while((result = diceRollRegEx.exec(di)) !== null) {
-                var count = (parseInt(result[1]) != 0) ? parseInt(result[1]) : 1;
-                if(isNaN(count)) {count = 1;}
-
-                var maxValue = (parseInt(result[2]) != 0) ? parseInt(result[2]) : 1;
-                if(isNaN(maxValue)) {maxValue = 1;}
-
-                var multiplier = (parseInt(result[3]) != 0) ? parseInt(result[3]) : 1;
-                if(isNaN(multiplier)) {multiplier = 1;}
-
-                var isFinalValue = !("+" === result[4]);
-
-                dice.push({
-                    count: count,
-                    maxValue: maxValue,
-                    multiplier: multiplier,
-                    isFinalValue: isFinalValue
-                });
-            }
-        }
-
-        console.log(dice);
-
-        var rolls = [];
-
-        var roll = 0;
-        for (var i = 0; i < dice.length; i++) {
-            roll += (Math.floor(Math.random() * (dice[i].maxValue)) + 1) * dice[i].multiplier;
-
-            if(dice[i].isFinalValue) {
-                rolls.push(roll);
-                roll = 0;
-            }
-        }
-
-        console.log(dice);
-
-
-        var outputString = "";
-
-        for (var i = 0; i < rolls.length; i++) {
-            outputString += rolls[i] + " | ";
-        };
-
-        outputString = outputString.substring(0, outputString.length-3);
-
-        client.getIRCClient().say(channel, outputString);
+        client.getIRCClient().say(channel, "Please use the command delimiter to use that command from now on.");
     }
 }
 

@@ -118,8 +118,87 @@ Commands.prototype.dice = function(nick, args, client, channel) {
     client.getIRCClient().say(channel, outputString);
 };
 
-Commands.prototype.newDice = function(nick, args, client, channel) {
-    // TODO: Implement better dice. https://wiki.roll20.net/Dice_Reference
+Commands.prototype.roll = function(nick, args, client, channel) {
+    var diceRegEx = /^(?:roll(?= *[^+ ]))(?: *(?: |\+) *(?:\d*[1-9]\d*|(?=d))(?:d\d*[1-9]\d*(?:x\d*[1-9]\d*)?)?)+ *$/gi;
+    var diceRollRegEx = /[ +](\d+|(?=d))(?:d(\d+)(?:x(\d+))?)?(?= *(\+| |$))/gi;
+
+    var msg = "roll "+args.join(" ");
+    var result;
+    var dice = [];
+
+    while((di = diceRegEx.exec(msg)) !== null) {
+        while((result = diceRollRegEx.exec(di)) !== null) {
+            var count = (parseInt(result[1]) != 0) ? parseInt(result[1]) : 1;
+            if(isNaN(count)) {count = 1;}
+
+            var maxValue = (parseInt(result[2]) != 0) ? parseInt(result[2]) : 1;
+            if(isNaN(maxValue)) {maxValue = 1;}
+
+            var multiplier = (parseInt(result[3]) != 0) ? parseInt(result[3]) : 1;
+            if(isNaN(multiplier)) {multiplier = 1;}
+
+            var isFinalValue = !("+" === result[4]);
+
+            dice.push({
+                count: count,
+                maxValue: maxValue,
+                multiplier: multiplier,
+                isFinalValue: isFinalValue
+            });
+        }
+    }
+
+    var rolls = [];
+
+    var roll = 0;
+    for (var i = 0; i < dice.length; i++) {
+        for(var j = 0; j < dice[i].count; j++) {
+            roll += (Math.floor(Math.random() * (dice[i].maxValue)) + 1) * dice[i].multiplier;
+        }
+
+        if(dice[i].isFinalValue) {
+            rolls.push(roll);
+            roll = 0;
+        }
+    }
+
+    var outputString = "";
+
+    for (var i = 0; i < rolls.length; i++) {
+        outputString += rolls[i] + " | ";
+    };
+
+    outputString = outputString.substring(0, outputString.length-3);
+
+    client.getIRCClient().say(channel, outputString);
+};
+
+Commands.prototype.convert = function(nick, args, client, channel) {
+    var tempRegEx = /^(-?\d+(?:\.\d+)?)°?([cf])$/gi;
+    var msg = args.join(" ");
+
+    var temp = parseFloat(msg.replace(tempRegEx, "$1"));
+    var tempTemp = msg.replace(tempRegEx, "$1");
+    var unit = msg.replace(tempRegEx, "$2");
+    var places = "0".repeat((tempTemp.indexOf(".") != -1) ? Math.min(Math.max(tempTemp.length - 1 - tempTemp.indexOf("."), 2), 20) : 2);
+
+    if(unit === "c") {
+        try {
+            client.getIRCClient().say(channel, temp+"°C is "+n((temp*9/5) + 32).format("0[.]"+places)+"°F.");
+        } catch(e) {
+            client.getIRCClient().say(channel, "Could not convert "+temp+"°C to Fahrenheit!");
+        }
+        return;
+    }
+
+    if(unit === "f") {
+        try {
+            client.getIRCClient().say(channel, temp+"°F is "+n((temp - 32)*5/9).format("0[.]"+places)+"°C.");
+        } catch(e) {
+            client.getIRCClient().say(channel, "Could not convert "+temp+"°F to Fahrenheit!");
+        }
+        return;
+    }
 };
 
 Commands.prototype.daft = function(nick, args, client, channel) {
