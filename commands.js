@@ -752,11 +752,6 @@ Commands.prototype.sendmessage = function(nick, args, client, channel, op, pm) {
 };
 
 Commands.prototype.changeDelimiter = function(nick, args, client, channel, op, pm) {
-    if(!op) {
-        console.log("not op");
-        return;
-    }
-
     if(args[0]) {
         console.log(args[0]);
         client.delimiter = args[0];
@@ -766,6 +761,20 @@ Commands.prototype.changeDelimiter = function(nick, args, client, channel, op, p
     } else {
         client.getIRCClient().say(nick, "Usage: changeDelimiter <newDelimiter>");
     }
+};
+
+Commands.prototype.restart = function(nick, args, client, channel, op, pm) {
+    if(!op || !pm) {
+        return;
+    }
+
+    var msg = "Goodbye.";
+
+    if(args[0]) {
+        msg = args.join(" ");
+    }
+
+    client.clientManager.shutdown(msg);
 };
 
 //export the module
