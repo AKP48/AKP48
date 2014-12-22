@@ -1,5 +1,6 @@
 var c = require('irc-colors');
 var config = require('./config.json');
+var chance = new require('chance')();
 var Google = require('./google');
 var Riot = require('./riot');
 var fs = require('fs');
@@ -153,7 +154,7 @@ Commands.prototype.roll = function(nick, args, client, channel) {
     var roll = 0;
     for (var i = 0; i < dice.length; i++) {
         for(var j = 0; j < dice[i].count; j++) {
-            roll += (Math.floor(Math.random() * (dice[i].maxValue)) + 1) * dice[i].multiplier;
+            roll += chance.natural({min: 1, max: dice[i].maxValue}) * dice[i].multiplier;
         }
 
         if(dice[i].isFinalValue) {
