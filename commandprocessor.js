@@ -79,7 +79,7 @@ CommandProcessor.prototype.process = function(nick, channel, text, client, pm) {
 };
 
 CommandProcessor.prototype.parseMessage = function(msg, client, channel, pm) {
-    var youTubeRegEx = /(?:.+)(?:https?:\/\/)?(?:[0-9A-Z-]+\.)?(?:youtu\.be\/|youtube(?:-nocookie)?\.com\S*[^\w\s-])([\w-]{11})(?=[^\w-]|$)(?![?=&+%\w.-]*(?:['"][^<>]*>|<\/a>))[?=&+%\w.-]*(?:.+)?/gi;
+    var youTubeRegEx = /(?:https?:\/\/)?(?:[0-9A-Z-]+\.)?(?:youtu\.be\/|youtube(?:-nocookie)?\.com\S*[^\w\s-])([\w-]{11})(?=[^\w-]|$)(?![?=&+%\w.-]*(?:['"][^<>]*>|<\/a>))[?=&+%\w.-]*/gi;
     var steamAppRegEx = /(?:.+)?(?:store\.steampowered\.com\/app\/)([0-9]+)(?:.+)?/gi;
     var steamPkgRegEx = /(?:.+)?(?:store\.steampowered\.com\/sub\/)([0-9]+)(?:.+)?/gi;
     var tempRegEx = /^convert (-?\d+(?:\.\d+)?)°?([cf])$/gi;
@@ -87,8 +87,12 @@ CommandProcessor.prototype.parseMessage = function(msg, client, channel, pm) {
     var diceRollRegEx = /[ +](\d+|(?=d))(?:d(\d+)(?:x(\d+))?)?(?= *(\+| |$))/gi;
 
     if(msg.search(youTubeRegEx) != -1) {
-        var youTubeId = msg.replace(youTubeRegEx, "$1");
-        this.auto.youtube(youTubeId, function(res) {
+        var youTubeIds = [];
+        while((result = youTubeRegEx.exec(msg)) !== null) {
+            youTubeIds.push(result[1]);
+        }
+        //TODO: better handling of maximum links.
+        this.auto.youtube(youTubeIds, 3, function(res) {
             client.getIRCClient().say(channel, res);
         });
     }

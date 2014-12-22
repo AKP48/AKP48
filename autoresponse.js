@@ -9,9 +9,9 @@ function AutoResponse() {
     this.google = new Google(config.google.apiKey);
 }
 
-AutoResponse.prototype.youtube = function(videoId, callback) {
-    this.google.youtube_video_info(videoId, function(res){
-        callback(res);
+AutoResponse.prototype.youtube = function(videoIds, maxLines, callback) {
+    this.google.youtube_video_info(videoIds, maxLines, function(res, last){
+        callback(res, last);
     });
 }
 
