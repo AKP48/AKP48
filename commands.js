@@ -199,6 +199,10 @@ Commands.prototype.convert = function(nick, args, client, channel) {
         }
         return;
     }
+
+    if(unit === "k") {
+        client.getIRCClient().say(channel, nick + ": " + "I'm a Korean Pop group, not a scientist.");
+    }
 };
 
 Commands.prototype.daft = function(nick, args, client, channel) {
