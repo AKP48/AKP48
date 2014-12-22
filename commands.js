@@ -180,7 +180,7 @@ Commands.prototype.roll = function(nick, args, client, channel) {
 
     //format output
     for (var i = 0; i < rolls.length; i++) {
-        outputString += rolls[i] + " | ";
+        outputString += n(rolls[i]).format("0,0") + " | ";
     };
 
     outputString = outputString.substring(0, outputString.length-3);
