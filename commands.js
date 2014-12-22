@@ -170,7 +170,7 @@ Commands.prototype.roll = function(nick, args, client, channel) {
 
     outputString = outputString.substring(0, outputString.length-3);
 
-    client.getIRCClient().say(channel, outputString);
+    client.getIRCClient().say(channel, nick + ": " + outputString);
 };
 
 Commands.prototype.convert = function(nick, args, client, channel) {
@@ -184,18 +184,18 @@ Commands.prototype.convert = function(nick, args, client, channel) {
 
     if(unit === "c") {
         try {
-            client.getIRCClient().say(channel, temp+"°C is "+n((temp*9/5) + 32).format("0[.]"+places)+"°F.");
+            client.getIRCClient().say(channel, nick + ": " + temp+"°C is "+n((temp*9/5) + 32).format("0[.]"+places)+"°F.");
         } catch(e) {
-            client.getIRCClient().say(channel, "Could not convert "+temp+"°C to Fahrenheit!");
+            client.getIRCClient().say(channel, nick + ": " + "Could not convert "+temp+"°C to Fahrenheit!");
         }
         return;
     }
 
     if(unit === "f") {
         try {
-            client.getIRCClient().say(channel, temp+"°F is "+n((temp - 32)*5/9).format("0[.]"+places)+"°C.");
+            client.getIRCClient().say(channel, nick + ": " + temp+"°F is "+n((temp - 32)*5/9).format("0[.]"+places)+"°C.");
         } catch(e) {
-            client.getIRCClient().say(channel, "Could not convert "+temp+"°F to Fahrenheit!");
+            client.getIRCClient().say(channel, nick + ": " + "Could not convert "+temp+"°F to Fahrenheit!");
         }
         return;
     }
