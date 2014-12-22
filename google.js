@@ -28,7 +28,6 @@ Google.prototype.youtube_video_info = function(video_ids, maxLines, callback) {
         this.client.get('/youtube/v3/videos?id='+video_ids[i]+'&key='+this.api_key+'&fields=items(snippet(title,channelId),contentDetails(duration,dimension,definition),statistics(viewCount,likeCount,dislikeCount))&part=snippet,statistics,contentDetails',
             function(err, res, body){
                 var video = body;
-                console.log(body);
                 if(video.items[0]) {
                     self.client.get('/youtube/v3/channels?part=snippet&key='+self.api_key+'&id='+video.items[0].snippet.channelId+'&fields=items(snippet(title))',
                         function(err, res, body) {
