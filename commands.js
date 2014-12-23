@@ -67,7 +67,9 @@ Commands.prototype.googleimages = function(nick, args, client, channel) {
 };
 
 Commands.prototype.lolfreechamps = function(nick, args, client, channel) {
-    this.riot.getFreeChamps();
+    this.riot.getFreeChamps(function(msg){
+        client.getIRCClient().say(channel, nick + ": " + msg);
+    });
 };
 
 Commands.prototype.dice = function(nick, args, client, channel) {
