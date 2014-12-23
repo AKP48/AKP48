@@ -16,9 +16,9 @@ function Riot(api_key) {
         lastAccess: m("1992-04-29")
     };
 
-    // setTimeout(function(){
-    //     this.getChampList();
-    // }, 43200000);
+    setTimeout(function(){
+        this.getChampList();
+    }, 43200000);
 }
 
 Riot.prototype.getChampList = function() {
