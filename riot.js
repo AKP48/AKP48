@@ -38,15 +38,39 @@ Riot.prototype.getFreeChamps = function(callback) {
         this.freeChamps = { champions: [], lastAccess: m() };
         var self = this;
         this.client.get('/api/lol/na/v1.2/champion?freeToPlay=true&api_key='+this.api_key, function(err, res, body) {
-                for (var i = 0; i < body.champions.length; i++) {
-                    self.freeChamps.champions.push(self.champions[body.champions[i].id].name);
-                };
+            for (var i = 0; i < body.champions.length; i++) {
+                self.freeChamps.champions.push(self.champions[body.champions[i].id].name);
+            };
 
-                callback(self.freeChamps.champions.join(" | "));
-            });
+            callback(self.freeChamps.champions.join(" | "));
+        });
     } else {
         callback(this.freeChamps.champions.join(" | "));
     }
+};
+
+Riot.prototype.getServerStatus = function(region, callback) {
+    var extra = '';
+    if(region.toLowerCase() === "pbe") {
+        extra = '.pbe';
+    }
+    this.client.get('http://status'+extra+'.leagueoflegends.com/shards/'+region.toLowerCase(), function(err, res, body) {
+        if(err) {callback("Could not get server status for that region!"); return;}
+        var response = [];
+        for (var property in body.services) {
+            if (body.services.hasOwnProperty(property)) {
+                var oS = body.services[property].name + ": " + body.services[property].status;
+                if(body.services[property].status === "online") {
+                    oS = c.green(oS);
+                } else {
+                    oS = c.red(oS);
+                }
+                response.push(oS);
+            }
+        }
+
+        callback(body.name + ": " + response.join(" | "));
+    });
 };
 
 module.exports = Riot;
