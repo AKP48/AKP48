@@ -72,6 +72,10 @@ Commands.prototype.lolfreechamps = function(nick, args, client, channel) {
     });
 };
 
+Commands.prototype.dotafreeheroes = function(nick, args, client, channel) {
+    client.getIRCClient().say(channel, nick + ": All of them.");
+};
+
 Commands.prototype.dice = function(nick, args, client, channel) {
     var numberOfRolls;
     var numberOfSides;
