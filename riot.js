@@ -34,7 +34,6 @@ Riot.prototype.getChampList = function() {
 };
 
 Riot.prototype.getFreeChamps = function(callback) {
-    console.log(this.champions);
     if(m().subtract(6, 'hours').isAfter(this.freeChamps.lastAccess)) {
         this.freeChamps = { champions: [], lastAccess: m() };
         var self = this;
