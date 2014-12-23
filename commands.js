@@ -72,6 +72,14 @@ Commands.prototype.lolfreechamps = function(nick, args, client, channel) {
     });
 };
 
+Commands.prototype.lolserverstatus = function(nick, args, client, channel) {
+    var region = "na";
+    if(args[0]) {region = args[0];}
+    this.riot.getServerStatus(region, function(msg) {
+        client.getIRCClient().say(channel, nick + ": " + msg);
+    });
+};
+
 Commands.prototype.dotafreeheroes = function(nick, args, client, channel) {
     client.getIRCClient().say(channel, nick + ": All of them.");
 };
