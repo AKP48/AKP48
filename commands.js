@@ -387,7 +387,7 @@ Commands.prototype.stock = function(nick, args, client, channel) {
         }
 
         if(change === 0) {
-            outputString += change+" "+"("+percent+" )";
+            outputString += change+" "+"("+percent+")";
         }
 
         self.client.getIRCClient().say(self.channel, outputString);
