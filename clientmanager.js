@@ -46,7 +46,7 @@ ClientManager.prototype.shutdown = function(msg) {
 ClientManager.prototype.saveConfig = function() {
     delete require.cache[__dirname+'/config.json'];
     var configObject = require("./config.json");
-    var configObject.servers = [];
+    configObject.servers = [];
     for (var i = 0; i < this.clients.length; i++) {
         if(this.clients[i].getConfig()) {
             configObject.servers.push(this.clients[i].getConfig());
