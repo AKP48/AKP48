@@ -206,7 +206,7 @@ Commands.prototype.roll = function(nick, args, client, channel) {
 };
 
 Commands.prototype.convert = function(nick, args, client, channel) {
-    var tempRegEx = /^(-?\d+(?:\.\d+)?)°?([cf])$/gi;
+    var tempRegEx = /^(-?\d+(?:\.\d+)?)°?([cfk])$/gi;
     var msg = args.join(" ");
 
     var temp = parseFloat(msg.replace(tempRegEx, "$1"));
