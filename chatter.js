@@ -1,8 +1,9 @@
-function Chatter(nick, client, channel) {
+function Chatter(nick, client, channel, real) {
     this.nick = nick;
     this.client = client;
     this.channel = channel;
     this.lastUsed = process.uptime();
+    this.real = real;
     this.timer = 30;
     this.violations = 0;
     this.maxViolations = 5;
@@ -56,7 +57,7 @@ Chatter.prototype.floodProtect = function() {
     if(this.shouldBeBanned()) {
         if(!this.banMsgSent) {
             this.isBanned = true;
-            if(this.nick === this.client.mcBot) {
+            if(!this.real) {
                 this.client.getIRCClient().say(this.channel, this.nick+": You have been temporarily banned from using my commands for spamming too many commands in a short time. Feel free to continue sending commands to me as private messages.");
             } else {
                 this.client.getIRCClient().say(this.nick, "You have been temporarily banned from using my commands for spamming too many commands in a short time. Feel free to continue sending commands to me as private messages.");

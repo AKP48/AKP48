@@ -64,7 +64,9 @@ CommandProcessor.prototype.process = function(nick, channel, text, client, pm) {
                             return;
                         }
                     } else {
-                        client.chatters[channel][nickname] = new Chatter(nickname, client, channel);
+                        var real = true;
+                        if(nick === client.mcBot) {real = false;}
+                        client.chatters[channel][nickname] = new Chatter(nickname, client, channel, real);
                     }
                 }
 
