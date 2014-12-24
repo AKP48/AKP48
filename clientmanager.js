@@ -44,16 +44,16 @@ ClientManager.prototype.shutdown = function(msg) {
 };
 
 ClientManager.prototype.saveConfig = function() {
-    var configObject = {
-        servers: []
-    };
+    delete require.cache[__dirname+'/config.json'];
+    var configObject = require("./config.json");
+    var configObject.servers = [];
     for (var i = 0; i < this.clients.length; i++) {
         if(this.clients[i].getConfig()) {
             configObject.servers.push(this.clients[i].getConfig());
         }
     };
 
-    fs.writeFile('./servers.json', JSON.stringify(configObject, null, 4), function (err) {
+    fs.writeFile('./config.json', JSON.stringify(configObject, null, 4), function (err) {
         if (err) return console.log(err);
         console.log('Saved config!');
     });
