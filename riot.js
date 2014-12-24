@@ -34,7 +34,7 @@ Riot.prototype.getChampList = function() {
 };
 
 Riot.prototype.getFreeChamps = function(callback) {
-    if(m().subtract(6, 'hours').isAfter(this.freeChamps.lastAccess)) {
+    if(m().subtract(2, 'seconds').isAfter(this.freeChamps.lastAccess)) {
         this.freeChamps = { champions: [], lastAccess: m() };
         var self = this;
         this.client.get('/api/lol/na/v1.2/champion?freeToPlay=true&api_key='+this.api_key, function(err, res, body) {
