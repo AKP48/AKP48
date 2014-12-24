@@ -56,15 +56,15 @@ CommandProcessor.prototype.process = function(nick, channel, text, client, pm) {
                 // Flood protection
                 if((!pm || !(channel === client.nick)) && !client.isOp(nickname)) {
                     if(!client.chatters[channel]) {client.chatters[channel] = [];}
-                    if(client.chatters[channel][nick]) {
-                        client.chatters[channel][nick].floodProtect();
+                    if(client.chatters[channel][nickname]) {
+                        client.chatters[channel][nickname].floodProtect();
                         //if they have been banned
-                        if(client.chatters[channel][nick].checkBan()) {
+                        if(client.chatters[channel][nickname].checkBan()) {
                             //just end here
                             return;
                         }
                     } else {
-                        client.chatters[channel][nick] = new Chatter(nick, client, channel);
+                        client.chatters[channel][nickname] = new Chatter(nickname, client, channel);
                     }
                 }
 
