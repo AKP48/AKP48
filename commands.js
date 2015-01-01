@@ -12,8 +12,8 @@ var Sandbox = require("sandbox");
 var s = new Sandbox();
 
 function Commands() {
-    this.google = new Google(config.google.apiKey);
-    this.riot = new Riot(config.riot.apiKey);
+    this.googleAPI = new Google(config.google.apiKey);
+    this.riotAPI = new Riot(config.riot.apiKey);
     this.slogans = [];
     this.larts = [];
 }
@@ -21,13 +21,13 @@ function Commands() {
 Commands.prototype.lmgtfy = function(nick, args, client, channel) {
     var query = args.join(' ');
     query = encodeURIComponent(query);
-    this.google.shorten_url("http://lmgtfy.com/?q="+query, function(url) {
+    this.googleAPI.shorten_url("http://lmgtfy.com/?q="+query, function(url) {
         client.getIRCClient().say(channel, nick + ": " + url);
     });
 };
 
 Commands.prototype.googl = function(nick, args, client, channel) {
-    this.google.shorten_url(args[0], function(url) {
+    this.googleAPI.shorten_url(args[0], function(url) {
         client.getIRCClient().say(channel, nick + ": " + url);
     });
 }
@@ -49,25 +49,25 @@ Commands.prototype.geocode = function(nick, args, client, channel) {
         }
     }
 
-    this.google.geocode(location, region, function(msg){
+    this.googleAPI.geocode(location, region, function(msg){
         client.getIRCClient().say(channel, msg);
     });
 }
 
 Commands.prototype.googlesearch = function(nick, args, client, channel) {
-    this.google.search(args.join(" "), "web", function(msg) {
+    this.googleAPI.search(args.join(" "), "web", function(msg) {
         client.getIRCClient().say(channel, nick + ": " + msg);
     });
 };
 
 Commands.prototype.googleimages = function(nick, args, client, channel) {
-    this.google.search(args.join(" "), "images", function(msg){
+    this.googleAPI.search(args.join(" "), "images", function(msg){
         client.getIRCClient().say(channel, nick + ": " + msg);
     });
 };
 
 Commands.prototype.lolfreechamps = function(nick, args, client, channel) {
-    this.riot.getFreeChamps(function(msg){
+    this.riotAPI.getFreeChamps(function(msg){
         client.getIRCClient().say(channel, nick + ": " + msg);
     });
 };
@@ -75,7 +75,7 @@ Commands.prototype.lolfreechamps = function(nick, args, client, channel) {
 Commands.prototype.lolserverstatus = function(nick, args, client, channel) {
     var region = "na";
     if(args[0]) {region = args[0];}
-    this.riot.getServerStatus(region, function(msg) {
+    this.riotAPI.getServerStatus(region, function(msg) {
         client.getIRCClient().say(channel, nick + ": " + msg);
     });
 };
@@ -570,6 +570,10 @@ Commands.prototype.rainbow = function(nick, args, client, channel) {
 }
 
 Commands.prototype.g = function(nick, args, client, channel) {
+    this.googlesearch(nick, args, client, channel);
+};
+
+Commands.prototype.google = function(nick, args, client, channel) {
     this.googlesearch(nick, args, client, channel);
 };
 
