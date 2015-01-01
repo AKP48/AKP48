@@ -34,22 +34,13 @@ function IRCClient(o, clientManager, save) {
     var self = this;
 
     this.ircClient.on('message', function(nick, to, text, message) {
-        var pm = false;
-        if(to === this.nick) {
-            pm = true;
-        }
-
-        self.commandProcessor.process(nick, to, text, self, pm);
-    });
-
-    this.ircClient.on('join', function(channel, nick, message){
-        console.log("Joined channel "+channel);
-    });
-
-    this.ircClient.on('part', function(channel, nick, reason, message) {
-        console.log("Left channel "+channel+" ("+reason+")");
+        self.commandProcessor.process(nick, to, text, self);
     });
 }
+
+IRCClient.prototype.say = function(context, message) {
+    this.getIRCClient().say(context.channel, context.nick + ": " + message);
+};
 
 IRCClient.prototype.reload = function() {
     CommandProcessor = require("./commandprocessor")

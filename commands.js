@@ -1,8 +1,6 @@
 var c = require('irc-colors');
 var config = require('./config.json');
 var chance = new require('chance')();
-var Google = require('./API/google');
-var Riot = require('./API/riot');
 var fs = require('fs');
 var YQL = require('yql');
 var request = require('request-json');
@@ -12,230 +10,9 @@ var Sandbox = require("sandbox");
 var s = new Sandbox();
 
 function Commands() {
-    this.googleAPI = new Google(config.google.apiKey);
-    this.riotAPI = new Riot(config.riot.apiKey);
     this.slogans = [];
     this.larts = [];
 }
-
-Commands.prototype.lmgtfy = function(nick, args, client, channel) {
-    var query = args.join(' ');
-    query = encodeURIComponent(query);
-    this.googleAPI.shorten_url("http://lmgtfy.com/?q="+query, function(url) {
-        client.getIRCClient().say(channel, nick + ": " + url);
-    });
-};
-
-Commands.prototype.googl = function(nick, args, client, channel) {
-    this.googleAPI.shorten_url(args[0], function(url) {
-        client.getIRCClient().say(channel, nick + ": " + url);
-    });
-}
-
-Commands.prototype.geocode = function(nick, args, client, channel) {
-    if(args[0] === undefined || args[0].length === 0) {
-        return;
-    }
-
-    var location = args.join(" ");
-    var region = "";
-
-    if(args[1]) {
-        location = args.slice(0, args.length - 1).join(" ");
-        if(args[args.length - 1].length === 2) {
-            region = args[args.length - 1];
-        } else {
-            location += " "+args[args.length - 1];
-        }
-    }
-
-    this.googleAPI.geocode(location, region, function(msg){
-        client.getIRCClient().say(channel, msg);
-    });
-}
-
-Commands.prototype.googlesearch = function(nick, args, client, channel) {
-    this.googleAPI.search(args.join(" "), "web", function(msg) {
-        client.getIRCClient().say(channel, nick + ": " + msg);
-    });
-};
-
-Commands.prototype.googleimages = function(nick, args, client, channel) {
-    this.googleAPI.search(args.join(" "), "images", function(msg){
-        client.getIRCClient().say(channel, nick + ": " + msg);
-    });
-};
-
-Commands.prototype.lolfreechamps = function(nick, args, client, channel) {
-    this.riotAPI.getFreeChamps(function(msg){
-        client.getIRCClient().say(channel, nick + ": " + msg);
-    });
-};
-
-Commands.prototype.lolserverstatus = function(nick, args, client, channel) {
-    var region = "na";
-    if(args[0]) {region = args[0];}
-    this.riotAPI.getServerStatus(region, function(msg) {
-        client.getIRCClient().say(channel, nick + ": " + msg);
-    });
-};
-
-Commands.prototype.dotafreeheroes = function(nick, args, client, channel) {
-    client.getIRCClient().say(channel, nick + ": All of them.");
-};
-
-Commands.prototype.dice = function(nick, args, client, channel) {
-    var numberOfRolls;
-    var numberOfSides;
-
-    if(args[0] === undefined) {
-        numberOfRolls = 1;
-    } else {
-        numberOfRolls = parseInt(args[0]);
-
-        if(isNaN(numberOfRolls)) {numberOfRolls = 1}
-    }
-
-    if(args[1] === undefined) {
-        numberOfSides = 6;
-    } else {
-        numberOfSides = parseInt(args[1]);
-
-        if(isNaN(numberOfSides)) {numberOfSides = 6}
-    }
-
-    if(numberOfSides > 500) {numberOfSides = 500;}
-    if(numberOfRolls > 50) {numberOfRolls = 50;}
-
-    var rolls = [];
-
-    for (var i = 0; i < numberOfRolls; i++) {
-        rolls.push(Math.floor(Math.random() * (numberOfSides)) + 1);
-    };
-
-    var outputString = nick + ": ";
-
-    for (var i = 0; i < rolls.length; i++) {
-        outputString += rolls[i] + " | ";
-    };
-
-    outputString = outputString.substring(0, outputString.length - 3);
-
-    if(numberOfSides == 2) {
-        outputString = outputString.replace(/1/g, 'H');
-        outputString = outputString.replace(/2/g, 'T');
-    }
-
-    if(numberOfSides < 2) {
-        outputString = nick + ": ಠ_ಠ";
-    }
-
-    client.getIRCClient().say(channel, outputString);
-};
-
-Commands.prototype.roll = function(nick, args, client, channel) {
-    var diceRegEx = /^(?:roll(?= *[^+ ]))(?: *(?: |\+) *(?:\d*[1-9]\d*|(?=d))(?:d\d*[1-9]\d*(?:x\d*[1-9]\d*)?)?)+ *$/gi;
-    var diceRollRegEx = /[ +](\d+|(?=d))(?:d(\d+)(?:x(\d+))?)?(?= *(\+| |$))/gi;
-
-    //too lazy to change regex
-    var msg = "roll "+args.join(" ");
-    var result;
-    var dice = [];
-
-    var countLimited = false;
-
-    //for each group
-    while((di = diceRegEx.exec(msg)) !== null) {
-        //for each dice
-        while((result = diceRollRegEx.exec(di)) !== null) {
-            //parse out each value
-            var count = (parseInt(result[1]) != 0) ? parseInt(result[1]) : 1;
-            if(isNaN(count)) {count = 1;}
-            if(count > 1000000) {count = 1000000; countLimited = true;}
-
-            var maxValue = (parseInt(result[2]) != 0) ? parseInt(result[2]) : 1;
-            if(isNaN(maxValue)) {maxValue = 1;}
-
-            var multiplier = (parseInt(result[3]) != 0) ? parseInt(result[3]) : 1;
-            if(isNaN(multiplier)) {multiplier = 1;}
-
-            var isFinalValue = !("+" === result[4]);
-
-            //add to array
-            dice.push({
-                count: count,
-                maxValue: maxValue,
-                multiplier: multiplier,
-                isFinalValue: isFinalValue
-            });
-        }
-    }
-
-    var rolls = [];
-    var roll = 0;
-
-    //for each di
-    for (var i = 0; i < dice.length; i++) {
-        //for count of di
-        for(var j = 0; j < dice[i].count; j++) {
-            //add dice result to roll.
-            roll += chance.natural({min: 1, max: dice[i].maxValue}) * dice[i].multiplier;
-        }
-
-        //if this was the last di in this group
-        if(dice[i].isFinalValue) {
-            //push & reset the roll
-            rolls.push(roll);
-            roll = 0;
-        }
-    }
-
-    var outputString = "";
-
-    //format output
-    for (var i = 0; i < rolls.length; i++) {
-        outputString += n(rolls[i]).format("0,0") + " | ";
-    };
-
-    outputString = outputString.substring(0, outputString.length-3);
-
-    if(countLimited) {outputString += " | (Dice counts limited to 1,000,000.)"}
-
-    //output string to IRC
-    client.getIRCClient().say(channel, nick + ": " + outputString);
-};
-
-Commands.prototype.convert = function(nick, args, client, channel) {
-    var tempRegEx = /^(-?\d+(?:\.\d+)?)°?([cfk])$/gi;
-    var msg = args.join(" ");
-
-    var temp = parseFloat(msg.replace(tempRegEx, "$1"));
-    var tempTemp = msg.replace(tempRegEx, "$1");
-    var unit = msg.replace(tempRegEx, "$2");
-    var places = "0".repeat((tempTemp.indexOf(".") != -1) ? Math.min(Math.max(tempTemp.length - 1 - tempTemp.indexOf("."), 2), 20) : 2);
-
-    if(unit === "c") {
-        try {
-            client.getIRCClient().say(channel, nick + ": " + temp+"°C is "+n((temp*9/5) + 32).format("0[.]"+places)+"°F.");
-        } catch(e) {
-            client.getIRCClient().say(channel, nick + ": " + "Could not convert "+temp+"°C to Fahrenheit!");
-        }
-        return;
-    }
-
-    if(unit === "f") {
-        try {
-            client.getIRCClient().say(channel, nick + ": " + temp+"°F is "+n((temp - 32)*5/9).format("0[.]"+places)+"°C.");
-        } catch(e) {
-            client.getIRCClient().say(channel, nick + ": " + "Could not convert "+temp+"°F to Fahrenheit!");
-        }
-        return;
-    }
-
-    if(unit === "k") {
-        client.getIRCClient().say(channel, nick + ": " + "I'm a Korean Pop group, not a scientist.");
-    }
-};
 
 Commands.prototype.daft = function(nick, args, client, channel) {
     if(args[0] !== undefined) {
@@ -285,10 +62,6 @@ Commands.prototype.lart = function(nick, args, client, channel) {
         var item = this.larts[Math.floor(Math.random()*this.larts.length)];
         client.getIRCClient().say(channel, nick + " " + item.replace(/\{user\}/g, object));
     }
-};
-
-Commands.prototype.かわいい = function(nick, args, client, channel) {
-    client.getIRCClient().say(channel, "ですですですですです。　：３");
 };
 
 Commands.prototype.bitcoin = function(nick, args, client, channel) {
@@ -341,56 +114,6 @@ Commands.prototype.currency = function(nick, args, client, channel) {
         var name= data.query.results.rate.Name;
         if(name === self.from+self.to+"=X") {self.client.getIRCClient().say(self.channel, self.nick + ": Either "+self.from+" or "+self.to+" does not exist!"); return;}
         self.client.getIRCClient().say(self.channel, self.nick + ": "+self.amount+" "+name+": "+rate*self.amount);
-    });
-};
-
-Commands.prototype.stock = function(nick, args, client, channel) {
-
-    if(!args[0]) { return; }
-
-    var symbol = args[0];
-
-    var query = new YQL('select * from yahoo.finance.quote WHERE symbol=\''+symbol+'\' LIMIT 1');
-
-    var self = {};
-    self.client = client;
-    self.channel = channel;
-    self.nick = nick;
-    self.symbol = symbol;
-
-    query.exec(function(err, data) {
-        if(err) { self.client.getIRCClient().say(self.channel, "There was an error getting information for "+self.symbol+"."); return;}
-        if(data.query.results === null) {self.client.getIRCClient().say(self.channel, "There was an error getting information for "+self.symbol+"."); return;}
-
-        var quote = data.query.results.quote;
-        var change = parseFloat(quote.Change);
-        var symbol = quote.Symbol;
-        var price = parseFloat(quote.LastTradePriceOnly);
-
-        if(isNaN(change) || isNaN(price)) {
-            self.client.getIRCClient().say(self.channel, "There was an error getting information for "+self.symbol+".");
-            return;
-        }
-
-        var percent = change / (price - change);
-
-        percent = n(percent).format('0.00%');
-
-        var outputString = symbol + " "+ price + " ";
-
-        if(change < 0) {
-            outputString += c.red(change+" ▼ "+"("+percent+" ▼)");
-        }
-
-        if(change > 0) {
-            outputString += c.green(change+" ▲ "+"("+percent+" ▲)");
-        }
-
-        if(change === 0) {
-            outputString += change+" "+"("+percent+")";
-        }
-
-        self.client.getIRCClient().say(self.channel, outputString);
     });
 };
 
@@ -569,18 +292,6 @@ Commands.prototype.rainbow = function(nick, args, client, channel) {
     client.getIRCClient().say(channel, c.rainbow(msg));
 }
 
-Commands.prototype.g = function(nick, args, client, channel) {
-    this.googlesearch(nick, args, client, channel);
-};
-
-Commands.prototype.google = function(nick, args, client, channel) {
-    this.googlesearch(nick, args, client, channel);
-};
-
-Commands.prototype.search = function(nick, args, client, channel) {
-    this.googlesearch(nick, args, client, channel);
-};
-
 Commands.prototype.b2h = function(nick, args, client, channel) {
     this.bin2hex(nick, args, client, channel);
 };
@@ -589,24 +300,8 @@ Commands.prototype.h2b = function(nick, args, client, channel) {
     this.hex2bin(nick, args, client, channel);
 };
 
-Commands.prototype.gi = function(nick, args, client, channel) {
-    this.googleimages(nick, args, client, channel);
-};
-
-Commands.prototype.image = function(nick, args, client, channel) {
-    this.googleimages(nick, args, client, channel);
-};
-
 Commands.prototype.r = function(nick, args, client, channel) {
     this.rainbow(nick, args, client, channel);
-};
-
-Commands.prototype.help = function(nick, args, client, channel) {
-    client.getIRCClient().say(channel, "For help, visit http://akpwebdesign.com/PwnedBot/help.html");
-};
-
-Commands.prototype.halp = function(nick, args, client, channel) {
-    this.help(nick, args, client, channel);
 };
 
 Commands.prototype.btc = function(nick, args, client, channel) {
@@ -691,22 +386,6 @@ Commands.prototype.nick = function(nick, args, client, channel, op, pm) {
     if(op && pm && args[0]) {
         client.getIRCClient().send("NICK", args[0]);
         client.nick = args[0];
-    }
-}
-
-Commands.prototype.reload = function(nick, args, client, channel, op, pm) {
-    if(op && pm) {
-        delete require.cache[__dirname+'/commandprocessor.js'];
-        delete require.cache[__dirname+'/autoresponse.js'];
-        delete require.cache[__dirname+'/commands.js'];
-        delete require.cache[__dirname+'/chatter.js'];
-
-        delete require.cache[__dirname+'/API/google.js'];
-        delete require.cache[__dirname+'/API/steam.js'];
-        delete require.cache[__dirname+'/API/riot.js'];
-
-        client.getIRCClient().say(nick, "All channels reloading!");
-        client.clientManager.reloadAll();
     }
 }
 

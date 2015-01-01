@@ -5,34 +5,66 @@ var Chatter = require("./chatter");
 function CommandProcessor() {
     this.cmd = new Commands();
     this.auto = new AutoResponse();
+
+    //command list for help purposes, leaves out aliases.
+    this.commands = require('./Commands');
+
+    //full command list with aliases included.
+    this.aliasedCommands = {};
+    this.initCommandAliases();
 }
 
-CommandProcessor.prototype.process = function(nick, channel, text, client, pm) {
-    var args = [];
-    var command = "";
-    var nickname = "";
+CommandProcessor.prototype.initCommandAliases = function() {
+    for (var property in this.commands) {
+        if (this.commands.hasOwnProperty(property)) {
+            for (var i = 0; i < this.commands[property].aliases.length; i++) {
+                this.aliasedCommands[this.commands[property].aliases[i]] = this.commands[property];
+            };
+        }
+    }
+};
 
+CommandProcessor.prototype.process = function(nick, channel, text, client) {
+
+    //the context we will be sending to the command.
+    var context = {};
+
+    //these help in our string parsing.
     var start = -1;
     var end = -1;
 
     //ignore ourself
     if(nick === client.nick) {return;}
 
+    //if the message came from our minecraft bot...
     if(nick === client.mcBot) {
 
-        //find user name
+        //find nick
         start = text.indexOf('(');
         end = text.indexOf(')');
-        nickname = text.substring(start + 1, end);
+
+        //set nick
+        context.nick = text.substring(start + 1, end);
 
         //trim text down to remove username
         text = text.substring(end+2);
     } else {
-        nickname = nick;
+        context.nick = nick;
     }
 
+    //the channel the message came from.
+    context.channel = channel;
+    //this command processor.
+    context.commandProcessor = this;
+    //the client.
+    context.client = client;
+    //whether or not this nick is an op.
+    context.isOp = client.isOp(context.nick);
+
+    //if this is true, then this is a private message.
     if(channel === client.nick) {
-        channel = nick;
+        context.channel = nick;
+        context.isPm = true;
     }
 
     //if we have a command
@@ -40,43 +72,35 @@ CommandProcessor.prototype.process = function(nick, channel, text, client, pm) {
 
         //find command
         end = text.indexOf(' ');
-        command = text.substring(client.delimiter.length,end);
+        context.command = text.substring(client.delimiter.length,end);
 
         //if there wasn't actually a space, we won't have gotten a command.
         //instead, we'll just chop off the first two characters now.
         if(end === -1) {
-            command = text.substring(client.delimiter.length, text.length).toLowerCase();
+            context.command = text.substring(client.delimiter.length, text.length);
         } else {
             //otherwise, we can cut off the command and save the arguments.
-            args = text.substring(end+1).split(' ');
+            context.arguments = text.substring(end+1).split(' ');
         }
 
-        if(typeof this.cmd[command] === 'function') {
-            if(!client.isBanned(nickname)) {
-                // Flood protection
-                if((!pm || !(channel === client.nick)) && !client.isOp(nickname)) {
-                    if(!client.chatters[channel]) {client.chatters[channel] = [];}
-                    if(client.chatters[channel][nickname]) {
-                        client.chatters[channel][nickname].floodProtect();
-                        //if they have been banned
-                        if(client.chatters[channel][nickname].checkBan()) {
-                            //just end here
-                            return;
-                        }
-                    } else {
-                        var real = true;
-                        if(nick === client.mcBot) {real = false;}
-                        client.chatters[channel][nickname] = new Chatter(nickname, client, channel, real);
-                    }
-                }
+        //lowercase the command
+        context.command = context.command.toLowerCase();
 
-                this.cmd[command](nickname, args, client, channel, client.isOp(nickname), pm);
+        if(this.aliasedCommands[context.command] !== undefined) {
+            if(typeof this.aliasedCommands[context.command].execute === 'function') {
+
+                //TODO: refactor this to somewhere else.
+                if(!client.isBanned(context.nick) && this.floodProtection(context)) {
+
+                    //execute the command.
+                    this.aliasedCommands[context.command].execute(context);
+                }
             }
         } else {
-            this.parseMessage(text, client, channel, pm);
+            //this.parseMessage(text, client, channel, pm);
         }
     } else {
-        this.parseMessage(text, client, channel, pm);
+        //this.parseMessage(text, client, channel, pm);
     }
 };
 
@@ -116,5 +140,30 @@ CommandProcessor.prototype.parseMessage = function(msg, client, channel, pm) {
         });
     }
 }
+
+/**
+ * Perform flood protection.
+ * @param  {Object} context The IRC context that this message came from.
+ * @return {Boolean}         Whether or not the message should be sent.
+ */
+CommandProcessor.prototype.floodProtection = function(context) {
+    if((!context.pm || !(context.channel === context.client.nick)) && !context.client.isOp(context.nick)) {
+        if(!context.client.chatters[context.channel]) {context.client.chatters[context.channel] = [];}
+        if(context.client.chatters[context.channel][context.nick]) {
+            context.client.chatters[context.channel][context.nick].floodProtect();
+            //if they have been banned
+            if(context.client.chatters[context.channel][context.nick].checkBan()) {
+                //just end here
+                return false;
+            }
+        } else {
+            var real = true;
+            if(context.nick === context.client.mcBot) {real = false;}
+            context.client.chatters[context.channel][context.nick] = new Chatter(context.nick, context.client, context.channel, real);
+        }
+    }
+
+    return true;
+};
 
 module.exports = CommandProcessor;
