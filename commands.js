@@ -1,8 +1,8 @@
 var c = require('irc-colors');
 var config = require('./config.json');
 var chance = new require('chance')();
-var Google = require('./google');
-var Riot = require('./riot');
+var Google = require('./API/google');
+var Riot = require('./API/riot');
 var fs = require('fs');
 var YQL = require('yql');
 var request = require('request-json');
@@ -700,9 +700,10 @@ Commands.prototype.reload = function(nick, args, client, channel, op, pm) {
         delete require.cache[__dirname+'/autoresponse.js'];
         delete require.cache[__dirname+'/commands.js'];
         delete require.cache[__dirname+'/chatter.js'];
+
+        delete require.cache[__dirname+'/API/google.js'];
         delete require.cache[__dirname+'/API/steam.js'];
-        delete require.cache[__dirname+'/google.js'];
-        delete require.cache[__dirname+'/riot.js'];
+        delete require.cache[__dirname+'/API/riot.js'];
 
         client.getIRCClient().say(nick, "All channels reloading!");
         client.clientManager.reloadAll();

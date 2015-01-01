@@ -2,7 +2,7 @@ var irc = require('irc');
 var c = require('irc-colors');
 var n = require('numeral');
 var config = require('./config.json');
-var Google = require('./google');
+var Google = require('./API/google');
 var Steam = require('./API/steam');
 var request = require('request-json');
 
