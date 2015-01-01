@@ -700,6 +700,7 @@ Commands.prototype.reload = function(nick, args, client, channel, op, pm) {
         delete require.cache[__dirname+'/autoresponse.js'];
         delete require.cache[__dirname+'/commands.js'];
         delete require.cache[__dirname+'/chatter.js'];
+        delete require.cache[__dirname+'/API/steam.js'];
         delete require.cache[__dirname+'/google.js'];
         delete require.cache[__dirname+'/riot.js'];
 

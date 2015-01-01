@@ -82,8 +82,8 @@ CommandProcessor.prototype.process = function(nick, channel, text, client, pm) {
 
 CommandProcessor.prototype.parseMessage = function(msg, client, channel, pm) {
     var youTubeRegEx = /(?:https?:\/\/)?(?:[0-9A-Z-]+\.)?(?:youtu\.be\/|youtube(?:-nocookie)?\.com\S*[^\w\s-])([\w-]{11})(?=[^\w-]|$)(?![?=&+%\w.-]*(?:['"][^<>]*>|<\/a>))[?=&+%\w.-]*/gi;
-    var steamAppRegEx = /(?:.+)?(?:store\.steampowered\.com\/app\/)([0-9]+)(?:.+)?/gi;
-    var steamPkgRegEx = /(?:.+)?(?:store\.steampowered\.com\/sub\/)([0-9]+)(?:.+)?/gi;
+    var steamAppRegEx = /(?:store\.steampowered\.com\/app\/)([0-9]+)/gi;
+    var steamPkgRegEx = /(?:store\.steampowered\.com\/sub\/)([0-9]+)/gi;
 
     if(msg.search(youTubeRegEx) != -1) {
         var youTubeIds = [];
@@ -97,15 +97,21 @@ CommandProcessor.prototype.parseMessage = function(msg, client, channel, pm) {
     }
 
     if(msg.search(steamAppRegEx) != -1) {
-        var steamId = msg.replace(steamAppRegEx, "$1");
-        this.auto.steamApp(steamId, function(res) {
+        var steamIds = [];
+        while((result = steamAppRegEx.exec(msg)) !== null) {
+            steamIds.push(result[1]);
+        }
+        this.auto.steamApp(steamIds, 3, function(res) {
             client.getIRCClient().say(channel, res);
         });
     }
 
     if(msg.search(steamPkgRegEx) != -1) {
-        var steamId = msg.replace(steamPkgRegEx, "$1");
-        this.auto.steamPkg(steamId, function(res) {
+        var steamIds = [];
+        while((result = steamPkgRegEx.exec(msg)) !== null) {
+            steamIds.push(result[1]);
+        }
+        this.auto.steamPkg(steamIds, 3, function(res) {
             client.getIRCClient().say(channel, res);
         });
     }
