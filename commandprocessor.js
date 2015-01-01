@@ -84,9 +84,6 @@ CommandProcessor.prototype.parseMessage = function(msg, client, channel, pm) {
     var youTubeRegEx = /(?:https?:\/\/)?(?:[0-9A-Z-]+\.)?(?:youtu\.be\/|youtube(?:-nocookie)?\.com\S*[^\w\s-])([\w-]{11})(?=[^\w-]|$)(?![?=&+%\w.-]*(?:['"][^<>]*>|<\/a>))[?=&+%\w.-]*/gi;
     var steamAppRegEx = /(?:.+)?(?:store\.steampowered\.com\/app\/)([0-9]+)(?:.+)?/gi;
     var steamPkgRegEx = /(?:.+)?(?:store\.steampowered\.com\/sub\/)([0-9]+)(?:.+)?/gi;
-    var tempRegEx = /^convert (-?\d+(?:\.\d+)?)°?([cf])$/gi;
-    var diceRegEx = /^(?:roll(?= *[^+ ]))(?: *(?: |\+) *(?:\d*[1-9]\d*|(?=d))(?:d\d*[1-9]\d*(?:x\d*[1-9]\d*)?)?)+ *$/gi;
-    var diceRollRegEx = /[ +](\d+|(?=d))(?:d(\d+)(?:x(\d+))?)?(?= *(\+| |$))/gi;
 
     if(msg.search(youTubeRegEx) != -1) {
         var youTubeIds = [];
@@ -111,14 +108,6 @@ CommandProcessor.prototype.parseMessage = function(msg, client, channel, pm) {
         this.auto.steamPkg(steamId, function(res) {
             client.getIRCClient().say(channel, res);
         });
-    }
-
-    if(msg.search(tempRegEx) != -1) {
-        client.getIRCClient().say(channel, "Please use the command delimiter to use that command from now on.");
-    }
-
-    if(msg.search(diceRegEx) != -1) {
-        client.getIRCClient().say(channel, "Please use the command delimiter to use that command from now on.");
     }
 }
 
