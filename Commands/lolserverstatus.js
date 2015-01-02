@@ -1,5 +1,5 @@
-var config = require('./config.json');
-var Riot = require('./API/riot');
+var config = require('../config.json');
+var Riot = require('../API/riot');
 
 function LoLServerStatus() {
     //the name of the command.

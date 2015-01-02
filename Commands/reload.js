@@ -22,10 +22,9 @@ function Reload() {
 }
 
 Reload.prototype.execute = function(context) {
-    delete require.cache[__dirname+'/commandprocessor.js'];
-    delete require.cache[__dirname+'/autoresponse.js'];
-    delete require.cache[__dirname+'/commands.js'];
-    delete require.cache[__dirname+'/chatter.js'];
+    delete require.cache[require.resolve('../commandprocessor')];
+    delete require.cache[require.resolve('../autoresponse')];
+    delete require.cache[require.resolve('../chatter')];
 
     this.removeAPIAndCommandCache();
 
@@ -35,13 +34,13 @@ Reload.prototype.execute = function(context) {
 
 Reload.prototype.removeAPIAndCommandCache = function() {
     require('fs').readdirSync(__dirname).forEach(function(file) {
-        delete require.cache[__dirname + "/" + file];
+        delete require.cache[require.resolve('./'+file)];
     });
 
     delete require.cache[__dirname];
 
     require('fs').readdirSync(__dirname + '/../API/').forEach(function(file) {
-        delete require.cache[__dirname + '/../API/' + file];
+        delete require.cache[require.resolve('../API/' + file)];
     });
 };
 
