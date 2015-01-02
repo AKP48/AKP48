@@ -15,6 +15,26 @@ function CommandProcessor() {
 }
 
 CommandProcessor.prototype.initCommandAliases = function() {
+    //loop to remove modules without fulfilled dependencies.
+    for (var property in this.commands) {
+        if (this.commands.hasOwnProperty(property)) {
+            //if dependencies are defined
+            if(this.commands[property] !== undefined && this.commands[property].dependencies !== undefined) {
+                //for each dependency
+                for (var i = 0; i < this.commands[property].dependencies.length; i++) {
+                    //if dependency doesn't exist
+                    if(this.commands[this.commands[property].dependencies[i]] === undefined) {
+                        //disable it.
+                        console.log(property + "module does not have all required dependencies! Disabling " + property + " module!");
+                        delete this.commands[property];
+                        break;
+                    }
+                };
+            }
+        }
+    }
+
+    //loop to put in aliases
     for (var property in this.commands) {
         if (this.commands.hasOwnProperty(property)) {
             for (var i = 0; i < this.commands[property].aliases.length; i++) {
@@ -70,6 +90,9 @@ CommandProcessor.prototype.process = function(nick, channel, text, client) {
     //if we have a command
     if(text.substring(0, client.delimiter.length) === client.delimiter) {
 
+        //create blank arguments
+        context.arguments = [];
+
         //find command
         end = text.indexOf(' ');
         context.command = text.substring(client.delimiter.length,end);
@@ -86,13 +109,34 @@ CommandProcessor.prototype.process = function(nick, channel, text, client) {
         //lowercase the command
         context.command = context.command.toLowerCase();
 
+        //put commands into context.
+        context.commands = this.aliasedCommands;
+
         if(this.aliasedCommands[context.command] !== undefined) {
             if(typeof this.aliasedCommands[context.command].execute === 'function') {
 
-                //TODO: refactor this to somewhere else.
+                //easier access
+                var command = this.aliasedCommands[context.command];
+
+                //flood protection
                 if(!client.isBanned(context.nick) && this.floodProtection(context)) {
 
-                    //execute the command.
+                    //return if this needs to be a privmsg and isn't.
+                    if(command.isPmOnly && !context.isPm) {
+                        return;
+                    }
+
+                    //return if this needs to be run by an OP and we aren't one.
+                    if(command.requireOP && !context.client.isOp(context.nick)) {
+                        return;
+                    }
+
+                    //return if command is not allowed as a privmsg and this is one (unless we're op.)
+                    if(!command.allowPm && context.isPm && !context.client.isOp(context.nick)) {
+                        return;
+                    }
+
+                    //execute the command if we haven't returned by now.
                     this.aliasedCommands[context.command].execute(context);
                 }
             }
