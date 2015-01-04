@@ -3,7 +3,6 @@ var AutoResponse = require('./autoresponse');
 var Chatter = require("./chatter");
 
 function CommandProcessor() {
-    this.cmd = new Commands();
     this.auto = new AutoResponse();
 
     //command list for help purposes, leaves out aliases.
