@@ -220,8 +220,8 @@ CommandProcessor.prototype.floodProtection = function(context) {
             }
         } else {
             var real = true;
-            if(context.nick === context.client.mcBot) {real = false;}
-            context.client.chatters[context.channel][context.nick] = new Chatter(context.nick, context.client, context.channel, real);
+            if(context.isMcBot) {real = false;}
+            context.client.chatters[context.channel][context.nick] = new Chatter(context, real);
         }
     }
 
