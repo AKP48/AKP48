@@ -28,9 +28,11 @@ function Googl() {
 }
 
 Googl.prototype.execute = function(context) {
+    if(!context.arguments.length) {return false;}
     this.googleAPI.shorten_url(context.arguments[0], function(url) {
         context.client.say(context, url);
     });
+    return true;
 };
 
 module.exports = Googl;

@@ -33,6 +33,7 @@ LMGTFY.prototype.execute = function(context) {
     this.googleAPI.shorten_url("http://lmgtfy.com/?q="+query, function(url) {
         context.client.say(context, url);
     });
+    return true;
 };
 
 module.exports = LMGTFY;

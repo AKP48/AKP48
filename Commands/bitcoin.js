@@ -44,6 +44,7 @@ Bitcoin.prototype.execute = function(context) {
 
     //just piggy-back on the currency function a bit.
     context.commands.currency.execute(context);
+    return true;
 };
 
 module.exports = Bitcoin;

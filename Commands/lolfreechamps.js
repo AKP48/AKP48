@@ -31,6 +31,7 @@ LoLFreeChamps.prototype.execute = function(context) {
     this.riotAPI.getFreeChamps(function(msg){
         context.client.say(context, msg);
     });
+    return true;
 };
 
 module.exports = LoLFreeChamps;

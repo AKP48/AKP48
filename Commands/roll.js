@@ -91,6 +91,7 @@ Roll.prototype.execute = function(context) {
 
     //output string to IRC
     context.client.say(context.channel, outputString);
+    return true;
 };
 
 module.exports = Roll;

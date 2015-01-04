@@ -26,7 +26,7 @@ function MCNameHistory() {
 MCNameHistory.prototype.execute = function(context) {
     context.apiClient = request.newClient("https://api.mojang.com/");
 
-    if(!context.arguments[0]) {return;}
+    if(!context.arguments[0]) {return false;}
 
     context.name = context.arguments[0];
 
@@ -35,10 +35,10 @@ MCNameHistory.prototype.execute = function(context) {
     //Example names to use: PlasmaPod, ezfe.
 
     context.apiClient.get("/users/profiles/minecraft/"+context.name, function(err, res, body) {
-        if(err || body.error == "Not Found") {context.client.say(context, "There is no player with the name "+context.name+"!"); return;}
+        if(err || body.error == "Not Found") {context.client.say(context, "There is no player with the name "+context.name+"!"); return true;}
 
         context.apiClient.get("/user/profiles/"+body.id+"/names", function(error, response, bodyy) {
-            if(error || body.error == "Not Found" || body.length < 4) {context.client.say(context, "There was an error finding previous names for "+context.name+"!"); return;}
+            if(error || body.error == "Not Found" || body.length < 4) {context.client.say(context, "There was an error finding previous names for "+context.name+"!"); return true;}
 
             var outputString = "Previous names found for "+context.name+": ";
             for (var i = bodyy.length - 1; i >= 0; i--) {
@@ -49,6 +49,7 @@ MCNameHistory.prototype.execute = function(context) {
             context.client.say(context, outputString);
         });
     });
+    return true;
 };
 
 module.exports = MCNameHistory;

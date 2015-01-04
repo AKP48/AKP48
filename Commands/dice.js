@@ -70,6 +70,7 @@ Dice.prototype.execute = function(context) {
     }
 
     context.client.say(context, outputString);
+    return true;
 };
 
 module.exports = Dice;

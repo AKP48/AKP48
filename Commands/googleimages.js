@@ -28,9 +28,11 @@ function GoogleImages() {
 }
 
 GoogleImages.prototype.execute = function(context) {
+    if(!context.arguments.length) {return false;}
     this.googleAPI.search(context.arguments.join(" "), "images", function(msg) {
         context.client.say(context, msg);
     });
+    return true;
 };
 
 module.exports = GoogleImages;

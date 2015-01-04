@@ -26,7 +26,7 @@ function Stock() {
 }
 
 Stock.prototype.execute = function(context) {
-    if(!context.arguments[0]) { return; }
+    if(!context.arguments[0]) { return false; }
 
     var symbol = context.arguments[0];
 
@@ -36,8 +36,8 @@ Stock.prototype.execute = function(context) {
     self.symbol = symbol;
 
     query.exec(function(err, data) {
-        if(err) { context.client.say(context.channel, "There was an error getting information for "+self.symbol+"."); return;}
-        if(data.query.results === null) {context.client.say(context.channel, "There was an error getting information for "+self.symbol+"."); return;}
+        if(err) { context.client.say(context.channel, "There was an error getting information for "+self.symbol+"."); return true;}
+        if(data.query.results === null) {context.client.say(context.channel, "There was an error getting information for "+self.symbol+"."); return true;}
 
         var quote = data.query.results.quote;
         var change = parseFloat(quote.Change);
@@ -69,6 +69,7 @@ Stock.prototype.execute = function(context) {
 
         context.client.say(context, outputString);
     });
+    return true;
 };
 
 module.exports = Stock;

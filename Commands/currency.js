@@ -56,6 +56,7 @@ Currency.prototype.execute = function(context) {
         if(name === self.from+self.to+"=X") {context.client.say(context, "Either "+self.from+" or "+self.to+" does not exist!"); return;}
         context.client.say(context, self.amount+" "+name+": "+rate*self.amount);
     });
+    return true;
 };
 
 module.exports = Currency;

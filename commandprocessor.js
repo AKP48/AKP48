@@ -59,6 +59,9 @@ CommandProcessor.prototype.process = function(nick, channel, text, client) {
     //if the message came from our minecraft bot...
     if(nick === client.mcBot) {
 
+        //save into context
+        context.isMcBot = true;
+
         //find nick
         start = text.indexOf('(');
         end = text.indexOf(')');
@@ -119,7 +122,7 @@ CommandProcessor.prototype.process = function(nick, channel, text, client) {
                 var command = this.aliasedCommands[context.command];
 
                 //flood protection
-                if(!client.isBanned(context.nick) && this.floodProtection(context)) {
+                if(!client.isBanned(context.nick)) {
 
                     //return if this needs to be a privmsg and isn't.
                     if(command.isPmOnly && !context.isPm) {
@@ -136,8 +139,12 @@ CommandProcessor.prototype.process = function(nick, channel, text, client) {
                         return;
                     }
 
-                    //execute the command if we haven't returned by now.
-                    this.aliasedCommands[context.command].execute(context);
+                    //do flood protection/execute the command if we haven't returned by now.
+                    if(this.floodProtection(context)) {
+                        if(!command.execute(context)) {
+                            this.sendUsageMessage(context, command);
+                        }
+                    }
                 }
             }
         } else {
@@ -208,6 +215,13 @@ CommandProcessor.prototype.floodProtection = function(context) {
     }
 
     return true;
+};
+
+CommandProcessor.prototype.sendUsageMessage = function(context, command) {
+    if(!context.isMcBot) {
+        context.channel = context.nick;
+    }
+    context.client.say(context, context.client.delimiter + context.command + " " + command.usageText);
 };
 
 module.exports = CommandProcessor;

@@ -27,7 +27,7 @@ Daft.prototype.execute = function(context) {
     } else {
         context.client.getIRCClient().say(context.channel, context.nick + ", are you daft?");
     }
-
+    return true;
 };
 
 module.exports = Daft;

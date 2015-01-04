@@ -30,6 +30,7 @@ Reload.prototype.execute = function(context) {
 
     context.client.say(context, "All channels reloading!");
     context.client.clientManager.reloadAll();
+    return true;
 };
 
 Reload.prototype.removeAPIAndCommandCache = function() {

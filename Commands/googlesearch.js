@@ -28,9 +28,11 @@ function GoogleSearch() {
 }
 
 GoogleSearch.prototype.execute = function(context) {
+    if(!context.arguments.length) {return false;}
     this.googleAPI.search(context.arguments.join(" "), "web", function(msg) {
         context.client.say(context, msg);
     });
+    return true;
 };
 
 module.exports = GoogleSearch;

@@ -33,6 +33,7 @@ LoLServerStatus.prototype.execute = function(context) {
     this.riotAPI.getServerStatus(region, function(msg) {
         context.client.say(context, msg);
     });
+    return true;
 };
 
 module.exports = LoLServerStatus;
