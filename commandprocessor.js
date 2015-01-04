@@ -118,7 +118,6 @@ CommandProcessor.prototype.process = function(nick, channel, text, client) {
             while((i = context.arguments.indexOf('')) !== -1) {
                 context.arguments.splice(i, 1);
             }
-            console.log(context.arguments);
         }
 
         //lowercase the command
