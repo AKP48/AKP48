@@ -25,7 +25,6 @@ function Js() {
 }
 
 Js.prototype.execute = function(context) {
-    if(!context.arguments.length){return false};
     s.run( context.arguments.join(" "), function(output) {
         var outputString = "";
         if(output.result) {
