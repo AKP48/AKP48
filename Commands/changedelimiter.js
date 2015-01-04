@@ -9,7 +9,7 @@ function ChangeDelimiter() {
     this.usageText = "<delimiter>";
 
     //ways to call this command.
-    this.aliases = ['commanddelimiter', 'cd'];
+    this.aliases = ['changedelimiter', 'cd'];
 
     //whether or not to allow this command in a private message.
     this.allowPm = true;
