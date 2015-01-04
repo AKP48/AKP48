@@ -58,9 +58,9 @@ Chatter.prototype.floodProtect = function() {
         if(!this.banMsgSent) {
             this.isBanned = true;
             if(!this.real) {
-                this.client.getIRCClient().say(this.channel, this.nick+": You have been temporarily banned from using my commands for spamming too many commands in a short time. Feel free to continue sending commands to me as private messages.");
+                this.client.getIRCClient().say(this.channel, this.nick+": You have been temporarily banned from using my commands for spamming too many commands in a short time. Please refrain from sending commands in this channel for 1 minute, or I will make your ban longer.");
             } else {
-                this.client.getIRCClient().say(this.nick, "You have been temporarily banned from using my commands for spamming too many commands in a short time. Feel free to continue sending commands to me as private messages.");
+                this.client.getIRCClient().say(this.nick, "You have been temporarily banned from using my commands for spamming too many commands in a short time. Please refrain from sending commands in this channel for 1 minute, or I will make your ban longer. Feel free to continue sending commands to me as private messages.");
             }
             this.banMsgSent = true;
         } else {
