@@ -3,13 +3,13 @@ var s = new Sandbox();
 
 function Js() {
     //the name of the command.
-    this.name = "Js";
+    this.name = "JavaScript";
 
     //help text to show for this command.
     this.helpText = "Runs Javascript code.";
 
     //usage message. only include the parameters. the command name will be automatically added.
-    this.usageText = "";
+    this.usageText = "<code>";
 
     //ways to call this command.
     this.aliases = ['js', '>'];
@@ -25,6 +25,7 @@ function Js() {
 }
 
 Js.prototype.execute = function(context) {
+    if(!context.arguments.length){return false};
     s.run( context.arguments.join(" "), function(output) {
         var outputString = "";
         if(output.result) {
