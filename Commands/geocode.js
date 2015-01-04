@@ -28,8 +28,8 @@ function Geocode() {
 }
 
 Geocode.prototype.execute = function(context) {
-    if(context.args[0] === undefined || context.args[0].length === 0) {
-        return;
+    if(!context.arguments.length) {
+        return false;
     } else {
         var args = context.arguments;
     }
@@ -49,6 +49,7 @@ Geocode.prototype.execute = function(context) {
     this.googleAPI.geocode(location, region, function(msg){
         context.client.say(context, msg);
     });
+    return true;
 };
 
 module.exports = Geocode;

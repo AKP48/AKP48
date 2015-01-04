@@ -35,7 +35,7 @@ Bin2Hex.prototype.execute = function(context) {
             if (part[k] !== '0' && part[k] !== '1') {
                 // invalid character
                 context.client.say(context, "Cannot convert "+context.arguments.join(" ")+" to hex!");
-                return;
+                return true;
             }
             // compute the length 4 substring
             accum = accum * 2 + parseInt(part[k], 10);
@@ -55,7 +55,7 @@ Bin2Hex.prototype.execute = function(context) {
         for (k = 0; k <= i; k += 1) {
             if (s[k] !== '0' && s[k] !== '1') {
                 context.client.say(context, "Cannot convert "+context.arguments.join(" ")+" to hex!");
-                return;
+                return true;
             }
             accum = accum * 2 + parseInt(s[k], 10);
         }
@@ -63,6 +63,7 @@ Bin2Hex.prototype.execute = function(context) {
         ret = String(accum) + ret;
     }
     context.client.say(context, context.arguments.join(" ")+" to hex: "+ret);
+    return true;
 };
 
 module.exports = Bin2Hex;

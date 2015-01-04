@@ -25,6 +25,7 @@ function Uptime() {
 
 Uptime.prototype.execute = function(context) {
     context.client.say(context, "I've been up for "+moment.duration(process.uptime(), "seconds").humanize());
+    return true;
 };
 
 module.exports = Uptime;

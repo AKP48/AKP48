@@ -1,29 +1,32 @@
-function かわいい() {
+function Nick() {
     //the name of the command.
-    this.name = "かわいい";
+    this.name = "Nick";
 
     //help text to show for this command.
-    this.helpText = "私わかわいいです。";
+    this.helpText = "Changes the bot's nickname on the network.";
 
     //usage message. only include the parameters. the command name will be automatically added.
-    this.usageText = "";
+    this.usageText = "<nickname>";
 
     //ways to call this command.
-    this.aliases = ['かわいい'];
+    this.aliases = ['nick'];
 
     //whether or not to allow this command in a private message.
     this.allowPm = true;
 
     //whether or not to only allow this command if it's in a private message.
-    this.isPmOnly = false;
+    this.isPmOnly = true;
 
     //whether this command requires operator privileges.
-    this.requireOp = false;
+    this.requireOp = true;
 }
 
-かわいい.prototype.execute = function(context) {
-    context.client.say(context, "ですですですですです。　：３");
+Nick.prototype.execute = function(context) {
+    if(context.arguments[0]) {
+        context.client.getIRCClient().send("NICK", context.arguments[0]);
+        context.client.nick = context.arguments[0];
+    }
     return true;
 };
 
-module.exports = かわいい;
+module.exports = Nick;

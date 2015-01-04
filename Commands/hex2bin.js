@@ -41,10 +41,11 @@ Hex2Bin.prototype.execute = function(context) {
             ret += lookupTable[s[i]];
         } else {
             context.client.say(context, "Cannot convert "+context.arguments.join(" ")+" to binary!");
-            return;
+            return true;
         }
     }
     context.client.say(context, context.arguments.join(" ")+" to binary: "+ret);
+    return true;
 };
 
 module.exports = Hex2Bin;

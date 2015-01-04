@@ -28,6 +28,7 @@ Rainbow.prototype.execute = function(context) {
         var msg = context.arguments.join(' ');
         context.client.getIRCClient().say(context.channel, c.rainbow(msg));
     }
+    return true;
 };
 
 module.exports = Rainbow;

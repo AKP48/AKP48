@@ -16,6 +16,8 @@ function IRCClient(o, clientManager, save) {
 
     this.password = o.password;
 
+    if(!this.password.length) {this.password = undefined;}
+
     this.ircClient = new irc.Client(this.server, this.nick, { channels: this.channels, realName: this.nick, password: this.password, userName: this.nick });
 
     this.mcBot = o.mcBot;

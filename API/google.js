@@ -3,6 +3,9 @@ var c = require('irc-colors');
 var n = require('numeral');
 var m = require('moment');
 
+//TODO: Out with request-json, in with googleapis. https://github.com/google/google-api-nodejs-client
+//Official tools are nice.
+
 function Google(api_key) {
     this.api_key = api_key;
     this.client = request.newClient('https://www.googleapis.com/');
@@ -89,6 +92,7 @@ Google.prototype.geocode = function(location, region, callback) {
     });
 };
 
+//I think request-json is still needed here.
 Google.prototype.search = function(query, type, callback) {
     var url = 'http://ajax.googleapis.com/ajax/services/search/'+type+'?v=1.0&safe=high&q='+encodeURIComponent(query);
     var self = this;

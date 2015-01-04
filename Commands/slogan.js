@@ -43,6 +43,7 @@ Slogan.prototype.execute = function(context) {
         var item = this.slogans[Math.floor(Math.random()*this.slogans.length)];
         context.client.say(context, item.replace(/<text>/g, object));
     }
+    return true;
 };
 
 module.exports = Slogan;

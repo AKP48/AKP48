@@ -39,7 +39,7 @@ Convert.prototype.execute = function(context) {
         } catch(e) {
             context.client.say(context, "Could not convert "+temp+"°C to Fahrenheit!");
         }
-        return;
+        return true;
     }
 
     if(unit === "f") {
@@ -48,12 +48,13 @@ Convert.prototype.execute = function(context) {
         } catch(e) {
             context.client.say(context, "Could not convert "+temp+"°F to Fahrenheit!");
         }
-        return;
+        return true;
     }
 
     if(unit === "k") {
         context.client.say(context, "I'm a Korean Pop group, not a scientist.");
     }
+    return true;
 };
 
 module.exports = Convert;

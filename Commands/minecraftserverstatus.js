@@ -30,7 +30,7 @@ MinecraftServerStatus.prototype.execute = function(context) {
     var self = context;
 
     apiClient.get("/check", function(err, res, body) {
-        if(err) {self.client.getIRCClient().say(self.channel, "There was an error retrieving the Minecraft server status!"); return;}
+        if(err) {self.client.getIRCClient().say(self.channel, "There was an error retrieving the Minecraft server status!"); return true;}
         var skins = body[4]['skins.minecraft.net'];
         var auth = body[3]["auth.mojang.com"];
         var session = body[1]["session.minecraft.net"];
@@ -84,6 +84,7 @@ MinecraftServerStatus.prototype.execute = function(context) {
 
         self.client.say(self, outputString);
     });
+    return true;
 };
 
 module.exports = MinecraftServerStatus;

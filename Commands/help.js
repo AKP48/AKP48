@@ -22,7 +22,13 @@ function Help() {
 }
 
 Help.prototype.execute = function(context) {
-    context.client.say(context, "For help, visit http://akpwebdesign.com/PwnedBot/help.html");
+    for (var i = 0; i < context.commands.length; i++) {
+        context.client.getIRCClient().say(context.nick, context.commands[i].name + ": " + context.commands[i].helpText);
+        for (var j = 0; j < context.commands[i].aliases.length; j++) {
+            context.client.getIRCClient().say(context.nick, context.client.delimiter + context.commands[i].aliases[j] + context.commands[i].helpText);
+        };
+    };
+    return true;
 };
 
 module.exports = Help;

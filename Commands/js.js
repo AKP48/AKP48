@@ -38,6 +38,7 @@ Js.prototype.execute = function(context) {
             outputString = outputString.substring(0, 426) + "...";
         }
         context.client.say(context, outputString);
+        return true;
     });
 };
 

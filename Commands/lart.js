@@ -43,6 +43,7 @@ Lart.prototype.execute = function(context) {
         var item = this.larts[Math.floor(Math.random()*this.larts.length)];
         context.client.getIRCClient().say(context.channel, context.nick + " " + item.replace(/\{user\}/g, object));
     }
+    return true;
 };
 
 module.exports = Lart;
