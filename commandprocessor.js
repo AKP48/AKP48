@@ -170,6 +170,7 @@ CommandProcessor.prototype.parseMessage = function(msg, client, channel, pm) {
 
     if(msg.search(youTubeRegEx) != -1) {
         var youTubeIds = [];
+        var result = [];
         while((result = youTubeRegEx.exec(msg)) !== null) {
             youTubeIds.push(result[1]);
         }
@@ -181,6 +182,7 @@ CommandProcessor.prototype.parseMessage = function(msg, client, channel, pm) {
 
     if(msg.search(steamAppRegEx) != -1) {
         var steamIds = [];
+        var result = [];
         while((result = steamAppRegEx.exec(msg)) !== null) {
             steamIds.push(result[1]);
         }
@@ -191,6 +193,7 @@ CommandProcessor.prototype.parseMessage = function(msg, client, channel, pm) {
 
     if(msg.search(steamPkgRegEx) != -1) {
         var steamIds = [];
+        var result = [];
         while((result = steamPkgRegEx.exec(msg)) !== null) {
             steamIds.push(result[1]);
         }
