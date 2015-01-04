@@ -48,6 +48,9 @@ CommandProcessor.prototype.process = function(nick, channel, text, client) {
     //the context we will be sending to the command.
     var context = {};
 
+    //the original message
+    context.originalMessage = text;
+
     //these help in our string parsing.
     var start = -1;
     var end = -1;
@@ -89,6 +92,9 @@ CommandProcessor.prototype.process = function(nick, channel, text, client) {
         context.isPm = true;
     }
 
+    //parse the message for auto response system
+    this.parseMessage(context.originalMessage, context.client, context.channel, context.isPm);
+
     //if we have a command
     if(text.substring(0, client.delimiter.length) === client.delimiter) {
 
@@ -100,12 +106,19 @@ CommandProcessor.prototype.process = function(nick, channel, text, client) {
         context.command = text.substring(client.delimiter.length,end);
 
         //if there wasn't actually a space, we won't have gotten a command.
-        //instead, we'll just chop off the first two characters now.
+        //instead, we'll just chop off the delimiter now.
         if(end === -1) {
             context.command = text.substring(client.delimiter.length, text.length);
         } else {
             //otherwise, we can cut off the command and save the arguments.
             context.arguments = text.substring(end+1).split(' ');
+
+            //remove any blank arguments
+            var i;
+            while((i = context.arguments.indexOf('')) !== -1) {
+                context.arguments.splice(i, 1);
+            }
+            console.log(context.arguments);
         }
 
         //lowercase the command
@@ -114,6 +127,7 @@ CommandProcessor.prototype.process = function(nick, channel, text, client) {
         //put commands into context.
         context.commands = this.aliasedCommands;
 
+        //if the command exists
         if(this.aliasedCommands[context.command] !== undefined) {
             if(typeof this.aliasedCommands[context.command].execute === 'function') {
 
@@ -146,11 +160,7 @@ CommandProcessor.prototype.process = function(nick, channel, text, client) {
                     }
                 }
             }
-        } else {
-            //this.parseMessage(text, client, channel, pm);
         }
-    } else {
-        //this.parseMessage(text, client, channel, pm);
     }
 };
 
