@@ -1,4 +1,4 @@
-var Commands = require('./commands');
+var Commands = require('./Commands');
 var AutoResponse = require('./autoresponse');
 var Chatter = require("./chatter");
 
