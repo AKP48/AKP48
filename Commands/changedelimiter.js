@@ -24,6 +24,9 @@ function ChangeDelimiter() {
 ChangeDelimiter.prototype.execute = function(context) {
     if(!context.arguments.length) {return false;}
 
+    context.client.say("NYI");
+    return true;
+
     console.log(context.arguments[0]);
     context.client.delimiter = context.arguments[0];
     context.client.clientManager.saveConfig();
