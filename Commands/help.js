@@ -6,7 +6,7 @@ function Help() {
     this.helpText = "Shows documentation for the bot.";
 
     //usage message. only include the parameters. the command name will be automatically added.
-    this.usageText = "";
+    this.usageText = "[page]";
 
     //ways to call this command.
     this.aliases = ['help', 'halp'];
@@ -37,7 +37,8 @@ Help.prototype.execute = function(context) {
         //check if argument 0 is a number
         if(!isNaN(+context.arguments[0])) {
             page += (+context.arguments[0] - 1);
-            if(page = 0) {page = 1}
+            if(page == 0) {page = 1;}
+            if(page > 99) {page = 99;}
         } else {
             //not a number. Check for a command here, I guess.
         }
