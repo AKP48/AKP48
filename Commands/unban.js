@@ -26,7 +26,7 @@ Unban.prototype.execute = function(context) {
         context.client.unban(context.arguments[i]);
     };
     context.client.clientManager.saveConfig();
-    context.client.getIRCClient().say(context, "Unbanned "+context.arguments.join(", "));
+    context.client.getIRCClient().say(context.nick, "Unbanned "+context.arguments.join(", "));
     return true;
 };
 

@@ -1,7 +1,7 @@
-function Chatter(nick, client, channel, real) {
-    this.nick = nick;
-    this.client = client;
-    this.channel = channel;
+function Chatter(context, real) {
+    this.nick = context.nick;
+    this.client = context.client;
+    this.channel = context.channel;
     this.lastUsed = process.uptime();
     this.real = real;
     this.timer = 30;

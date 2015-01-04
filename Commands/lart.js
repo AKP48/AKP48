@@ -27,8 +27,8 @@ function Lart() {
 Lart.prototype.execute = function(context) {
     var object = context.nick;
 
-    if(args[0] !== undefined) {
-        object = args.join(" ");
+    if(context.arguments[0] !== undefined) {
+        object = context.arguments.join(" ");
     }
 
     if(!this.larts.length) {
