@@ -9,7 +9,7 @@ function かわいい() {
     this.usageText = "";
 
     //ways to call this command.
-    this.aliases = ['かわいい'];
+    this.aliases = ['かわいい', 'kawaii'];
 
     //whether or not to allow this command in a private message.
     this.allowPm = true;
