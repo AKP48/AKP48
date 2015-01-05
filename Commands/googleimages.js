@@ -12,7 +12,7 @@ function GoogleImages() {
     this.usageText = "<query>";
 
     //ways to call this command.
-    this.aliases = ['gi', 'images', 'googleimages'];
+    this.aliases = ['gi', 'images', 'googleimages', 'askgaminggforapicture'];
 
     //whether or not to allow this command in a private message.
     this.allowPm = true;
