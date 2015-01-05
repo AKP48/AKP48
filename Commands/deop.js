@@ -26,7 +26,7 @@ DeOp.prototype.execute = function(context) {
         context.client.deop(context.arguments[i]);
     };
     context.client.clientManager.saveConfig();
-    context.client.getIRCClient().say(context.nick, "Deopped "+context.arguments.join(", "));
+    context.client.say(context, "Deopped "+context.arguments.join(", "));
     return true;
 };
 
