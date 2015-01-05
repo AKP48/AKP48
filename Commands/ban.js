@@ -26,7 +26,7 @@ Ban.prototype.execute = function(context) {
         context.client.setBanned(context.arguments[i]);
     };
     context.client.clientManager.saveConfig();
-    context.client.getIRCClient().say(context.nick, "Banned "+context.arguments.join(", "));
+    context.client.say(context, "Banned "+context.arguments.join(", "));
     return true;
 };
 

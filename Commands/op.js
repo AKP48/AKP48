@@ -26,7 +26,7 @@ Op.prototype.execute = function(context) {
         context.client.setOp(context.arguments[i]);
     };
     context.client.clientManager.saveConfig();
-    context.client.getIRCClient().say(context.nick, "Opped "+context.arguments.join(", "));
+    context.client.say(context, "Opped "+context.arguments.join(", "));
     return true;
 };
 
