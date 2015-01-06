@@ -1,31 +1,50 @@
 {
-    "productionMode": true,
+    "productionMode": true, // Disable this in order to make the bot crash on most errors.
     "servers": [
         {
-            "name": "Default",
-            "server": "kuroi.irc.nolimitzone.com",
-            "password": "PasswordGoesHere",
-            "nick": "IRCBot9000",
-            "channels": [
-                "#botplace"
-            ],
-            "delimiter": ".",
-            "users": {
-                "YourNickHere": {
-                    "permissions": ["user.command.use", "chanop.command.use"]
+            "name": "Default", // Name of the bot. Not really used anywhere yet
+            "server": "kuroi.irc.nolimitzone.com", // IRC server for the bot to connect to.
+            "nick": "IRCBot9000", // Nick to use on the IRC server
+            "password": "PasswordGoesHere", // Password the bot should use upon connecting.
+            "channels": { // Channels to connect to
+                "#botplace": { // Name of channel
+                    "users": { // Users on the channel
+                        "YourNickHere": { // Each user has a name and a set of permissions.
+                            "permissions": ["user.command.use", "chanop.command.use"]
+                        },
+                        "AnotherNickHere": {
+                            "permissions": ["user.command.use", "chanop.command.use"]
+                        },
+                        "BannedNick": {
+                            "permissions": ["user.command.banned"] // This user is banned.
+                        }
+                    },
+                    "commandDelimiter": ".", // The command delimiter to use on this channel.
+                    "mcBots": [ // The CraftIRC bots to register for this channel. The bots listed here are handled differently internally.
+                        "IfYouHaveAnIRCBotForAMinecraftServerItGoesHere",
+                        "YouCanHaveMultipleIRCBots"
+                    ]
                 },
-                "AnotherNickHere": {
-                    "permissions": ["user.command.use", "chanop.command.use", "netop.command.use", "root.command.use"]
+                "global": { // The 'global' channel is used for private messages.
+                        "users": {
+                        "YourNickHere": {
+                            "permissions": ["user.command.use", "chanop.command.use", "netop.command.use", "root.command.use"] // Define users with network and root permissions here.
+                        },
+                        "BannedNick": {
+                            "permissions": ["user.command.banned"] // Users can be banned here, as well.
+                        }
+                    },
+                    "commandDelimiter": "."
                 }
             },
-            "banned": [],
-            "mcBot": "IfYouHaveAnIRCBotForAMinecraftServerItGoesHere"
         }
     ],
     "google": {
-        "apiKey": "PutYourGoogleAPIKeyHere"
+        "apiKey": "PutYourGoogleAPIKeyHere" // API key to use for Google API-related commands. If non-existent, Google-related commands will be disabled.
+        // See https://developers.google.com/console/help/ for more information on obtaining a Google API key.
     },
     "riot": {
-        "apiKey": "PutYourRiotGamesAPIKeyHere"
+        "apiKey": "PutYourRiotGamesAPIKeyHere" // API key to use for Riot Games API-related commands. If non-existent, League of Legends-related commands will be disabled.
+        // See http://developer.riotgames.com/ for more information on obtaining a Riot Games API key.
     }
 }
