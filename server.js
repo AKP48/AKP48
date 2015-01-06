@@ -1,9 +1,9 @@
-var ClientManager = require('./clientmanager');
+var ClientManager = require('./ClientManager');
 
 require('./polyfill.js')();
 var config = require('./config.json');
 
-var climgr = new ClientManager(config);
+var clientmanager = new ClientManager(config);
 
 //todo: better exception handling plz
 if(config.productionMode) {
