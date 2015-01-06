@@ -166,7 +166,7 @@ Client.prototype.initialize = function(clientManager) {
     var password = (this.password.length ? this.password : undefined);
 
     //create the IRC client. This automatically connects, as well.
-    this.ircClient = irc.Client(this.server, this.nick, { channels: this.channels, realName: this.nick, password: password, userName: this.nick });
+    this.ircClient = new irc.Client(this.server, this.nick, { channels: this.channels, realName: this.nick, password: password, userName: this.nick });
 };
 
 module.exports = Client;
