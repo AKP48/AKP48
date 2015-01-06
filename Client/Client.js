@@ -1,5 +1,5 @@
 var irc = require('irc');
-var CommandProcessor = require("../commandprocessor");
+var CommandProcessor = require("../CommandProcessor");
 
 /**
  * An IRC client.
@@ -25,6 +25,9 @@ function Client() {
 
     // Whether or not this client is temporary. (Will not be saved on configuration saves)
     this.isTemporary = false;
+
+    // The client's CommandProcessor.
+    this.commandProcessor = new CommandProcessor();
 }
 
 /**
@@ -124,6 +127,20 @@ Client.prototype.removeChannel = function(channel) {
 };
 
 /**
+ * Get channel.
+ * @param  {String}  The channel's name.
+ * @return {Channel} The channel.
+ */
+Client.prototype.getChannel = function(channame) {
+    //get index of channel, -1 if non-existent
+    var index = this.channels.indexOf(channame);
+    if(index > -1) {
+        return this.channels[index];
+    }
+    return false;
+};
+
+/**
  * Get the IRC client that this Client uses.
  * @return {irc} The IRC client.
  */
@@ -155,6 +172,17 @@ Client.prototype.getTemporary = function() {
     return this.temporary;
 };
 
+Client.prototype.getCommandProcessor = function() {
+    return this.commandProcessor;
+};
+
+/**
+ * Reload the client's CommandProcessor.
+ */
+Client.prototype.reloadCommandProcessor = function() {
+    this.commandProcessor = new CommandProcessor();
+};
+
 /**
  * Initialize the Client by creating an IRC client.
  */
@@ -163,10 +191,26 @@ Client.prototype.initialize = function(clientManager) {
     this.clientManager = clientManager;
 
     //if there is a password, we use it. Otherwise, we leave it undefined, so we don't get an error from some IRC servers.
-    var password = (this.password.length ? this.password : undefined);
+    var password = (this.getPassword().length ? this.getPassword() : undefined);
+
+    //channels to connect to.
+    var channels = [];
+
+    //loop to get channel names
+    for (var property in this.getChannels()) {
+        if (this.getChannels().hasOwnProperty(property) && property !== "global") {
+            channels.push(property);
+        }
+    }
 
     //create the IRC client. This automatically connects, as well.
-    this.ircClient = new irc.Client(this.server, this.nick, { channels: this.channels, realName: this.nick, password: password, userName: this.nick });
+    this.ircClient = new irc.Client(this.getServer(), this.getNick(), { channels: channels, realName: this.getNick(), password: password, userName: this.getNick() });
+
+    var self = this;
+
+    this.ircClient.on('message', function(nick, to, text, message) {
+        self.getCommandProcessor().process(message, self);
+    });
 };
 
 module.exports = Client;
