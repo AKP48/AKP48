@@ -1,5 +1,4 @@
 var Builder = require("./Client/Builder");
-fs = require('fs');
 
 /**
  * The ClientManager.
@@ -14,8 +13,9 @@ function ClientManager(config) {
 }
 
 ClientManager.prototype.loadClients = function(config) {
+    var builder = new Builder();
     for (var i = 0; i < config.servers.length; i++) {
-        builder.buildClient(config.servers[i]);
+        this.addClient(builder.buildClient(config.servers[i]));
     };
 };
 
