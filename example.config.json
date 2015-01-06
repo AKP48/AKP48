@@ -10,9 +10,14 @@
                 "#botplace"
             ],
             "delimiter": ".",
-            "ops": [
-                "YourNickHere"
-            ],
+            "users": {
+                "YourNickHere": {
+                    "permissions": ["user.command.use", "chanop.command.use"]
+                },
+                "AnotherNickHere": {
+                    "permissions": ["user.command.use", "chanop.command.use", "netop.command.use", "root.command.use"]
+                }
+            },
             "banned": [],
             "mcBot": "IfYouHaveAnIRCBotForAMinecraftServerItGoesHere"
         }

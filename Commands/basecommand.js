@@ -14,6 +14,9 @@ function BaseCommand() {
     //dependencies that this module has.
     this.dependencies = ['moduleThatWillNeverBeHereSoThatThisCommandWillNeverLoad'];
 
+    //Name of the permission needed to use this command. All users have 'user.command.use' by default. Banned users have 'user.command.banned' by default.
+    this.permissionName = 'user.command.use';
+
     //whether or not to allow this command in a private message.
     this.allowPm = true;
 

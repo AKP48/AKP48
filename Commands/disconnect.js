@@ -11,14 +11,14 @@ function Disconnect() {
     //ways to call this command.
     this.aliases = ['disconnect', 'dc'];
 
+    //Name of the permission needed to use this command. All users have 'user.command.use' by default. Banned users have 'user.command.banned' by default.
+    this.permissionName = 'root.command.use';
+
     //whether or not to allow this command in a private message.
     this.allowPm = true;
 
     //whether or not to only allow this command if it's in a private message.
     this.isPmOnly = true;
-
-    //whether this command requires operator privileges.
-    this.requireOp = true;
 }
 
 Disconnect.prototype.execute = function(context) {
