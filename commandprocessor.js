@@ -1,6 +1,7 @@
 var Commands = require('./Commands');
 var AutoResponse = require('./autoresponse');
 var Chatter = require("./chatter");
+var Builder = require("./Client/Builder");
 
 function CommandProcessor() {
     this.auto = new AutoResponse();
@@ -43,54 +44,10 @@ CommandProcessor.prototype.initCommandAliases = function() {
     }
 };
 
-CommandProcessor.prototype.process = function(nick, channel, text, client) {
+CommandProcessor.prototype.process = function(message, client) {
 
     //the context we will be sending to the command.
-    var context = {};
-
-    //the original message
-    context.originalMessage = text;
-
-    //these help in our string parsing.
-    var start = -1;
-    var end = -1;
-
-    //ignore ourself
-    if(nick === client.nick) {return;}
-
-    //if the message came from our minecraft bot...
-    if(nick === client.mcBot) {
-
-        //save into context
-        context.isMcBot = true;
-
-        //find nick
-        start = text.indexOf('(');
-        end = text.indexOf(')');
-
-        //set nick
-        context.nick = text.substring(start + 1, end);
-
-        //trim text down to remove username
-        text = text.substring(end+2);
-    } else {
-        context.nick = nick;
-    }
-
-    //the channel the message came from.
-    context.channel = channel;
-    //this command processor.
-    context.commandProcessor = this;
-    //the client.
-    context.client = client;
-    //whether or not this nick is an op.
-    context.isOp = client.isOp(context.nick);
-
-    //if this is true, then this is a private message.
-    if(channel === client.nick) {
-        context.channel = nick;
-        context.isPm = true;
-    }
+    var context = new Builder().buildContext(message, client);
 
     //parse the message for auto response system
     this.parseMessage(context.originalMessage, context.client, context.channel, context.isPm);
@@ -219,9 +176,7 @@ CommandProcessor.prototype.floodProtection = function(context) {
                 return false;
             }
         } else {
-            var real = true;
-            if(context.isMcBot) {real = false;}
-            context.client.chatters[context.channel][context.nick] = new Chatter(context, real);
+            context.client.chatters[context.channel][context.nick] = new Chatter(context, !context.isMcBot);
         }
     }
 
