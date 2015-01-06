@@ -25,7 +25,7 @@ function Convert() {
 
 Convert.prototype.execute = function(context) {
     var args = context.arguments;
-    var tempRegEx = /^(-?\d+(?:\.\d+)?)\s?°?([cfk])$/gi;
+    var tempRegEx = /^(-?\d+(?:\.\d+)?)\s?°?\s?([cfk])$/gi;
     var msg = args.join(" ");
 
     var temp = parseFloat(msg.replace(tempRegEx, "$1"));
@@ -33,7 +33,7 @@ Convert.prototype.execute = function(context) {
     var unit = msg.replace(tempRegEx, "$2");
     var places = "0".repeat((tempTemp.indexOf(".") != -1) ? Math.min(Math.max(tempTemp.length - 1 - tempTemp.indexOf("."), 2), 20) : 2);
 
-    if(unit === "c") {
+    if(unit.toLowerCase() === "c") {
         try {
             context.client.say(context, temp+"°C is "+n((temp*9/5) + 32).format("0[.]"+places)+"°F.");
         } catch(e) {
@@ -42,7 +42,7 @@ Convert.prototype.execute = function(context) {
         return true;
     }
 
-    if(unit === "f") {
+    if(unit.toLowerCase() === "f") {
         try {
             context.client.say(context, temp+"°F is "+n((temp - 32)*5/9).format("0[.]"+places)+"°C.");
         } catch(e) {
@@ -51,7 +51,7 @@ Convert.prototype.execute = function(context) {
         return true;
     }
 
-    if(unit === "k") {
+    if(unit.toLowerCase() === "k") {
         context.client.say(context, "I'm a Korean Pop group, not a scientist.");
     }
     return true;
