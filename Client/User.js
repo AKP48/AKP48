@@ -5,11 +5,17 @@ function User() {
     // The user's nickname.
     this.nick = "";
 
+    // The user's full hostmask.
+    this.hostmask = "";
+
     // The user's permissions.
     this.permissions = ["user.command.use"];
 
     // The user's flood protection violation level.
     this.violationLevel = 0;
+
+    // Whether or not this user is a Real IRC User™.
+    this.isRealIRCUser = true;
 }
 
 /**
@@ -26,6 +32,22 @@ User.prototype.setNick = function(nick) {
  */
 User.prototype.getNick = function() {
     return this.nick;
+};
+
+/**
+ * Set hostmask.
+ * @param {String} hostmask The hostmask.
+ */
+User.prototype.setHostmask = function(hostmask) {
+    this.hostmask = hostmask;
+};
+
+/**
+ * Get hostmask.
+ * @return {String} The hostmask.
+ */
+User.prototype.getHostmask = function() {
+    return this.hostmask;
 };
 
 /**
@@ -97,6 +119,14 @@ User.prototype.setViolationLevel = function(violationLevel) {
  */
 User.prototype.getViolationLevel = function() {
     return this.violationLevel;
+};
+
+/**
+ * Set isRealIRCUser.
+ * @param {Boolean} isRealIRCUser Whether or not the user is a Real IRC User™.
+ */
+User.prototype.setIsRealIRCUser = function(isRealIRCUser) {
+    this.isRealIRCUser = isRealIRCUser;
 };
 
 module.exports = User;

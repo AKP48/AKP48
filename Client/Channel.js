@@ -37,12 +37,21 @@ Channel.prototype.removeUser = function(user) {
         this.users.splice(index, 1);
         return true;
     }
-
     return false;
 };
 
+/**
+ * Get a user.
+ * @param  {String} nick The user's nickname.
+ * @return {User}        The user, false if no user.
+ */
 Channel.prototype.getUser = function(nick) {
-    // body...
+    //get index of user, -1 if non-existent
+    var index = this.users.indexOf(user);
+    if(index > -1) {
+        return this.users[index];
+    }
+    return false;
 };
 
 /**

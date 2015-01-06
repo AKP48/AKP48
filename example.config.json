@@ -9,13 +9,13 @@
             "channels": { // Channels to connect to
                 "#botplace": { // Name of channel
                     "users": { // Users on the channel
-                        "YourNickHere": { // Each user has a name and a set of permissions.
+                        "Nick!User@hostname.com": { // Users are defined by hostmasks (only full hostmasks allowed for now), and have permissions.
                             "permissions": ["user.command.use", "chanop.command.use"]
                         },
-                        "AnotherNickHere": {
+                        "AnotherNick!User@hostname.net": {
                             "permissions": ["user.command.use", "chanop.command.use"]
                         },
-                        "BannedNick": {
+                        "BannedNick!User@hostname.org": {
                             "permissions": ["user.command.banned"] // This user is banned.
                         }
                     },
@@ -25,12 +25,12 @@
                         "YouCanHaveMultipleIRCBots"
                     ]
                 },
-                "global": { // The 'global' channel is used for private messages.
-                        "users": {
-                        "YourNickHere": {
+                "global": { // The 'global' channel is used for private messages. If it is not present, things will not work.
+                    "users": {
+                        "Nick!User@hostname.com": {
                             "permissions": ["user.command.use", "chanop.command.use", "netop.command.use", "root.command.use"] // Define users with network and root permissions here.
                         },
-                        "BannedNick": {
+                        "BannedNick!User@hostname.org": {
                             "permissions": ["user.command.banned"] // Users can be banned here, as well.
                         }
                     },
