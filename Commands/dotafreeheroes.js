@@ -11,14 +11,14 @@ function DOTAFreeHeroes() {
     //ways to call this command.
     this.aliases = ['dotafreeheroes', 'dota2freeheroes', 'dota2fh'];
 
+    //Name of the permission needed to use this command. All users have 'user.command.use' by default. Banned users have 'user.command.banned' by default.
+    this.permissionName = 'user.command.use';
+
     //whether or not to allow this command in a private message.
     this.allowPm = true;
 
     //whether or not to only allow this command if it's in a private message.
     this.isPmOnly = false;
-
-    //whether this command requires operator privileges.
-    this.requireOp = false;
 }
 
 DOTAFreeHeroes.prototype.execute = function(context) {

@@ -8,9 +8,9 @@ function IRCClient(o, clientManager, save) {
 
     this.nick = o.nick;
 
-    this.ops = o.ops;
+    this.users = o.users;
 
-    this.banned = o.banned;
+    if(!this.users) {this.users = [];}
 
     this.channels = o.channels;
 
@@ -52,46 +52,24 @@ IRCClient.prototype.reload = function() {
     this.commandProcessor = new CommandProcessor();
 };
 
-IRCClient.prototype.isOp = function(nick) {
-    if(this.ops.indexOf(nick) > -1) {
-        return false; // I literally don't know why that isn't working, but uh... doesn't matter with the rewrite anyway.
-    }
-
-    return false;
-};
-
-IRCClient.prototype.isBanned = function(nick) {
-    if(this.banned.indexOf(nick) > -1) {
-        return true;
-    }
-
-    return false;
-};
-
-IRCClient.prototype.setOp = function(nickname) {
-    this.ops.push(nickname);
-};
-
-IRCClient.prototype.setBanned = function(nickname) {
-    this.banned.push(nickname);
-};
-
-IRCClient.prototype.deop = function(nickname) {
-    var index = this.ops.indexOf(nickname);
-    if (index > -1) {
-        this.ops.splice(index, 1);
-    }
-};
-
-IRCClient.prototype.unban = function(nickname) {
-    var index = this.banned.indexOf(nickname);
-    if (index > -1) {
-        this.banned.splice(index, 1);
-    }
-};
-
 IRCClient.prototype.getIRCClient = function() {
     return this.ircClient;
+};
+
+IRCClient.prototype.getUser = function(nick) {
+    //attempt to get the user requested.
+    var index = this.users.indexOf(nick);
+
+    //if the user doesn't exist, return false.
+    if(index == -1) {return false;}
+
+    //otherwise, return the user.
+    return this.users[index];
+};
+
+IRCClient.prototype.getUserPermissions = function(nick) {
+    //piggyback on the getUser command.
+    return this.getUser(nick).permissions;
 };
 
 IRCClient.prototype.getConfig = function() {
