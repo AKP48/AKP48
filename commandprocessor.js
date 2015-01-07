@@ -61,8 +61,8 @@ CommandProcessor.prototype.process = function(message, client) {
                 return;
             }
 
-            //return if command is not allowed as a privmsg and this is one (unless we have the chanop permission.)
-            if(!context.getCommand().allowPm && context.isPm && !context.user.hasPermission("chanop.command.use")) {
+            //return if command is not allowed as a privmsg and this is one (unless we have the root permission.)
+            if(!context.getCommand().allowPm && context.isPm && !context.user.hasPermission("root.command.use")) {
                 return;
             }
 
