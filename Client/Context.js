@@ -98,4 +98,8 @@ Context.prototype.getArguments = function() {
     return this.arguments;
 };
 
+Context.prototype.commandExists = function() {
+    return (this.commands[this.command] !== undefined && typeof this.commands[this.command].execute === 'function');
+};
+
 module.exports = Context;

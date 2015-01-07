@@ -8,14 +8,16 @@ function ClientManager(config) {
     // array of all clients
     this.clients = [];
 
+    // a builder for us to use.
+    this.builder = new Builder();
+
     // load all of the clients on creation of this object.
     this.loadClients(config);
 }
 
 ClientManager.prototype.loadClients = function(config) {
-    var builder = new Builder();
     for (var i = 0; i < config.servers.length; i++) {
-        this.addClient(builder.buildClient(config.servers[i]));
+        this.addClient(this.builder.buildClient(config.servers[i]));
     };
 };
 

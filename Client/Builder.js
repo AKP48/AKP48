@@ -104,7 +104,31 @@ Builder.prototype.buildContext = function(message, client) {
         messageString = messageString.substring(messageString.indexOf(')')+1);
     }
 
+    //if we have a command
+    if(messageString.substring(0, client.getCommandDelimiter().length) === client.getCommandDelimiter()) {
 
+        //find command
+        var end = messageString.indexOf(' ');
+        context.setCommand(messageString.substring(client.getCommandDelimiter().length,end).toLowerCase());
+
+        //if there wasn't actually a space, we won't have gotten a command.
+        //instead, we'll just chop off the delimiter now.
+        if(end === -1) {
+            context.setCommand(messageString.substring(client.getCommandDelimiter().length));
+        } else {
+            //otherwise, we can cut off the command and save the arguments.
+            var args = messageString.substring(end+1).split(' ');
+
+            //remove any blank arguments
+            var i;
+            while((i = args.indexOf('')) !== -1) {
+                args.splice(i, 1);
+            }
+            context.setArguments(args);
+        }
+    }
+
+    return context;
 };
 
 /**
