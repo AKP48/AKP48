@@ -1,3 +1,4 @@
+var Channel = require("./Channel");
 var Client = require("./Client");
 var Context = require("./Context");
 var User = require("./User");
@@ -29,7 +30,10 @@ Builder.prototype.buildClient = function(options) {
         client.setPassword(options.password);
     }
     if(options.channels) {
-        client.setChannels(options.channels);
+        client.setChannels([]);
+        for (var i = 0; i < options.channels.length; i++) {
+            client.addChannel(this.buildChannel(options.channels[i]));
+        };
     }
     //return it.
     return client;
@@ -105,16 +109,16 @@ Builder.prototype.buildContext = function(message, client) {
     }
 
     //if we have a command
-    if(messageString.substring(0, client.getCommandDelimiter().length) === client.getCommandDelimiter()) {
+    if(messageString.substring(0, channel.getCommandDelimiter().length) === channel.getCommandDelimiter()) {
 
         //find command
         var end = messageString.indexOf(' ');
-        context.setCommand(messageString.substring(client.getCommandDelimiter().length,end).toLowerCase());
+        context.setCommand(messageString.substring(channel.getCommandDelimiter().length,end).toLowerCase());
 
         //if there wasn't actually a space, we won't have gotten a command.
         //instead, we'll just chop off the delimiter now.
         if(end === -1) {
-            context.setCommand(messageString.substring(client.getCommandDelimiter().length));
+            context.setCommand(messageString.substring(channel.getCommandDelimiter().length));
         } else {
             //otherwise, we can cut off the command and save the arguments.
             var args = messageString.substring(end+1).split(' ');
@@ -132,7 +136,7 @@ Builder.prototype.buildContext = function(message, client) {
 };
 
 /**
- * Builds a User.
+ * Builds a User using a message and Client.
  * @param  {Message} message The IRC message to use.
  * @param  {Client}  client  The client to use.
  * @return {User}            The User.
@@ -162,6 +166,61 @@ Builder.prototype.buildUser = function(message, client) {
     }
 
     return user;
+};
+
+/**
+ * Builds a User using options.
+ * @param  {JSON} options    The options to use.
+ * @return {User}            The User.
+ */
+Builder.prototype.buildUser = function(options) {
+    //Make ourselves a new User...
+    var user = new User();
+    //set the options, if we get them.
+    if(options.nick) {
+        user.setNick(options.nick)
+    }
+    if(options.hostmask) {
+        user.setHostmask(options.hostmask);
+    }
+    if(options.permissions) {
+        user.setPermissions(options.permissions);
+    }
+    if(options.violationLevel) {
+        user.setViolationLevel(options.violationLevel);
+    }
+    if(options.isRealIRCUser) {
+        user.setIsRealIRCUser(options.isRealIRCUser);
+    }
+    //return the user.
+    return user;
+};
+
+/**
+ * Builds a Channel.
+ * @param  {Options} options The options to use
+ * @return {User}            The User.
+ */
+Builder.prototype.buildChannel = function(options) {
+    //Make ourselves a new Channel...
+    var channel = new Channel();
+    //set the options, if we get them.
+    if(options.name) {
+        channel.setName(options.name);
+    }
+    if(options.users) {
+        for (var i = 0; i < options.users.length; i++) {
+            channel.addUser(this.buildUser(options.users[i]));
+        };
+    }
+    if(options.mcBots) {
+        channel.setMcBots(options.mcBots);
+    }
+    if(options.commandDelimiter) {
+        channel.setCommandDelimiter(options.commandDelimiter);
+    }
+    //return the channel
+    return channel;
 };
 
 module.exports = Builder;

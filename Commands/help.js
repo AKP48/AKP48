@@ -26,17 +26,17 @@ function Help() {
 
 Help.prototype.execute = function(context) {
 
-    if(context.isMcBot) {
-        context.client.say(context, "Getting help from the Minecraft server is not yet possible! To get help, please join the IRC channel.");
+    if(!context.getUser().isRealIRCUser) {
+        context.getClient().say(context, "Getting help from the Minecraft server is not yet possible! To get help, please join the IRC channel.");
         return true;
     }
 
     var page = 0;
 
-    if(context.arguments.length) {
+    if(context.getArguments().length) {
         //check if argument 0 is a number
-        if(!isNaN(+context.arguments[0])) {
-            page += (+context.arguments[0] - 1);
+        if(!isNaN(+context.getArguments()[0])) {
+            page += (+context.getArguments()[0] - 1);
             if(page == 0) {page = 1;}
             if(page > 99) {page = 99;}
         } else {
@@ -48,12 +48,12 @@ Help.prototype.execute = function(context) {
     var responses = [];
 
     //for each command
-    for (var property in context.commandProcessor.commands) {
-        if (context.commandProcessor.commands.hasOwnProperty(property)) {
+    for (var property in context.getCommands()) {
+        if (context.getCommands().hasOwnProperty(property)) {
             //if command is really there
-            if(context.commandProcessor.commands[property] !== undefined) {
-                if(!context.commandProcessor.commands[property].requireOp || context.client.isOp(context.nick)) {
-                    responses.push(context.commandProcessor.commands[property].name + ": " + context.commandProcessor.commands[property].helpText + " | Usage: " + context.client.delimiter + context.commandProcessor.commands[property].aliases[0] + " " + context.commandProcessor.commands[property].usageText);
+            if(context.getCommands()[property] !== undefined) {
+                if(context.getUser().hasPermission(context.getCommands()[property].permissionName) || context.getClient().getChannel("global").getUser(context.getUser().getNick()).hasPermission(context.getCommands()[property].permissionName)) {
+                    responses.push(context.getCommands()[property].name + ": " + context.getCommands()[property].helpText + " | Usage: " + context.getChannel().getCommandDelimiter() + context.getCommands()[property].aliases[0] + " " + context.getCommands()[property].usageText);
                 }
             }
         }
@@ -69,7 +69,7 @@ Help.prototype.execute = function(context) {
         waste--;
     }
 
-    context.client.getIRCClient().say(context.nick, "Help: Page "+(page+ 1)+" of "+numberOfPages);
+    context.getClient().getIRCClient().say(context.getUser().getNick(), "Help: Page "+(page+ 1)+" of "+numberOfPages);
 
     var self = this;
     //counter for number per page
@@ -78,7 +78,7 @@ Help.prototype.execute = function(context) {
     var interval = setInterval(function() {
         if(responses.length && j < self.perPage) {
             var i = responses.shift();
-            context.client.getIRCClient().say(context.nick, i);
+            context.client.getIRCClient().say(context.getUser().getNick(), i);
             j++;
         } else {
             clearInterval(interval);

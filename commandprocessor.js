@@ -1,7 +1,6 @@
 var Commands = require('./Commands');
 var AutoResponse = require('./autoresponse');
 var Chatter = require("./chatter");
-var Builder = require("./Client/Builder");
 
 function CommandProcessor() {
     this.auto = new AutoResponse();
@@ -46,7 +45,7 @@ CommandProcessor.prototype.initCommandAliases = function() {
 
 CommandProcessor.prototype.process = function(message, client) {
     //the context we will be sending to the command.
-    var context = new Builder().buildContext(message, client);
+    var context = client.getClientManager().builder.buildContext(message, client);
 
     //parse the message for auto response system
     this.parseMessage(context.getFullMessage(), context.getClient(), context.getChannel(), context.isPm);
@@ -54,23 +53,23 @@ CommandProcessor.prototype.process = function(message, client) {
     //if the command exists
     if(context.commandExists()) {
 
-        //flood protection
-        if(!client.isBanned(context.nick)) {
+        //if user isn't banned
+        if(!context.getChannel().isBanned(context.getUser())) {
 
             //return if this needs to be a privmsg and isn't.
-            if(command.isPmOnly && !context.isPm) {
+            if(context.getCommand().isPmOnly && !context.isPm) {
                 return;
             }
 
             //return if command is not allowed as a privmsg and this is one (unless we have the chanop permission.)
-            if(!command.allowPm && context.isPm && !context.user.hasPermission("chanop.command.use")) {
+            if(!context.getCommand().allowPm && context.isPm && !context.user.hasPermission("chanop.command.use")) {
                 return;
             }
 
             //do flood protection/execute the command if we haven't returned by now.
             if(this.floodProtection(context)) {
-                if(!command.execute(context)) {
-                    this.sendUsageMessage(context, command);
+                if(!context.getCommand().execute(context)) {
+                    this.sendUsageMessage(context, context.getCommand());
                 }
             }
         }
@@ -123,19 +122,19 @@ CommandProcessor.prototype.parseMessage = function(msg, client, channel, pm) {
  * @return {Boolean}         Whether or not the message should be sent.
  */
 CommandProcessor.prototype.floodProtection = function(context) {
-    if((!context.pm || !(context.channel === context.client.nick)) && !context.client.isOp(context.nick)) {
-        if(!context.client.chatters[context.channel]) {context.client.chatters[context.channel] = [];}
-        if(context.client.chatters[context.channel][context.nick]) {
-            context.client.chatters[context.channel][context.nick].floodProtect();
-            //if they have been banned
-            if(context.client.chatters[context.channel][context.nick].checkBan()) {
-                //just end here
-                return false;
-            }
-        } else {
-            context.client.chatters[context.channel][context.nick] = new Chatter(context, !context.isMcBot);
-        }
-    }
+    // if((!context.pm || !(context.channel === context.client.nick)) && !context.channel.isOp(context.user)) {
+    //     if(!context.client.chatters[context.channel]) {context.client.chatters[context.channel] = [];}
+    //     if(context.client.chatters[context.channel][context.nick]) {
+    //         context.client.chatters[context.channel][context.nick].floodProtect();
+    //         //if they have been banned
+    //         if(context.client.chatters[context.channel][context.nick].checkBan()) {
+    //             //just end here
+    //             return false;
+    //         }
+    //     } else {
+    //         context.client.chatters[context.channel][context.nick] = new Chatter(context, !context.isMcBot);
+    //     }
+    // }
 
     return true;
 };

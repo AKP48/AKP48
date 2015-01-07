@@ -132,11 +132,11 @@ Client.prototype.removeChannel = function(channel) {
  * @return {Channel} The channel.
  */
 Client.prototype.getChannel = function(channame) {
-    //get index of channel, -1 if non-existent
-    var index = this.channels.indexOf(channame);
-    if(index > -1) {
-        return this.channels[index];
-    }
+    for (var i = 0; i < this.channels.length; i++) {
+        if(this.channels[i].name === channame) {
+            return this.channels[i];
+        }
+    };
     return false;
 };
 
@@ -197,11 +197,11 @@ Client.prototype.initialize = function(clientManager) {
     var channels = [];
 
     //loop to get channel names
-    for (var property in this.getChannels()) {
-        if (this.getChannels().hasOwnProperty(property) && property !== "global") {
-            channels.push(property);
+    for (var i = 0; i < this.getChannels().length; i++) {
+        if(this.getChannels()[i].getName() && this.getChannels()[i].getName() !== "global") {
+            channels.push(this.getChannels()[i].getName());
         }
-    }
+    };
 
     //create the IRC client. This automatically connects, as well.
     this.ircClient = new irc.Client(this.getServer(), this.getNick(), { channels: channels, realName: this.getNick(), password: password, userName: this.getNick() });
@@ -213,4 +213,12 @@ Client.prototype.initialize = function(clientManager) {
     });
 };
 
+/**
+ * Say a message to a context.
+ * @param  {Context} context The context.
+ * @param  {String}  message The message.
+ */
+Client.prototype.say = function(context, message) {
+    this.getIRCClient().say(context.getChannel().getName(), context.getUser().getNick() + ": " + message);
+};
 module.exports = Client;
