@@ -45,75 +45,32 @@ CommandProcessor.prototype.initCommandAliases = function() {
 };
 
 CommandProcessor.prototype.process = function(message, client) {
-
     //the context we will be sending to the command.
     var context = new Builder().buildContext(message, client);
 
     //parse the message for auto response system
-    this.parseMessage(context.originalMessage, context.client, context.channel, context.isPm);
+    this.parseMessage(context.getFullMessage(), context.getClient(), context.getChannel(), context.isPm);
 
-    //if we have a command
-    if(text.substring(0, client.delimiter.length) === client.delimiter) {
+    //if the command exists
+    if(context.commandExists()) {
 
-        //create blank arguments
-        context.arguments = [];
+        //flood protection
+        if(!client.isBanned(context.nick)) {
 
-        //find command
-        end = text.indexOf(' ');
-        context.command = text.substring(client.delimiter.length,end);
-
-        //if there wasn't actually a space, we won't have gotten a command.
-        //instead, we'll just chop off the delimiter now.
-        if(end === -1) {
-            context.command = text.substring(client.delimiter.length, text.length);
-        } else {
-            //otherwise, we can cut off the command and save the arguments.
-            context.arguments = text.substring(end+1).split(' ');
-
-            //remove any blank arguments
-            var i;
-            while((i = context.arguments.indexOf('')) !== -1) {
-                context.arguments.splice(i, 1);
+            //return if this needs to be a privmsg and isn't.
+            if(command.isPmOnly && !context.isPm) {
+                return;
             }
-        }
 
-        //lowercase the command
-        context.command = context.command.toLowerCase();
+            //return if command is not allowed as a privmsg and this is one (unless we have the chanop permission.)
+            if(!command.allowPm && context.isPm && !context.user.hasPermission("chanop.command.use")) {
+                return;
+            }
 
-        //put commands into context.
-        context.commands = this.aliasedCommands;
-
-        //if the command exists
-        if(this.aliasedCommands[context.command] !== undefined) {
-            if(typeof this.aliasedCommands[context.command].execute === 'function') {
-
-                //easier access
-                var command = this.aliasedCommands[context.command];
-
-                //flood protection
-                if(!client.isBanned(context.nick)) {
-
-                    //return if this needs to be a privmsg and isn't.
-                    if(command.isPmOnly && !context.isPm) {
-                        return;
-                    }
-
-                    //return if this needs to be run by an OP and we aren't one.
-                    if(command.requireOP && !context.client.isOp(context.nick)) {
-                        return;
-                    }
-
-                    //return if command is not allowed as a privmsg and this is one (unless we're op.)
-                    if(!command.allowPm && context.isPm && !context.client.isOp(context.nick)) {
-                        return;
-                    }
-
-                    //do flood protection/execute the command if we haven't returned by now.
-                    if(this.floodProtection(context)) {
-                        if(!command.execute(context)) {
-                            this.sendUsageMessage(context, command);
-                        }
-                    }
+            //do flood protection/execute the command if we haven't returned by now.
+            if(this.floodProtection(context)) {
+                if(!command.execute(context)) {
+                    this.sendUsageMessage(context, command);
                 }
             }
         }
