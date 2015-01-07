@@ -24,7 +24,7 @@ function Context() {
     this.commands = null;
 
     // The command being requested in this context.
-    this.command = "";
+    this.command = null;
 
     // The arguments being requested in this context.
     this.arguments = [];
@@ -66,7 +66,7 @@ Context.prototype.setIsPm = function(isPm) {
     this.isPm = isPm;
 };
 
-Context.prototype.setCommandProcessor = function(commandProcssor) {
+Context.prototype.setCommandProcessor = function(commandProcessor) {
     this.commandProcessor = commandProcessor;
 };
 
@@ -87,7 +87,8 @@ Context.prototype.setCommand = function(command) {
 };
 
 Context.prototype.getCommand = function() {
-    return this.command;
+    if(!this.commandExists()){return false;}
+    return this.commands[this.command];
 };
 
 Context.prototype.setArguments = function(arguments) {

@@ -16,6 +16,22 @@ function Channel() {
 }
 
 /**
+ * Set the channel's name
+ * @param {String} name The new name.
+ */
+Channel.prototype.setName = function(name) {
+    this.name = name;
+};
+
+/**
+ * Get the channel's name.
+ * @return {String} The name.
+ */
+Channel.prototype.getName = function() {
+    return this.name
+};
+
+/**
  * Add a user.
  * @param {User} user The user.
  */
@@ -42,15 +58,15 @@ Channel.prototype.removeUser = function(user) {
 
 /**
  * Get a user.
- * @param  {String} nick The user's nickname.
- * @return {User}        The user, false if no user.
+ * @param  {String} hostmask The user's hostmask.
+ * @return {User}            The user, false if no user.
  */
-Channel.prototype.getUser = function(nick) {
-    //get index of user, -1 if non-existent
-    var index = this.users.indexOf(user);
-    if(index > -1) {
-        return this.users[index];
-    }
+Channel.prototype.getUser = function(hostmask) {
+    for (var i = 0; i < this.users.length; i++) {
+        if(this.users[i].getHostmask() === hostmask) {
+            return this.users[i];
+        }
+    };
     return false;
 };
 
@@ -126,6 +142,17 @@ Channel.prototype.setCommandDelimiter = function(commandDelimiter) {
  */
 Channel.prototype.getCommandDelimiter = function() {
     return this.commandDelimiter;
+};
+
+/**
+ * Check if a user has been banned.
+ * @param  {User}  user The user to check
+ * @return {Boolean}    Whether or not the user has been banned.
+ */
+Channel.prototype.isBanned = function(user) {
+    //get user for sure.
+    var checkUser = this.getUser(user.getHostmask());
+    return user.hasPermission("user.command.banned");
 };
 
 module.exports = Channel;
