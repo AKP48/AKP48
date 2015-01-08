@@ -23,10 +23,26 @@ function Ban() {
 
 Ban.prototype.execute = function(context) {
     for (var i = 0; i < context.arguments.length; i++) {
-        context.client.setBanned(context.arguments[i]);
+        //get the user
+        var user = context.getChannel().getUser(context.arguments[i]);
+        //if we didn't get a user, we make one and add them to the channel.
+        if(!user) {
+            //this means it's a hostmask
+            if(context.arguments[i].indexOf("!") !== -1 && context.arguments[i].indexOf("@") !== -1 && context.arguments[i].indexOf(".") !== -1) {
+                user = context.getClient().getClientManager().builder.buildUser(null, null, {hostmask: context.arguments[i]});
+            } else {
+                //otherwise, we take it as a nick
+                user = context.getClient().getClientManager().builder.buildUser(null, null, {nick: context.arguments[i]});
+            }
+
+            //add user to channel
+            context.getChannel().addUser(user);
+        }
+        //ban the user.
+        context.getChannel().banUser(user);
     };
-    context.client.clientManager.saveConfig();
-    context.client.say(context, "Banned "+context.arguments.join(", "));
+    context.getClient().getIRCClient().notice(context.getUser().getNick(), "Banned "+context.arguments.join(", "));
+    context.getClient().getClientManager().save();
     return true;
 };
 

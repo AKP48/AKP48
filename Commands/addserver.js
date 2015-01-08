@@ -35,7 +35,7 @@ AddServer.prototype.execute = function(context) {
                     delimiter: context.arguments[6],
                 });
 
-    context.client.clientManager.saveConfig();
+    context.getClient().getClientManager().save();
 
     if(!created) {
         context.client.getIRCClient().say(context.nick, "There was a problem creating the client!");

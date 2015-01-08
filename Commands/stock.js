@@ -36,8 +36,8 @@ Stock.prototype.execute = function(context) {
     self.symbol = symbol;
 
     query.exec(function(err, data) {
-        if(err) { context.client.say(context.channel, "There was an error getting information for "+self.symbol+"."); return true;}
-        if(data.query.results === null) {context.client.say(context.channel, "There was an error getting information for "+self.symbol+"."); return true;}
+        if(err) { context.getClient().say(context, "There was an error getting information for "+self.symbol+"."); return true;}
+        if(data.query.results === null) {context.getClient().say(context, "There was an error getting information for "+self.symbol+"."); return true;}
 
         var quote = data.query.results.quote;
         var change = parseFloat(quote.Change);
@@ -45,7 +45,7 @@ Stock.prototype.execute = function(context) {
         var price = parseFloat(quote.LastTradePriceOnly);
 
         if(isNaN(change) || isNaN(price)) {
-            context.client.say(context.channel, "There was an error getting information for "+self.symbol+".");
+            context.getClient().say(context, "There was an error getting information for "+self.symbol+".");
             return;
         }
 
@@ -67,7 +67,7 @@ Stock.prototype.execute = function(context) {
             outputString += change+" "+"("+percent+")";
         }
 
-        context.client.say(context, outputString);
+        context.getClient().say(context, outputString);
     });
     return true;
 };

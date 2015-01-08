@@ -50,11 +50,11 @@ Currency.prototype.execute = function(context) {
     }
 
     query.exec(function(err, data) {
-        if(err) { context.client.say(context, "There was an error converting "+self.from+" to "+self.to); return;}
+        if(err) { context.getClient().say(context, "There was an error converting "+self.from+" to "+self.to); return;}
         var rate = data.query.results.rate.Rate;
         var name= data.query.results.rate.Name;
-        if(name === self.from+self.to+"=X") {context.client.say(context, "Either "+self.from+" or "+self.to+" does not exist!"); return;}
-        context.client.say(context, self.amount+" "+name+": "+rate*self.amount);
+        if(name === self.from+self.to+"=X") {context.getClient().say(context, "Either "+self.from+" or "+self.to+" does not exist!"); return;}
+        context.getClient().say(context, self.amount+" "+name+": "+rate*self.amount);
     });
     return true;
 };

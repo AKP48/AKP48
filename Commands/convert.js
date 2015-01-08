@@ -35,24 +35,24 @@ Convert.prototype.execute = function(context) {
 
     if(unit.toLowerCase() === "c") {
         try {
-            context.client.say(context, temp+"°C is "+n((temp*9/5) + 32).format("0[.]"+places)+"°F.");
+            context.getClient().say(context, temp+"°C is "+n((temp*9/5) + 32).format("0[.]"+places)+"°F.");
         } catch(e) {
-            context.client.say(context, "Could not convert "+temp+"°C to Fahrenheit!");
+            context.getClient().say(context, "Could not convert "+temp+"°C to Fahrenheit!");
         }
         return true;
     }
 
     if(unit.toLowerCase() === "f") {
         try {
-            context.client.say(context, temp+"°F is "+n((temp - 32)*5/9).format("0[.]"+places)+"°C.");
+            context.getClient().say(context, temp+"°F is "+n((temp - 32)*5/9).format("0[.]"+places)+"°C.");
         } catch(e) {
-            context.client.say(context, "Could not convert "+temp+"°F to Fahrenheit!");
+            context.getClient().say(context, "Could not convert "+temp+"°F to Fahrenheit!");
         }
         return true;
     }
 
     if(unit.toLowerCase() === "k") {
-        context.client.say(context, "I'm a Korean Pop group, not a scientist.");
+        context.getClient().say(context, "I'm a Korean Pop group, not a scientist.");
     }
     return true;
 };

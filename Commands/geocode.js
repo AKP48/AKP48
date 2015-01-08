@@ -47,7 +47,7 @@ Geocode.prototype.execute = function(context) {
     }
 
     this.googleAPI.geocode(location, region, function(msg){
-        context.client.say(context, msg);
+        context.getClient().say(context, msg);
     });
     return true;
 };

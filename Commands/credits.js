@@ -25,7 +25,7 @@ function Credits() {
 }
 
 Credits.prototype.execute = function(context) {
-    context.client.say(context, "http://akpwebdesign.com/IRCBot/credits.html");
+    context.getClient().say(context, "http://akpwebdesign.com/IRCBot/credits.html");
     return true;
 };
 

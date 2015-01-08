@@ -26,7 +26,7 @@ function Rainbow() {
 Rainbow.prototype.execute = function(context) {
     if(context.arguments.length) {
         var msg = context.arguments.join(' ');
-        context.client.getIRCClient().say(context.channel, c.rainbow(msg));
+        context.getClient().getIRCClient().say(context.getChannel().getName(), c.rainbow(msg));
     }
     return true;
 };

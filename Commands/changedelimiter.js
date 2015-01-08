@@ -24,12 +24,12 @@ function ChangeDelimiter() {
 ChangeDelimiter.prototype.execute = function(context) {
     if(!context.arguments.length) {return false;}
 
-    context.client.say("NYI");
+    context.getClient().say(context, "NYI");
     return true;
 
     console.log(context.arguments[0]);
     context.client.delimiter = context.arguments[0];
-    context.client.clientManager.saveConfig();
+    context.getClient().getClientManager().save();
     context.client.getIRCClient().say(context.nick, "Delimiter changed!");
     console.log("Delimiter changed! -> "+context.arguments[0]);
     context.commands.reload.execute();

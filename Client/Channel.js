@@ -58,12 +58,12 @@ Channel.prototype.removeUser = function(user) {
 
 /**
  * Get a user.
- * @param  {String} hostmask The user's hostmask.
- * @return {User}            The user, null if no user.
+ * @param  {String} nickOrHost The user's nick or hostmask.
+ * @return {User}              The user, null if no user.
  */
-Channel.prototype.getUser = function(hostmask) {
+Channel.prototype.getUser = function(nickOrHost) {
     for (var i = 0; i < this.users.length; i++) {
-        if(this.users[i].getHostmask() === hostmask) {
+        if(this.users[i].getHostmask() === nickOrHost || this.users[i].getNick() === nickOrHost) {
             return this.users[i];
         }
     };
@@ -145,14 +145,54 @@ Channel.prototype.getCommandDelimiter = function() {
 };
 
 /**
+ * Ban a user.
+ * @param  {User} user The user to ban.
+ */
+Channel.prototype.banUser = function(user) {
+    //get user for sure.
+    var banUser = this.getUser(user.getHostmask());
+    banUser.addPermission("user.command.banned");
+};
+
+/**
+ * Unban a user.
+ * @param  {User} user The user to unban.
+ */
+Channel.prototype.unbanUser = function(user) {
+    //get user for sure.
+    var unbanUser = this.getUser(user.getHostmask());
+    unbanUser.removePermission("user.command.banned");
+};
+
+/**
  * Check if a user has been banned.
- * @param  {User}  user The user to check
- * @return {Boolean}    Whether or not the user has been banned.
+ * @param  {User} user The user to check.
+ * @return {Boolean}   Whether or not the user has been banned.
  */
 Channel.prototype.isBanned = function(user) {
     //get user for sure.
     var checkUser = this.getUser(user.getHostmask());
-    return user.hasPermission("user.command.banned");
+    return checkUser.hasPermission("user.command.banned");
+};
+
+/**
+ * Op a user.
+ * @param  {User} user The user to op.
+ */
+Channel.prototype.opUser = function(user) {
+    //get user for sure.
+    var opUser = this.getUser(user.getHostmask());
+    opUser.addPermission("chanop.command.use");
+};
+
+/**
+ * Deop a user.
+ * @param  {User} user The user to deop.
+ */
+Channel.prototype.deopUser = function(user) {
+    //get user for sure.
+    var deopUser = this.getUser(user.getHostmask());
+    deopUser.removePermission("chanop.command.use");
 };
 
 module.exports = Channel;

@@ -38,7 +38,7 @@ Js.prototype.execute = function(context) {
         if(outputString.length > 430) {
             outputString = outputString.substring(0, 426) + "...";
         }
-        context.client.say(context, outputString);
+        context.getClient().say(context, outputString);
     });
     return true;
 };

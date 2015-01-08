@@ -23,10 +23,16 @@ function DeOp() {
 
 DeOp.prototype.execute = function(context) {
     for (var i = 0; i < context.arguments.length; i++) {
-        context.client.deop(context.arguments[i]);
+        //get the user
+        var user = context.getChannel().getUser(context.arguments[i]);
+        //if we didn't get a user, we don't need to do anything, as they aren't banned...
+        if(user) {
+            //unban the user.
+            context.getChannel().deopUser(user);
+        }
     };
-    context.client.clientManager.saveConfig();
-    context.client.say(context, "Deopped "+context.arguments.join(", "));
+    context.getClient().getIRCClient().notice(context.getUser().getNick(), "Deopped "+context.arguments.join(", "));
+    context.getClient().getClientManager().save();
     return true;
 };
 

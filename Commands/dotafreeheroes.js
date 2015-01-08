@@ -22,7 +22,7 @@ function DOTAFreeHeroes() {
 }
 
 DOTAFreeHeroes.prototype.execute = function(context) {
-    context.client.say(context, "All of them.");
+    context.getClient().say(context, "All of them.");
     return true;
 };
 

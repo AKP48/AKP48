@@ -22,9 +22,6 @@ function BaseCommand() {
 
     //whether or not to only allow this command if it's in a private message.
     this.isPmOnly = false;
-
-    //whether this command requires operator privileges.
-    this.requireOp = false;
 }
 
 BaseCommand.prototype.execute = function(context) {
