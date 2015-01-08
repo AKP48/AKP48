@@ -62,7 +62,12 @@ CommandProcessor.prototype.process = function(message, client) {
             }
 
             //return if command is not allowed as a privmsg and this is one (unless we have the root permission.)
-            if(!context.getCommand().allowPm && context.isPm && !context.user.hasPermission("root.command.use")) {
+            if(!context.getCommand().allowPm && context.isPm && !context.getUser().hasPermission("root.command.use")) {
+                return;
+            }
+
+            //check privilege
+            if(!context.getUser().hasPermission(context.getCommand().permissionName) && !context.user.hasPermission("root.command.use")) {
                 return;
             }
 
