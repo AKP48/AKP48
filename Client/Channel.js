@@ -59,7 +59,7 @@ Channel.prototype.removeUser = function(user) {
 /**
  * Get a user.
  * @param  {String} hostmask The user's hostmask.
- * @return {User}            The user, false if no user.
+ * @return {User}            The user, null if no user.
  */
 Channel.prototype.getUser = function(hostmask) {
     for (var i = 0; i < this.users.length; i++) {
@@ -67,7 +67,7 @@ Channel.prototype.getUser = function(hostmask) {
             return this.users[i];
         }
     };
-    return false;
+    return null;
 };
 
 /**

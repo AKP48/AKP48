@@ -80,9 +80,9 @@ Builder.prototype.buildContext = function(message, client) {
     var user = channel.getUser(message.prefix);
 
     //if there is no user with this hostmask
-    if(!user) {
+    if(user === null) {
         //create a new one and add it.
-        user = this.buildUser(message, client);
+        user = this.buildUser(message, context, {});
         channel.addUser(user);
     }
 
@@ -138,45 +138,36 @@ Builder.prototype.buildContext = function(message, client) {
 /**
  * Builds a User using a message and Client.
  * @param  {Message} message The IRC message to use.
- * @param  {Client}  client  The client to use.
+ * @param  {Context} context The context to use.
+ * @param  {JSON}    options The options to use.
  * @return {User}            The User.
  */
-Builder.prototype.buildUser = function(message, client) {
+Builder.prototype.buildUser = function(message, context, options) {
     //Make ourselves a new User...
     var user = new User();
 
-    //if the user this came from is a Minecraft bot,
-    if(client.getMcBots().indexOf(message.prefix)){
-        //say so.
-        user.setIsRealIRCUser(false);
+    if(message && context) {
+        //if the user this came from is a Minecraft bot,
+        if(context.getChannel().getMcBots().indexOf(message.prefix) !== -1){
+            //say so.
+            user.setIsRealIRCUser(false);
 
-        //find nick
-        start = message.args[1].indexOf('(');
-        end = message.args[1].indexOf(')');
+            //find nick
+            start = message.args[1].indexOf('(');
+            end = message.args[1].indexOf(')');
 
-        //set nick
-        user.setNick(message.args[1].substring(start + 1, end));
+            //set nick
+            user.setNick(message.args[1].substring(start + 1, end));
 
-        //set hostmask
-        user.setHostmask(user.getNick()+"!"+message.user+"@"+message.host);
-    } else {
-        //the user is legit, so just use their nick and hostmask.
-        user.setNick(message.nick);
-        user.setHostmask(message.prefix);
+            //set hostmask
+            user.setHostmask(user.getNick()+"!"+message.user+"@"+message.host);
+        } else {
+            //the user is legit, so just use their nick and hostmask.
+            user.setNick(message.nick);
+            user.setHostmask(message.prefix);
+        }
     }
 
-    return user;
-};
-
-/**
- * Builds a User using options.
- * @param  {JSON} options    The options to use.
- * @return {User}            The User.
- */
-Builder.prototype.buildUser = function(options) {
-    //Make ourselves a new User...
-    var user = new User();
-    //set the options, if we get them.
     if(options.nick) {
         user.setNick(options.nick)
     }
@@ -192,7 +183,7 @@ Builder.prototype.buildUser = function(options) {
     if(options.isRealIRCUser) {
         user.setIsRealIRCUser(options.isRealIRCUser);
     }
-    //return the user.
+
     return user;
 };
 
@@ -210,7 +201,7 @@ Builder.prototype.buildChannel = function(options) {
     }
     if(options.users) {
         for (var i = 0; i < options.users.length; i++) {
-            channel.addUser(this.buildUser(options.users[i]));
+            channel.addUser(this.buildUser(null, null, options.users[i]));
         };
     }
     if(options.mcBots) {

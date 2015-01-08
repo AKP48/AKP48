@@ -55,7 +55,23 @@ Help.prototype.execute = function(context) {
         if (commands.hasOwnProperty(property)) {
             //if command is really there
             if(commands[property] !== undefined) {
-                if(context.getUser().hasPermission(commands[property].permissionName) || context.getClient().getChannel("global").getUser(context.getUser().getNick()).hasPermission(commands[property].permissionName)) {
+
+                //to tell us whether or not to send this message.
+                var send = true;
+
+                //check permission on user
+                if(!context.getUser().hasPermission(commands[property].permissionName)) {
+                    send = false;
+                }
+
+                //get user from global channel
+                var globalUser = context.getClient().getChannel("global").getUser(context.getUser().getNick());
+                //check permission on global channel user
+                if(globalUser && !globalUser.hasPermission(commands[property].permissionName)) {
+                    send = false;
+                }
+
+                if(send) {
                     responses.push(commands[property].name + ": " + commands[property].helpText + " | Usage: " + context.getChannel().getCommandDelimiter() + commands[property].aliases[0] + " " + commands[property].usageText);
                 }
             }
@@ -72,7 +88,7 @@ Help.prototype.execute = function(context) {
         waste--;
     }
 
-    context.getClient().getIRCClient().say(context.getUser().getNick(), "Help: Page "+(page+ 1)+" of "+numberOfPages);
+    context.getClient().getIRCClient().notice(context.getUser().getNick(), "Help: Page "+(page+ 1)+" of "+numberOfPages+" (use "+context.getChannel().getCommandDelimiter()+"help [page] to switch pages)");
 
     var self = this;
     //counter for number per page
@@ -81,7 +97,7 @@ Help.prototype.execute = function(context) {
     var interval = setInterval(function() {
         if(responses.length && j < self.perPage) {
             var i = responses.shift();
-            context.client.getIRCClient().say(context.getUser().getNick(), i);
+            context.client.getIRCClient().notice(context.getUser().getNick(), i);
             j++;
         } else {
             clearInterval(interval);
