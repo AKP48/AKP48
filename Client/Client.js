@@ -160,18 +160,14 @@ Client.prototype.getClientManager = function() {
  * Set whether or not this Client should be temporary.
  * @param {Boolean} temporary New temporary status.
  */
-Client.prototype.setTemporary = function(temporary) {
-    this.temporary = temporary;
+Client.prototype.setTemporary = function(isTemporary) {
+    this.isTemporary = temporary;
 };
 
 /**
- * Get whether or not this Client should be temporary.
- * @return {Boolean} Temporary status.
+ * Get the CommandProcessor for this Client.
+ * @return {CommandProcessor} The CommandProcessor.
  */
-Client.prototype.getTemporary = function() {
-    return this.temporary;
-};
-
 Client.prototype.getCommandProcessor = function() {
     return this.commandProcessor;
 };
@@ -222,4 +218,24 @@ Client.prototype.say = function(context, message) {
     var channel = (context.getChannel().getName() === "global" ? context.getUser().getNick() : context.getChannel().getName());
     this.getIRCClient().say(channel, context.getUser().getNick() + ": " + message);
 };
+
+/**
+ * Clone this Client for configuration-saving.
+ * @return {Client} The client.
+ */
+Client.prototype.clone = function() {
+    //just return a blank object if this is supposed to be temporary.
+    if(this.isTemporary) {return {};}
+
+    //create new client, set options
+    var client = new Client();
+    client.setNick(this.getNick());
+    client.setServer(this.getServer());
+    client.setPassword(this.getPassword());
+    client.setChannels(this.getChannels());
+
+    //return the new client
+    return client;
+};
+
 module.exports = Client;

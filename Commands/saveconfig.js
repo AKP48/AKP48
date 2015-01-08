@@ -1,33 +1,33 @@
-function Daft() {
+function SaveConfig() {
     //the name of the command.
-    this.name = "Daft";
+    this.name = "Save Configuration";
 
     //help text to show for this command.
-    this.helpText = "Asks a user if they are daft.";
+    this.helpText = "Saves the current configuration of the bot.";
 
     //usage message. only include the parameters. the command name will be automatically added.
     this.usageText = "";
 
     //ways to call this command.
-    this.aliases = ['daft'];
+    this.aliases = ['saveconfig', 'saveconf'];
+
+    //dependencies that this module has.
+    //this.dependencies = [''];
 
     //Name of the permission needed to use this command. All users have 'user.command.use' by default. Banned users have 'user.command.banned' by default.
-    this.permissionName = 'user.command.use';
+    this.permissionName = 'root.command.use';
 
     //whether or not to allow this command in a private message.
     this.allowPm = true;
 
     //whether or not to only allow this command if it's in a private message.
-    this.isPmOnly = false;
+    this.isPmOnly = true;
 }
 
-Daft.prototype.execute = function(context) {
-    if(context.arguments[0] !== undefined) {
-        context.getClient().getIRCClient().say(context.getChannel().getName(), context.arguments.join(" ") + ", are you daft?");
-    } else {
-        context.getClient().getIRCClient().say(context.getChannel().getName(), context.nick + ", are you daft?");
-    }
+SaveConfig.prototype.execute = function(context) {
+    context.getClient().getClientManager().save();
+    context.getClient().getIRCClient().notice(context.getUser().getNick(), "Saved config!");
     return true;
 };
 
-module.exports = Daft;
+module.exports = SaveConfig;

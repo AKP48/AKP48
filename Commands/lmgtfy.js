@@ -31,7 +31,7 @@ LMGTFY.prototype.execute = function(context) {
     var query = context.arguments.join(' ');
     query = encodeURIComponent(query);
     this.googleAPI.shorten_url("http://lmgtfy.com/?q="+query, function(url) {
-        context.client.say(context, url);
+        context.getClient().say(context, url);
     });
     return true;
 };

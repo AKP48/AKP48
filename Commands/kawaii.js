@@ -22,7 +22,7 @@ function かわいい() {
 }
 
 かわいい.prototype.execute = function(context) {
-    context.client.say(context, "ですですですですです。　：３");
+    context.getClient().say(context, "ですですですですです。　：３");
     return true;
 };
 

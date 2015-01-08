@@ -2,7 +2,6 @@
     "productionMode": true, // Disable this in order to make the bot crash on most errors.
     "servers": [
         {
-            "name": "Default", // Name of the bot. Not really used anywhere yet.
             "server": "kuroi.irc.nolimitzone.com", // IRC server for the bot to connect to.
             "nick": "IRCBot9000", // Nick to use on the IRC server.
             "password": "PasswordGoesHere", // Password the bot should use upon connecting.

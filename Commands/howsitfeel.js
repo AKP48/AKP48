@@ -25,7 +25,7 @@ function HowsItFeel() {
 }
 
 HowsItFeel.prototype.execute = function(context) {
-    context.client.say(context, "Feels bad, man.");
+    context.getClient().say(context, "Feels bad, man.");
     return true;
 };
 

@@ -92,7 +92,7 @@ Roll.prototype.execute = function(context) {
     if(countLimited) {outputString += " | (Dice counts limited to 1,000,000.)"}
 
     //output string to IRC
-    context.client.say(context, outputString);
+    context.getClient().say(context.channel, outputString);
     return true;
 };
 

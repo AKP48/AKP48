@@ -30,9 +30,9 @@ Choose.prototype.execute = function(context) {
 
     if(!context.arguments.length) {return false;}
 
-    if(context.arguments.length == 1) {context.client.say(context, "The choice is yours!"); return true;}
+    if(context.arguments.length == 1) {context.getClient().say(context, "The choice is yours!"); return true;}
 
-    context.client.say(context, context.arguments[this.chance.integer({min:0, max:context.arguments.length-1})]);
+    context.getClient().say(context, context.arguments[this.chance.integer({min:0, max:context.arguments.length-1})]);
 
     return true;
 };

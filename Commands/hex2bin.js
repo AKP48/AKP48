@@ -40,11 +40,11 @@ Hex2Bin.prototype.execute = function(context) {
         if (lookupTable.hasOwnProperty(s[i])) {
             ret += lookupTable[s[i]];
         } else {
-            context.client.say(context, "Cannot convert "+context.arguments.join(" ")+" to binary!");
+            context.getClient().say(context, "Cannot convert "+context.arguments.join(" ")+" to binary!");
             return true;
         }
     }
-    context.client.say(context, context.arguments.join(" ")+" to binary: "+ret);
+    context.getClient().say(context, context.arguments.join(" ")+" to binary: "+ret);
     return true;
 };
 
