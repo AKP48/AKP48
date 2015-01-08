@@ -64,7 +64,7 @@ Builder.prototype.buildContext = function(message, client) {
         channel = "global";
 
         //set isPm
-        context.setIsPM();
+        context.setIsPm(true);
     }
 
     //set channel to the channel we are trying to get.
@@ -84,10 +84,10 @@ Builder.prototype.buildContext = function(message, client) {
         //create a new one and add it.
         user = this.buildUser(message, client);
         channel.addUser(user);
-        context.setUser(user);
     }
 
     //now we have a user.
+    context.setUser(user);
 
     //set full message
     context.setFullMessage(message.args[1]);

@@ -219,6 +219,7 @@ Client.prototype.initialize = function(clientManager) {
  * @param  {String}  message The message.
  */
 Client.prototype.say = function(context, message) {
-    this.getIRCClient().say(context.getChannel().getName(), context.getUser().getNick() + ": " + message);
+    var channel = (context.getChannel().getName() === "global" ? context.getUser().getNick() : context.getChannel().getName());
+    this.getIRCClient().say(channel, context.getUser().getNick() + ": " + message);
 };
 module.exports = Client;

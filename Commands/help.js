@@ -47,13 +47,16 @@ Help.prototype.execute = function(context) {
     //array for output
     var responses = [];
 
+    //get the current commands
+    var commands = context.getCommandProcessor().commands;
+
     //for each command
-    for (var property in context.getCommands()) {
-        if (context.getCommands().hasOwnProperty(property)) {
+    for (var property in commands) {
+        if (commands.hasOwnProperty(property)) {
             //if command is really there
-            if(context.getCommands()[property] !== undefined) {
-                if(context.getUser().hasPermission(context.getCommands()[property].permissionName) || context.getClient().getChannel("global").getUser(context.getUser().getNick()).hasPermission(context.getCommands()[property].permissionName)) {
-                    responses.push(context.getCommands()[property].name + ": " + context.getCommands()[property].helpText + " | Usage: " + context.getChannel().getCommandDelimiter() + context.getCommands()[property].aliases[0] + " " + context.getCommands()[property].usageText);
+            if(commands[property] !== undefined) {
+                if(context.getUser().hasPermission(commands[property].permissionName) || context.getClient().getChannel("global").getUser(context.getUser().getNick()).hasPermission(commands[property].permissionName)) {
+                    responses.push(commands[property].name + ": " + commands[property].helpText + " | Usage: " + context.getChannel().getCommandDelimiter() + commands[property].aliases[0] + " " + commands[property].usageText);
                 }
             }
         }
