@@ -37,11 +37,11 @@ Slogan.prototype.execute = function(context) {
             if(err) {console.error(err);}
             self.slogans = data.toString().split("\n");
             var item = self.slogans[Math.floor(Math.random()*self.slogans.length)];
-            context.client.say(context, item.replace(/<text>/g, object));
+            context.getClient().say(context, item.replace(/<text>/g, object));
         });
     } else {
         var item = this.slogans[Math.floor(Math.random()*this.slogans.length)];
-        context.client.say(context, item.replace(/<text>/g, object));
+        context.getClient().say(context, item.replace(/<text>/g, object));
     }
     return true;
 };

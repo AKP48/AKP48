@@ -35,9 +35,9 @@ Proxy.prototype.execute = function(context) {
         //send the message.
         context.client.getIRCClient().say(channel, text);
         //notify sender.
-        context.client.say(context, "\""+text + "\" successfully sent to "+channel+"!");
+        context.getClient().say(context, "\""+text + "\" successfully sent to "+channel+"!");
     } else {
-        context.client.say(context, "Could not send to channel "+channel+"!");
+        context.getClient().say(context, "Could not send to channel "+channel+"!");
     }
     return true;
 };

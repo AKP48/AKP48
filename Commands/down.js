@@ -36,7 +36,7 @@ Down.prototype.execute = function(context) {
     if((result = urlRegEx.exec(context.arguments[0])) !== null) {
         host = result[2];
         if(result[1] == "https://") {
-            context.client.say(context, "I can't do secure sites (https://), but I'll try to access the site normally for you.");
+            context.getClient().say(context, "I can't do secure sites (https://), but I'll try to access the site normally for you.");
         }
     }
 
@@ -51,7 +51,7 @@ Down.prototype.execute = function(context) {
     var http = require('http');
     var options = {method: 'HEAD', host: host, port: port, path: path};
     var req = http.request(options, function(res) {
-        context.client.say(context, host + " seems up to me.")
+        context.getClient().say(context, host + " seems up to me.")
       }
     );
 
@@ -69,19 +69,19 @@ Down.prototype.execute = function(context) {
         console.log(err);
         switch(err.code) {
             case 'ENOTFOUND':
-                context.client.say(context, "I couldn't find "+host+".");
+                context.getClient().say(context, "I couldn't find "+host+".");
                 break;
             case 'ECONNREFUSED':
-                context.client.say(context, host+" refused my connection.");
+                context.getClient().say(context, host+" refused my connection.");
                 break;
             case 'ETIMEDOUT':
-                context.client.say(context, "My connection to "+host+" timed out.");
+                context.getClient().say(context, "My connection to "+host+" timed out.");
                 break;
             case 'ECONNRESET':
-                context.client.say(context, "Either my connection to "+host+" was reset, or that site took too long to respond. I'd say it's probably down.");
+                context.getClient().say(context, "Either my connection to "+host+" was reset, or that site took too long to respond. I'd say it's probably down.");
                 break;
             default:
-                context.client.say(context, "I had trouble visiting "+host+", but I'm not sure why.");
+                context.getClient().say(context, "I had trouble visiting "+host+", but I'm not sure why.");
                 break;
         }
     });

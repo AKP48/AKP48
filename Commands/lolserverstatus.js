@@ -31,7 +31,7 @@ LoLServerStatus.prototype.execute = function(context) {
     var region = "na";
     if(context.arguments[0]) {region = context.arguments[0];}
     this.riotAPI.getServerStatus(region, function(msg) {
-        context.client.say(context, msg);
+        context.getClient().say(context, msg);
     });
     return true;
 };

@@ -69,7 +69,7 @@ Dice.prototype.execute = function(context) {
         outputString = nick + ": ಠ_ಠ";
     }
 
-    context.client.say(context, outputString);
+    context.getClient().say(context, outputString);
     return true;
 };
 
