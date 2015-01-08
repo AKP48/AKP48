@@ -9,7 +9,7 @@ function Reload() {
     this.usageText = "";
 
     //ways to call this command.
-    this.aliases = ['reload'];
+    this.aliases = ['reload', 'rl'];
 
     //Name of the permission needed to use this command. All users have 'user.command.use' by default. Banned users have 'user.command.banned' by default.
     this.permissionName = 'netop.command.use';
@@ -22,14 +22,14 @@ function Reload() {
 }
 
 Reload.prototype.execute = function(context) {
-    delete require.cache[require.resolve('../commandprocessor')];
+    delete require.cache[require.resolve('../CommandProcessor')];
     delete require.cache[require.resolve('../autoresponse')];
     delete require.cache[require.resolve('../chatter')];
 
     this.removeAPIAndCommandCache();
 
-    context.client.say(context, "All channels reloading!");
-    context.client.clientManager.reloadAll();
+    context.getClient().say(context, "All channels reloading!");
+    context.getClient().getClientManager().reloadClients();
     return true;
 };
 

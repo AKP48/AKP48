@@ -28,7 +28,7 @@ Channel.prototype.setName = function(name) {
  * @return {String} The name.
  */
 Channel.prototype.getName = function() {
-    return this.name
+    return this.name;
 };
 
 /**

@@ -26,4 +26,10 @@ ClientManager.prototype.addClient = function(client) {
     this.clients.push(client);
 };
 
+ClientManager.prototype.reloadClients = function() {
+    for (var i = 0; i < this.clients.length; i++) {
+        this.clients[i].reloadCommandProcessor();
+    };
+};
+
 module.exports = ClientManager;
