@@ -1,3 +1,5 @@
+var chance = require("chance");
+
 function Roll() {
     //the name of the command.
     this.name = "Roll";
