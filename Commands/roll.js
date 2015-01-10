@@ -1,4 +1,4 @@
-var chance = require("chance");
+var Chance = require("chance");
 
 function Roll() {
     //the name of the command.
@@ -21,6 +21,9 @@ function Roll() {
 
     //whether this command requires operator privileges.
     this.requireOp = false;
+
+    //randomizer
+    this.chance = new Chance();
 }
 
 Roll.prototype.execute = function(context) {
