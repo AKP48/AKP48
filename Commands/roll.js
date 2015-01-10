@@ -24,6 +24,9 @@ function Roll() {
 
     //randomizer
     this.chance = new Chance();
+
+    //number formatter
+    this.n = require('numeral');
 }
 
 Roll.prototype.execute = function(context) {
@@ -87,7 +90,7 @@ Roll.prototype.execute = function(context) {
 
     //format output
     for (var i = 0; i < rolls.length; i++) {
-        outputString += n(rolls[i]).format("0,0") + " | ";
+        outputString += this.n(rolls[i]).format("0,0") + " | ";
     };
 
     outputString = outputString.substring(0, outputString.length-3);
