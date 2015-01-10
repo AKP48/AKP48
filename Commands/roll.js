@@ -72,7 +72,7 @@ Roll.prototype.execute = function(context) {
         //for count of di
         for(var j = 0; j < dice[i].count; j++) {
             //add dice result to roll.
-            roll += chance.natural({min: 1, max: dice[i].maxValue}) * dice[i].multiplier;
+            roll += this.chance.natural({min: 1, max: dice[i].maxValue}) * dice[i].multiplier;
         }
 
         //if this was the last di in this group
