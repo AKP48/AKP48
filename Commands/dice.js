@@ -52,7 +52,7 @@ Dice.prototype.execute = function(context) {
         rolls.push(Math.floor(Math.random() * (numberOfSides)) + 1);
     };
 
-    var outputString = nick + ": ";
+    var outputString = "";
 
     for (var i = 0; i < rolls.length; i++) {
         outputString += rolls[i] + " | ";
@@ -66,7 +66,7 @@ Dice.prototype.execute = function(context) {
     }
 
     if(numberOfSides < 2) {
-        outputString = nick + ": ಠ_ಠ";
+        outputString = "ಠ_ಠ";
     }
 
     context.getClient().say(context, outputString);
