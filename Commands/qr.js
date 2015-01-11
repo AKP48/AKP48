@@ -15,7 +15,7 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-var imgurAPI = require('imgur-node-api');
+var config = require('../config.json');
 
 function QR() {
     //the name of the command.
@@ -41,6 +41,10 @@ function QR() {
 
     //whether or not to only allow this command if it's in a private message.
     this.isPmOnly = false;
+
+    //imgur API
+    this.imgurAPI = require('imgur-node-api');
+    this.imgurAPI.setClientID(config.imgur.clientID);
 }
 
 QR.prototype.execute = function(context) {

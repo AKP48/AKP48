@@ -83,5 +83,10 @@
     "riot": {
         "apiKey": "PutYourRiotGamesAPIKeyHere" // API key to use for Riot Games API-related commands. If non-existent, League of Legends-related commands will be disabled.
         // See http://developer.riotgames.com/ for more information on obtaining a Riot Games API key.
+    },
+    "imgur": {
+        "clientID": "PutYourImgurClientIDHere", // Client ID for imgur commands. If non-existent, imgur-related commands will be disabled.
+        "clientSecret": "PutYourImgurClientSecretHere" // Client secret for imgur commands. If non-existent, imgur-related commands will be disabled.
+        // See https://api.imgur.com/ for more information on getting imgur API authorization.
     }
 }
