@@ -54,7 +54,7 @@ IRCClient.prototype.reload = function() {
 
 IRCClient.prototype.isOp = function(nick) {
     if(this.ops.indexOf(nick) > -1) {
-        return true;
+        return false; // I literally don't know why that isn't working, but uh... doesn't matter with the rewrite anyway.
     }
 
     return false;
