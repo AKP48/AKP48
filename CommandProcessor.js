@@ -24,7 +24,7 @@ CommandProcessor.prototype.initCommandAliases = function() {
                     //if dependency doesn't exist
                     if(this.commands[this.commands[property].dependencies[i]] === undefined) {
                         //disable it.
-                        console.log(property + "module does not have all required dependencies! Disabling " + property + " module!");
+                        console.log(property + " module does not have all required dependencies! Disabling " + property + " module!");
                         delete this.commands[property];
                         break;
                     }
