@@ -41,7 +41,7 @@ function Channel() {
 
     //set an interval to reset users violation levels.
     var self = this;
-    setInterval(function(){self.resetViolationLevels();}, this.floodProtection.secondsToReset*1000);
+    setInterval(function(){self.resetViolationLevels();}, this.floodProtectionParams.secondsToReset*1000);
 }
 
 /**
