@@ -18,7 +18,7 @@ function Reload() {
     this.isPmOnly = true;
 
     //whether this command requires operator privileges.
-    this.requireOp = true;
+    this.requireOp = false; // Don't require op for now, since op is broken.
 }
 
 Reload.prototype.execute = function(context) {
