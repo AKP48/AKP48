@@ -51,7 +51,7 @@ function ChooseAttack() {
 }
 
 ChooseAttack.prototype.execute = function(context) {
-    context.client.say(context, this.values[this.chance.integer({min:0, max:this.values.length-1})]);
+    context.getClient().say(context, this.values[this.chance.integer({min:0, max:this.values.length-1})]);
 
     return true;
 };
