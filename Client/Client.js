@@ -249,7 +249,13 @@ Client.prototype.clone = function() {
     client.setNick(this.getNick());
     client.setServer(this.getServer());
     client.setPassword(this.getPassword());
-    client.setChannels(this.getChannels());
+
+    //looping through all channels to fix having a blank channel.
+    for (var i = 0; i < this.getChannels().length; i++) {
+        if(this.getChannels()[i].getName !== "") {
+            client.addChannel(this.getChannels()[i]);
+        }
+    };
 
     //return the new client
     return client;
