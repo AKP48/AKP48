@@ -41,6 +41,7 @@ function Reload() {
 Reload.prototype.execute = function(context) {
     delete require.cache[require.resolve('../CommandProcessor')];
     delete require.cache[require.resolve('../autoresponse')];
+    delete require.cache[require.resolve('../config.json')];
 
     this.removeAPIAndCommandCache();
 
