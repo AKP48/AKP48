@@ -86,7 +86,7 @@ CommandProcessor.prototype.process = function(message, client) {
     var context = client.getClientManager().builder.buildContext(message, client);
 
     //parse the message for auto response system
-    this.parseMessage(context.getFullMessage(), context.getClient(), context.getChannel(), context.isPm);
+    this.parseMessage(context);
 
     //if the command exists
     if(context.commandExists()) {
@@ -125,15 +125,14 @@ CommandProcessor.prototype.process = function(message, client) {
  * This is the method that handles sending information for
  * YouTube and Steam links. This method will be being changed soon.
  *
- * @param  {String}  msg     The message.
- * @param  {Client}  client  The Client this message came from.
- * @param  {Channel} channel The channel this message came from.
- * @param  {Boolean} pm      Whether or not this message is a private message.
+ * @param  {Context} context The context.
  */
-CommandProcessor.prototype.parseMessage = function(msg, client, channel, pm) {
+CommandProcessor.prototype.parseMessage = function(context) {
     var youTubeRegEx = /(?:https?:\/\/)?(?:[0-9A-Z-]+\.)?(?:youtu\.be\/|youtube(?:-nocookie)?\.com\S*[^\w\s-])([\w-]{11})(?=[^\w-]|$)(?![?=&+%\w.-]*(?:['"][^<>]*>|<\/a>))[?=&+%\w.-]*/gi;
     var steamAppRegEx = /(?:store\.steampowered\.com\/app\/)([0-9]+)/gi;
     var steamPkgRegEx = /(?:store\.steampowered\.com\/sub\/)([0-9]+)/gi;
+
+    var msg = context.getFullMessage();
 
     if(msg.search(youTubeRegEx) != -1) {
         var youTubeIds = [];
@@ -143,7 +142,7 @@ CommandProcessor.prototype.parseMessage = function(msg, client, channel, pm) {
         }
         //TODO: better handling of maximum links.
         this.auto.youtube(youTubeIds, 3, function(res) {
-            client.getIRCClient().say(channel, res);
+            context.getClient().getIRCClient().say(context.getChannel().getName(), res);
         });
     }
 
@@ -154,7 +153,7 @@ CommandProcessor.prototype.parseMessage = function(msg, client, channel, pm) {
             steamIds.push(result[1]);
         }
         this.auto.steamApp(steamIds, 3, function(res) {
-            client.getIRCClient().say(channel, res);
+            context.getClient().getIRCClient().say(context.getChannel().getName(), res);
         });
     }
 
@@ -165,7 +164,7 @@ CommandProcessor.prototype.parseMessage = function(msg, client, channel, pm) {
             steamIds.push(result[1]);
         }
         this.auto.steamPkg(steamIds, 3, function(res) {
-            client.getIRCClient().say(channel, res);
+            context.getClient().getIRCClient().say(context.getChannel().getName(), res);
         });
     }
 }
