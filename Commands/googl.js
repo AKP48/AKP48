@@ -52,4 +52,10 @@ Googl.prototype.execute = function(context) {
     return true;
 };
 
+Googl.prototype.shortenURL = function(context, url) {
+    this.googleAPI.shorten_url(url, function(url) {
+        context.getClient().say(context, url);
+    });
+};
+
 module.exports = Googl;

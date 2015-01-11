@@ -29,7 +29,7 @@ function Credits() {
     this.aliases = ['credits'];
 
     //dependencies that this module has.
-    //this.dependencies = [''];
+    this.dependencies = ['googl'];
 
     //Name of the permission needed to use this command. All users have 'user.command.use' by default. Banned users have 'user.command.banned' by default.
     this.permissionName = 'user.command.use';
@@ -42,7 +42,7 @@ function Credits() {
 }
 
 Credits.prototype.execute = function(context) {
-    context.getClient().say(context, "http://akpwebdesign.com/IRCBot/credits.html");
+    context.getClient().getCommandProcessor().aliasedCommands['googl'].shortenURL(context, "https://github.com/AKPWebDesign/AKP48/blob/master/CREDITS.md");
     return true;
 };
 

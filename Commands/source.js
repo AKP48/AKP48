@@ -15,20 +15,18 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-var config = require('../config.json');
-
-function QR() {
+function Source() {
     //the name of the command.
-    this.name = "QR Code";
+    this.name = "Source Code";
 
     //help text to show for this command.
-    this.helpText = "Creates a QR code.";
+    this.helpText = "Gives a link to the GitHub page for me.";
 
     //usage message. only include the parameters. the command name will be automatically added.
-    this.usageText = "[content of QR code]";
+    this.usageText = "";
 
     //ways to call this command.
-    this.aliases = ['qr', 'qrcode'];
+    this.aliases = ['source', 'src'];
 
     //dependencies that this module has.
     this.dependencies = ['googl'];
@@ -41,26 +39,11 @@ function QR() {
 
     //whether or not to only allow this command if it's in a private message.
     this.isPmOnly = false;
-
-    //imgur API
-    this.imgurAPI = require('imgur-node-api');
-    this.imgurAPI.setClientID(config.imgur.clientID);
 }
 
-QR.prototype.execute = function(context) {
-    //return if no arguments
-    if(!context.arguments.length) {return false;}
-
-    //this is the link that we're going to send to imgur
-    var imageURL = "http://chart.googleapis.com/chart?cht=qr&chs=500x500&chl=" + encodeURIComponent(context.arguments.join(" "));
-
-    //upload the image to imgur
-    this.imgurAPI.upload(imageURL, function (err,res) {
-        context.getClient().getCommandProcessor().aliasedCommands['googl'].shortenURL(context, res.data.link);
-    });
-
-    //add content here.
+Source.prototype.execute = function(context) {
+    context.getClient().getCommandProcessor().aliasedCommands['googl'].shortenURL(context, "https://github.com/AKPWebDesign/AKP48");
     return true;
 };
 
-module.exports = QR;
+module.exports = Source;
