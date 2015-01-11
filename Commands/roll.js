@@ -21,6 +21,12 @@ function Roll() {
 
     //whether or not to only allow this command if it's in a private message.
     this.isPmOnly = false;
+
+    //randomizer
+    this.chance = new Chance();
+
+    //number parser
+    this.n = require('numeral');
 }
 
 Roll.prototype.execute = function(context) {
