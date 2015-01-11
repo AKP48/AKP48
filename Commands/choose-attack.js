@@ -13,14 +13,14 @@ function ChooseAttack() {
     //ways to call this command.
     this.aliases = ['choose-attack', 'choose-atk'];
 
+    //Name of the permission needed to use this command. All users have 'user.command.use' by default. Banned users have 'user.command.banned' by default.
+    this.permissionName = 'user.command.use';
+
     //whether or not to allow this command in a private message.
     this.allowPm = true;
 
     //whether or not to only allow this command if it's in a private message.
     this.isPmOnly = false;
-
-    //whether this command requires operator privileges.
-    this.requireOp = false;
 
     //randomizer
     this.chance = new Chance();
@@ -28,11 +28,11 @@ function ChooseAttack() {
     //possible values
     this.values = [
         'Critical Fail',
-        'Miserable Fail',
+        'Dire Fail',
         'Horrible Fail',
         'Bad Fail',
         'Fail',
-        'Miserable Miss',
+        'Dismal Miss',
         'Horrible Miss',
         'Bad Miss',
         'Miss',
