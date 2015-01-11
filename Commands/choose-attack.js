@@ -56,4 +56,4 @@ ChooseAttack.prototype.execute = function(context) {
     return true;
 };
 
-module.exports = Choose;
+module.exports = ChooseAttack;
