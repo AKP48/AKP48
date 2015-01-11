@@ -15,7 +15,7 @@ function Client() {
     this.password = "";
 
     // The channels this client is connected to.
-    this.channels = ['#botplace'];
+    this.channels = [];
 
     // The IRC client being used for this client.
     this.ircClient = null;
