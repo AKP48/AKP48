@@ -1,3 +1,5 @@
+var Chance = require("chance");
+
 function Roll() {
     //the name of the command.
     this.name = "Roll";
@@ -19,6 +21,12 @@ function Roll() {
 
     //whether or not to only allow this command if it's in a private message.
     this.isPmOnly = false;
+
+    //randomizer
+    this.chance = new Chance();
+
+    //number parser
+    this.n = require('numeral');
 }
 
 Roll.prototype.execute = function(context) {
@@ -67,7 +75,7 @@ Roll.prototype.execute = function(context) {
         //for count of di
         for(var j = 0; j < dice[i].count; j++) {
             //add dice result to roll.
-            roll += chance.natural({min: 1, max: dice[i].maxValue}) * dice[i].multiplier;
+            roll += this.chance.natural({min: 1, max: dice[i].maxValue}) * dice[i].multiplier;
         }
 
         //if this was the last di in this group
@@ -82,7 +90,7 @@ Roll.prototype.execute = function(context) {
 
     //format output
     for (var i = 0; i < rolls.length; i++) {
-        outputString += n(rolls[i]).format("0,0") + " | ";
+        outputString += this.n(rolls[i]).format("0,0") + " | ";
     };
 
     outputString = outputString.substring(0, outputString.length-3);
