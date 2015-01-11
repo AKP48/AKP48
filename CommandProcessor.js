@@ -19,6 +19,9 @@ var Commands = require('./Commands');
 var AutoResponse = require('./autoresponse');
 var Chatter = require("./chatter");
 
+/**
+ * The Command Processor.
+ */
 function CommandProcessor() {
     this.auto = new AutoResponse();
 
@@ -30,15 +33,25 @@ function CommandProcessor() {
     this.initCommandAliases();
 }
 
+/**
+ * Initializes the aliasedCommands variable.
+ *
+ * This method is what allows us to use the various aliases that are
+ * included in different commands.
+ */
 CommandProcessor.prototype.initCommandAliases = function() {
-    //loop to remove modules without fulfilled dependencies.
+
+    // This first loop is simply to remove any modules with missing dependencies,
+    // as they will probably error out and not work. This ensures that the commands
+    // they provide will not be executible, and will not show up in the help list.
     for (var property in this.commands) {
+        //ensure that the property exists in our object.
         if (this.commands.hasOwnProperty(property)) {
-            //if dependencies are defined
+            //if dependencies are defined...
             if(this.commands[property] !== undefined && this.commands[property].dependencies !== undefined) {
-                //for each dependency
+                //for each dependency...
                 for (var i = 0; i < this.commands[property].dependencies.length; i++) {
-                    //if dependency doesn't exist
+                    //if dependency doesn't exist...
                     if(this.commands[this.commands[property].dependencies[i]] === undefined) {
                         //disable it.
                         console.log(property + " module does not have all required dependencies! Disabling " + property + " module!");
@@ -50,16 +63,25 @@ CommandProcessor.prototype.initCommandAliases = function() {
         }
     }
 
-    //loop to put in aliases
+    // This loop is the one that actually adds all of the aliases for each command
+    // and allows them to be executed.
     for (var property in this.commands) {
+        //if the property exists
         if (this.commands.hasOwnProperty(property)) {
+            //for each of the command's aliases
             for (var i = 0; i < this.commands[property].aliases.length; i++) {
+                //add the original command to the aliasedCommands array with the alias as it's name.
                 this.aliasedCommands[this.commands[property].aliases[i]] = this.commands[property];
             };
         }
     }
 };
 
+/**
+ * Process a message.
+ * @param  {IRCMessage} message The message object directly from the IRC module.
+ * @param  {Client}     client  The client that this message came from.
+ */
 CommandProcessor.prototype.process = function(message, client) {
     //the context we will be sending to the command.
     var context = client.getClientManager().builder.buildContext(message, client);
@@ -98,6 +120,17 @@ CommandProcessor.prototype.process = function(message, client) {
     }
 };
 
+/**
+ * Parse a message for automatically sent content.
+ *
+ * This is the method that handles sending information for
+ * YouTube and Steam links. This method will be being changed soon.
+ *
+ * @param  {String}  msg     The message.
+ * @param  {Client}  client  The Client this message came from.
+ * @param  {Channel} channel The channel this message came from.
+ * @param  {Boolean} pm      Whether or not this message is a private message.
+ */
 CommandProcessor.prototype.parseMessage = function(msg, client, channel, pm) {
     var youTubeRegEx = /(?:https?:\/\/)?(?:[0-9A-Z-]+\.)?(?:youtu\.be\/|youtube(?:-nocookie)?\.com\S*[^\w\s-])([\w-]{11})(?=[^\w-]|$)(?![?=&+%\w.-]*(?:['"][^<>]*>|<\/a>))[?=&+%\w.-]*/gi;
     var steamAppRegEx = /(?:store\.steampowered\.com\/app\/)([0-9]+)/gi;
@@ -139,28 +172,10 @@ CommandProcessor.prototype.parseMessage = function(msg, client, channel, pm) {
 }
 
 /**
- * Perform flood protection.
- * @param  {Object} context The IRC context that this message came from.
- * @return {Boolean}         Whether or not the message should be sent.
+ * Send a usage message to a user.
+ * @param  {Context} context The context that needs to be sent to.
+ * @param  {Command} command The command that was used.
  */
-CommandProcessor.prototype.floodProtection = function(context) {
-    // if((!context.pm || !(context.channel === context.client.nick)) && !context.channel.isOp(context.user)) {
-    //     if(!context.client.chatters[context.channel]) {context.client.chatters[context.channel] = [];}
-    //     if(context.client.chatters[context.channel][context.nick]) {
-    //         context.client.chatters[context.channel][context.nick].floodProtect();
-    //         //if they have been banned
-    //         if(context.client.chatters[context.channel][context.nick].checkBan()) {
-    //             //just end here
-    //             return false;
-    //         }
-    //     } else {
-    //         context.client.chatters[context.channel][context.nick] = new Chatter(context, !context.isMcBot);
-    //     }
-    // }
-
-    return true;
-};
-
 CommandProcessor.prototype.sendUsageMessage = function(context, command) {
     if(!context.isMcBot) {
         context.channel = context.nick;
