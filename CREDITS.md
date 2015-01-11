@@ -10,7 +10,7 @@
 
 **EvilSeph**: Thanks for giving me great ideas on what to make this bot do, and thanks for helping format the bot's output to make it look great!
 
-**Wolvereness**: Thanks for providing Regular Expressions for various things so that the can actually do wonderful things!
+**Wolvereness**: Thanks for providing Regular Expressions for various things so that it can actually do wonderful things!
 
 `#-i`: Thanks for helping test the bot.
 
