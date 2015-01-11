@@ -112,7 +112,7 @@ CommandProcessor.prototype.process = function(message, client) {
             //do flood protection/execute the command if we haven't returned by now.
             if(context.getChannel().floodProtection(context)) {
                 if(!context.getCommand().execute(context)) {
-                    this.sendUsageMessage(context, context.getCommand());
+                    this.sendUsageMessage(context);
                 }
             }
         }
@@ -172,13 +172,14 @@ CommandProcessor.prototype.parseMessage = function(context) {
 /**
  * Send a usage message to a user.
  * @param  {Context} context The context that needs to be sent to.
- * @param  {Command} command The command that was used.
  */
-CommandProcessor.prototype.sendUsageMessage = function(context, command) {
-    if(!context.isMcBot) {
-        context.channel = context.nick;
+CommandProcessor.prototype.sendUsageMessage = function(context) {
+    var message = context.getChannel().getCommandDelimiter() + context.getCommand().aliases[0] + " " + context.getCommand().usageText;
+    if(context.getUser().isRealIRCUser) {
+        context.getClient().getIRCClient().notice(context.getUser().getNick(), message);
+    } else {
+        context.getClient().say(context, message);
     }
-    context.client.say(context, context.client.delimiter + context.command + " " + command.usageText);
 };
 
 module.exports = CommandProcessor;
