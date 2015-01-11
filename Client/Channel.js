@@ -30,6 +30,18 @@ function Channel() {
 
     // The channel's command delimiter.
     this.commandDelimiter = ".";
+
+    // The channel's flood protection parameters. See example.config.json for more information.
+    this.floodProtectionParams = {
+        "enabled": true,
+        "secondsToReset": 30,
+        "maxViolationLevel": 8,
+        "penaltyMultiplier": 1.25
+    }
+
+    //set an interval to reset users violation levels.
+    var self = this;
+    setInterval(function(){self.resetViolationLevels();}, this.floodProtection.secondsToReset*1000);
 }
 
 /**
@@ -210,6 +222,62 @@ Channel.prototype.deopUser = function(user) {
     //get user for sure.
     var deopUser = this.getUser(user.getHostmask());
     deopUser.removePermission("chanop.command.use");
+};
+
+Channel.prototype.setFloodProtectionParams = function(floodProtectionParams) {
+    this.floodProtectionParams = floodProtectionParams;
+};
+
+/**
+ * Perform flood protection.
+ * @param  {Context} context The context to check.
+ * @return {Boolean}         Whether or not the command should be executed.
+ */
+Channel.prototype.floodProtection = function(context) {
+    //if this is a private message, or if the user is a channel operator, no flood protection.
+    if(this.getName() === "global" || context.getUser().hasPermission("chanop.command.use")) {return true;}
+
+    //if flood protection has been disabled for this channel, return true.
+    if(!this.floodProtectionParams.enabled) {return true;}
+
+    //if the user is already banned, penalize the user and return false.
+    if(context.getUser().floodProtection.isBanned) {
+        context.getUser().setViolationLevel(context.getUser().getViolationLevel() * this.floodProtectionParams.penaltyMultiplier);
+        return false;
+    }
+
+    //if the user's violation level is higher than the maximum allowed...
+    if(context.getUser().getViolationLevel() > this.floodProtectionParams.maxViolationLevel) {
+        //if they are a real IRC user, NOTICE them. otherwise, just send a message in their context.
+        if(context.getUser().isRealIRCUser) {
+            context.getClient().getIRCClient().notice(context.getUser().getNick(), "You have been temporarily banned from using my commands for spamming too many commands in a short time. Please refrain from spamming commands in this channel, or I will make your ban longer.");
+        } else {
+            context.getClient().say(context, "You have been temporarily banned from using my commands for spamming too many commands in a short time. Please refrain from spamming commands in this channel, or I will make your ban longer.");
+        }
+
+        //set the fact that they're banned
+        context.getUser().floodProtection.isBanned = true;
+
+        //return false to let the CommandProcessor know not to execute the command.
+        return false;
+    }
+
+    //if the user is not banned, add to their violation level and return true.
+    context.getUser().setViolationLevel(context.getUser().getViolationLevel() + 1);
+    return true;
+};
+
+/**
+ * Attempt to reset the violation level of all users.
+ */
+Channel.prototype.resetViolationLevels = function() {
+    var users = this.getUsers();
+
+    //for all users
+    for (var i = 0; i < users.length; i++) {
+        //subtract max violation level from their violation level
+        users[i].setViolationLevel(users[i].getViolationLevel() - this.floodProtectionParams.maxViolationLevel);
+    };
 };
 
 module.exports = Channel;

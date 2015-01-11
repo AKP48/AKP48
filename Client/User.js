@@ -33,6 +33,11 @@ function User() {
 
     // Whether or not this user is a Real IRC User™.
     this.isRealIRCUser = true;
+
+    // Flood protection information for this user.
+    this.floodProtection = {
+        "isBanned": false
+    }
 }
 
 /**
@@ -128,6 +133,8 @@ User.prototype.hasPermission = function(permission) {
  */
 User.prototype.setViolationLevel = function(violationLevel) {
     this.violationLevel = violationLevel;
+    //ensure that violation level never goes lower than 0.
+    if(this.violationLevel < 0) {this.violationLevel = 0;}
 };
 
 /**

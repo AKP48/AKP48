@@ -93,8 +93,25 @@ Builder.prototype.buildContext = function(message, client) {
     //set the channel in the context.
     context.setChannel(channel);
 
+    var nick = message.nick;
+    var prefix = message.prefix;
+
+    //if the message is from a Minecraft bot, figure out who the user should be.
+    if(context.getChannel().getMcBots().indexOf(message.nick) !== -1){
+        //find nick
+        var start = message.args[1].indexOf('(');
+        var end = message.args[1].indexOf(')');
+
+        //get the nickname
+        nick = message.args[1].substring(start + 1, end);
+
+        //set hostmask
+        prefix = nick+"!"+message.user+"@"+message.host;
+    }
+
+
     //temporary var for the user.
-    var user = channel.getUser(message.prefix);
+    var user = channel.getUser(prefix);
 
     //if there is no user with this hostmask
     if(user === null) {
@@ -122,7 +139,7 @@ Builder.prototype.buildContext = function(message, client) {
     //if the user is from a Minecraft bot
     if(!user.isRealIRCUser) {
         //cut off their name from the string.
-        messageString = messageString.substring(messageString.indexOf(')')+1);
+        messageString = messageString.substring(messageString.indexOf(')')+2);
     }
 
     //if we have a command
@@ -165,7 +182,7 @@ Builder.prototype.buildUser = function(message, context, options) {
 
     if(message && context) {
         //if the user this came from is a Minecraft bot,
-        if(context.getChannel().getMcBots().indexOf(message.prefix) !== -1){
+        if(context.getChannel().getMcBots().indexOf(message.nick) !== -1){
             //say so.
             user.setIsRealIRCUser(false);
 
@@ -226,6 +243,9 @@ Builder.prototype.buildChannel = function(options) {
     }
     if(options.commandDelimiter) {
         channel.setCommandDelimiter(options.commandDelimiter);
+    }
+    if(options.floodProtection) {
+        channel.setFloodProtectionParams(options.floodProtection);
     }
     //return the channel
     return channel;

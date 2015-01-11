@@ -17,7 +17,6 @@
 
 var Commands = require('./Commands');
 var AutoResponse = require('./autoresponse');
-var Chatter = require("./chatter");
 
 /**
  * The Command Processor.
@@ -111,7 +110,7 @@ CommandProcessor.prototype.process = function(message, client) {
             }
 
             //do flood protection/execute the command if we haven't returned by now.
-            if(this.floodProtection(context)) {
+            if(context.getChannel().floodProtection(context)) {
                 if(!context.getCommand().execute(context)) {
                     this.sendUsageMessage(context, context.getCommand());
                 }
