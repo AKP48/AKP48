@@ -10,6 +10,7 @@
   "license": "ISC",
   "dependencies": {
     "chance": "^0.7.0",
+    "imgur-node-api": "^0.1.0",
     "irc": "^0.3.7",
     "irc-colors": "^1.1.0",
     "moment": "^2.8.4",
