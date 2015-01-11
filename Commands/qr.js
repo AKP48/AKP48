@@ -48,6 +48,17 @@ function QR() {
 }
 
 QR.prototype.execute = function(context) {
+    //return if no arguments
+    if(!context.arguments.length) {return false;}
+
+    //this is the link that we're going to send to imgur
+    var imageURL = "http://chart.googleapis.com/chart?cht=qr&chs=500x500&chl=" + context.arguments.join(" ");
+
+    //upload the image to imgur
+    this.imgurAPI.upload(imageURL, function (err,res) {
+        context.getClient().say(context, res.data.link);
+    });
+
     //add content here.
     return true;
 };
