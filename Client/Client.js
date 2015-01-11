@@ -193,6 +193,8 @@ Client.prototype.getCommandProcessor = function() {
  * Reload the client's CommandProcessor.
  */
 Client.prototype.reloadCommandProcessor = function() {
+    delete this.commandProcessor;
+    var CommandProcessor = require("../CommandProcessor");
     this.commandProcessor = new CommandProcessor();
 };
 
