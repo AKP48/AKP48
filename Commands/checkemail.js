@@ -46,10 +46,10 @@ CheckEmail.prototype.execute = function(context) {
 
     if(!context.arguments.length){return false;}
 
-    if(emailRegEx.test(context.arguments[0])) {
-        context.getClient().say(context, context.arguments[0] + " is a valid email address.");
+    if(emailRegEx.test(context.arguments.join(" "))) {
+        context.getClient().say(context, context.arguments.join(" ") + " is a valid email address.");
     } else {
-        context.getClient().say(context, context.arguments[0] + " is not a valid email address.");
+        context.getClient().say(context, context.arguments.join(" ") + " is not a valid email address.");
     }
     return true;
 };
