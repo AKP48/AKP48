@@ -29,7 +29,7 @@ function Lart() {
     this.aliases = ['lart'];
 
     //disable this command.
-    this.dependencies = ['moduleThatWillNeverBeHereSoThatThisCommandWillNeverLoad'];
+    //this.dependencies = [''];
 
     //Name of the permission needed to use this command. All users have 'user.command.use' by default. Banned users have 'user.command.banned' by default.
     this.permissionName = 'user.command.use';
@@ -45,7 +45,7 @@ function Lart() {
 }
 
 Lart.prototype.execute = function(context) {
-    var object = context.nick;
+    var object = context.getUser().getNick();
 
     if(context.arguments[0] !== undefined) {
         object = context.arguments.join(" ");
@@ -53,15 +53,15 @@ Lart.prototype.execute = function(context) {
 
     if(!this.larts.length) {
         var self = this;
-        fs.readFile('./data/lart.txt', function(err, data) {
+        require('fs').readFile('./data/lart.txt', function(err, data) {
             if(err) {console.error(err);}
             self.larts = data.toString().split("\n");
             var item = self.larts[Math.floor(Math.random()*self.larts.length)];
-            context.getClient().getIRCClient().say(context.getChannel().getName(), context.nick + " " + item.replace(/\{user\}/g, object));
+            context.getClient().getIRCClient().say(context.getChannel().getName(), context.getUser().getNick() + " " + item.replace(/\{user\}/g, object));
         });
     } else {
         var item = this.larts[Math.floor(Math.random()*this.larts.length)];
-        context.getClient().getIRCClient().say(context.getChannel().getName(), context.nick + " " + item.replace(/\{user\}/g, object));
+        context.getClient().getIRCClient().say(context.getChannel().getName(), context.getUser().getNick() + " " + item.replace(/\{user\}/g, object));
     }
     return true;
 };

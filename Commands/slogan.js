@@ -29,7 +29,7 @@ function Slogan() {
     this.aliases = ['slogan'];
 
     //disable this command.
-    this.dependencies = ['moduleThatWillNeverBeHereSoThatThisCommandWillNeverLoad'];
+    //this.dependencies = [''];
 
     //Name of the permission needed to use this command. All users have 'user.command.use' by default. Banned users have 'user.command.banned' by default.
     this.permissionName = 'user.command.use';
@@ -45,7 +45,7 @@ function Slogan() {
 }
 
 Slogan.prototype.execute = function(context) {
-    var object = context.nick;
+    var object = context.getUser().getNick();
 
     if(context.arguments[0] !== undefined) {
         object = context.arguments.join(" ");
@@ -53,7 +53,7 @@ Slogan.prototype.execute = function(context) {
 
     if(!this.slogans.length) {
         var self = this;
-        fs.readFile('./data/slogans.txt', function(err, data) {
+        require('fs').readFile('./data/slogans.txt', function(err, data) {
             if(err) {console.error(err);}
             self.slogans = data.toString().split("\n");
             var item = self.slogans[Math.floor(Math.random()*self.slogans.length)];
