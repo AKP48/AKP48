@@ -167,6 +167,10 @@ CommandProcessor.prototype.parseMessage = function(context) {
             context.getClient().getIRCClient().say(context.getChannel().getName(), res);
         });
     }
+
+    if(msg.search(/ayy/gi) != -1) {
+        context.getClient().getIRCClient().say(context.getChannel().getName(), "ayy lmao");
+    }
 }
 
 /**
