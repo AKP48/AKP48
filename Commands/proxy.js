@@ -44,15 +44,25 @@ function Proxy() {
 Proxy.prototype.execute = function(context) {
     if(!(context.arguments.length >= 2)) {return false;}
     var channel = context.arguments[0];
+    //remove channel from arguments
     context.arguments.splice(0, 1);
-    var text = context.arguments.join(" ");
 
     //if we're in the channel that was asked for
     if(context.getClient().getChannel(channel)) {
-        //send the message.
-        context.client.getIRCClient().say(channel, text);
-        //notify sender.
-        context.getClient().say(context, "\""+text + "\" successfully sent to "+channel+"!");
+        //check for /me
+        if(context.arguments[0] == "/me") {
+            //remove /me from arguments
+            context.arguments.splice(0, 1);
+            //send text as action
+            context.getClient().getIRCClient().action(channel, context.arguments.join(" "));
+            //NOTICE user a success message
+            context.getClient().getIRCClient().notice(context.getUser().getNick(), "Action successfully sent to "+channel+"!");
+        } else {
+            //just send message if no /me
+            context.client.getIRCClient().say(channel, context.arguments.join(" "));
+            //NOTICE user a success message
+            context.getClient().getIRCClient().notice(context.getUser().getNick(), "Message successfully sent to "+channel+"!");
+        }
     } else {
         context.getClient().say(context, "Could not send to channel "+channel+"!");
     }
