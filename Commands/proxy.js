@@ -48,7 +48,7 @@ Proxy.prototype.execute = function(context) {
     var text = context.arguments.join(" ");
 
     //if we're in the channel that was asked for
-    if(context.client.channels.indexOf(channel) > -1) {
+    if(context.getClient().getChannel(channel)) {
         //send the message.
         context.client.getIRCClient().say(channel, text);
         //notify sender.
