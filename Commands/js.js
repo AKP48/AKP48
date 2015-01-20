@@ -28,7 +28,7 @@ function Js() {
     this.name = "JavaScript";
 
     //help text to show for this command.
-    this.helpText = "Runs Javascript code.";
+    this.helpText = "Runs Javascript code. If first parameter is a URL, runs code contained at that URL.";
 
     //usage message. only include the parameters. the command name will be automatically added.
     this.usageText = "<code>";

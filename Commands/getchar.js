@@ -15,18 +15,21 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-function かわいい() {
+function GetChar() {
     //the name of the command.
-    this.name = "かわいい";
+    this.name = "Get Character";
 
     //help text to show for this command.
-    this.helpText = "私わかわいいです。";
+    this.helpText = "Gets characters based on decimal character code.";
 
     //usage message. only include the parameters. the command name will be automatically added.
-    this.usageText = "";
+    this.usageText = "<character...>";
 
     //ways to call this command.
-    this.aliases = ['かわいい', 'kawaii'];
+    this.aliases = ['getchar', 'getcharacter'];
+
+    //dependencies that this module has.
+    //this.dependencies = [''];
 
     //Name of the permission needed to use this command. All users have 'user.command.use' by default. Banned users have 'user.command.banned' by default.
     this.permissionName = 'user.command.use';
@@ -38,9 +41,14 @@ function かわいい() {
     this.isPmOnly = false;
 }
 
-かわいい.prototype.execute = function(context) {
-    context.getClient().say(context, "ですですですですです。 ：３");
+GetChar.prototype.execute = function(context) {
+    if(!context.arguments.length) {return false;}
+    var output = "";
+    for (var i = 0; i < context.arguments.length; i++) {
+        output += String.fromCharCode(context.arguments[i]);
+    };
+    context.getClient().say(context, output);
     return true;
 };
 
-module.exports = かわいい;
+module.exports = GetChar;
