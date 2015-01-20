@@ -22,6 +22,7 @@ var request = require('request');
 var Chance = require('chance');
 var path = require('path');
 var fs = require('fs');
+var github = require('octonode');
 
 function Js() {
     //the name of the command.
@@ -50,6 +51,9 @@ function Js() {
 
     //randomizer
     this.chance = new Chance();
+
+    //Github API
+    this.ghAPI = github.client();
 }
 
 Js.prototype.execute = function(context) {
@@ -104,6 +108,7 @@ Js.prototype.execute = function(context) {
  * @param  {Context} context The context to send response to.
  */
 Js.prototype.runCode = function(code, context) {
+    var self = this;
     s.run(code, function(output) {
         var outputString = "";
         if(output.result) {
@@ -113,8 +118,26 @@ Js.prototype.runCode = function(code, context) {
             outputString += "Console: " + JSON.stringify(output.console);
         }
 
-        if(outputString.length > 430) {
-            outputString = outputString.substring(0, 426) + "...";
+        //if outputString is too long
+        if(outputString.length > 350) {
+            //upload Gist instead.
+            self.ghAPI.gist().create({
+                description: "Output of JavaScript function for "+context.getUser().getNick(),
+                files: {
+                    "input.js": {
+                        "content": code
+                    },
+                    "result.txt": {
+                        "content": JSON.stringify(output.result)
+                    },
+                    "console.txt": {
+                        "content": JSON.stringify(output.console)
+                    }
+                }
+            }, function(err, data, headers) {
+                context.getClient().getCommandProcessor().aliasedCommands['googl'].shortenURL(context, data.html_url);
+            });
+            return true;
         }
         context.getClient().say(context, outputString);
     });
