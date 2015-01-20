@@ -85,14 +85,14 @@ CommandProcessor.prototype.process = function(message, client) {
     //the context we will be sending to the command.
     var context = client.getClientManager().builder.buildContext(message, client);
 
-    //parse the message for auto response system
-    this.parseMessage(context);
+    //if user isn't banned
+    if(!context.getChannel().isBanned(context.getUser())) {
 
-    //if the command exists
-    if(context.commandExists()) {
+        //parse the message for auto response system
+        this.parseMessage(context);
 
-        //if user isn't banned
-        if(!context.getChannel().isBanned(context.getUser())) {
+        //if the command exists
+        if(context.commandExists()) {
 
             //return if this needs to be a privmsg and isn't.
             if(context.getCommand().isPmOnly && !context.isPm) {
