@@ -15,6 +15,7 @@
     "irc-colors": "^1.1.0",
     "moment": "^2.8.4",
     "numeral": "^1.5.3",
+    "request": "^2.51.0",
     "request-json": "^0.5.0",
     "sandbox": "^0.8.6",
     "yql": "^1.0.2"
