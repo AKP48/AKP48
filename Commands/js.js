@@ -124,7 +124,7 @@ Js.prototype.runCode = function(code, context) {
             self.ghAPI.gist().create({
                 description: "Output of JavaScript function for "+context.getUser().getNick(),
                 files: {
-                    "input.js": {
+                    "_input.js": {
                         "content": code
                     },
                     "result.txt": {
