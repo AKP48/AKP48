@@ -28,6 +28,9 @@ function Client() {
     // The server this client is connected to.
     this.server = "kuroi.irc.nolimitzone.com";
 
+    // The port to use.
+    this.port = 6667;
+
     // The username this client uses.
     this.username = "IRCBot9000";
 
@@ -85,6 +88,23 @@ Client.prototype.setServer = function(server) {
  */
 Client.prototype.getServer = function() {
     return this.server;
+};
+
+/**
+ * Set server port.
+ * @param {Integer} server The new port.
+ * @TODO Make this work with ircClient, if created.
+ */
+Client.prototype.setPort = function(port) {
+    this.port = port;
+};
+
+/**
+ * Get server port.
+ * @return {Integer} The server address.
+ */
+Client.prototype.getPort = function() {
+    return this.port;
 };
 
 /**
@@ -259,7 +279,7 @@ Client.prototype.initialize = function(clientManager) {
     };
 
     //create the IRC client. This automatically connects, as well.
-    this.ircClient = new irc.Client(this.getServer(), this.getNick(), { channels: channels, realName: this.getRealName(), password: password, userName: this.getUserName() });
+    this.ircClient = new irc.Client(this.getServer(), this.getNick(), { channels: channels, realName: this.getRealName(), password: password, userName: this.getUserName(), port: this.getPort(), autoRejoin: true, showErrors: true, encoding: 'utf8' });
 
     var self = this;
 

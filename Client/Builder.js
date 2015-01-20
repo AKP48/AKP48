@@ -49,6 +49,9 @@ Builder.prototype.buildClient = function(options) {
     if(options.server) {
         client.setServer(options.server);
     }
+    if(options.port) {
+        client.setPort(options.port);
+    }
     if(options.password) {
         client.setPassword(options.password);
     }
