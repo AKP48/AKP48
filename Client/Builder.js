@@ -40,6 +40,12 @@ Builder.prototype.buildClient = function(options) {
     if(options.nick) {
         client.setNick(options.nick);
     }
+    if(options.realname) {
+        client.setRealName(options.realname);
+    }
+    if(options.username) {
+        client.setUserName(options.username);
+    }
     if(options.server) {
         client.setServer(options.server);
     }

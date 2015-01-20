@@ -28,6 +28,12 @@ function Client() {
     // The server this client is connected to.
     this.server = "kuroi.irc.nolimitzone.com";
 
+    // The username this client uses.
+    this.username = "IRCBot9000";
+
+    // The realname this client uses.
+    this.realname = "IRCBot9000";
+
     // The password used by this client when connecting to the server.
     this.password = "";
 
@@ -78,7 +84,41 @@ Client.prototype.setServer = function(server) {
  * @return {String} The server address.
  */
 Client.prototype.getServer = function() {
-    return this.server
+    return this.server;
+};
+
+/**
+ * Set real name.
+ * @param {String} realname The new real name.
+ * @TODO Make this work with ircClient, if created.
+ */
+Client.prototype.setRealName = function(realname) {
+    this.realname = realname;
+};
+
+/**
+ * Get real name.
+ * @return {String} The real name.
+ */
+Client.prototype.getRealName = function() {
+    return this.realname;
+};
+
+/**
+ * Set user name.
+ * @param {String} username The new username.
+ * @TODO Make this work with ircClient, if created.
+ */
+Client.prototype.setUserName = function(username) {
+    this.username = username;
+};
+
+/**
+ * Get user name.
+ * @return {String} The user name.
+ */
+Client.prototype.getUserName = function() {
+    return this.username;
 };
 
 /**
@@ -219,7 +259,7 @@ Client.prototype.initialize = function(clientManager) {
     };
 
     //create the IRC client. This automatically connects, as well.
-    this.ircClient = new irc.Client(this.getServer(), this.getNick(), { channels: channels, realName: this.getNick(), password: password, userName: this.getNick() });
+    this.ircClient = new irc.Client(this.getServer(), this.getNick(), { channels: channels, realName: this.getRealName(), password: password, userName: this.getUserName() });
 
     var self = this;
 
