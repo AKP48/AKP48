@@ -85,6 +85,9 @@ CommandProcessor.prototype.process = function(message, client) {
     //the context we will be sending to the command.
     var context = client.getClientManager().builder.buildContext(message, client);
 
+    //if we don't get a context, something weird must have happened, and we shouldn't continue.
+    if(!context) {return false;}
+
     //if user isn't banned
     if(!context.getChannel().isBanned(context.getUser())) {
 
