@@ -62,7 +62,7 @@
 var re_weburl = new RegExp(
   "^" +
     // protocol identifier
-    "(?:(?:https?|ftp)://)" +
+    "(?:(?:http)://)" +
     // user:pass authentication
     "(?:\\S+(?::\\S*)?@)?" +
     "(?:" +
@@ -93,3 +93,5 @@ var re_weburl = new RegExp(
     "(?:/\\S*)?" +
   "$", "i"
 );
+
+module.exports = re_weburl;
