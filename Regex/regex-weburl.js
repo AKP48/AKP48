@@ -62,7 +62,7 @@
 var re_weburl = new RegExp(
   "^" +
     // protocol identifier
-    "(?:(?:http)://)" +
+    "(?:(?:https?)://)" +
     // user:pass authentication
     "(?:\\S+(?::\\S*)?@)?" +
     "(?:" +
