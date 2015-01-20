@@ -67,7 +67,7 @@ Js.prototype.execute = function(context) {
                 return true;
             } else {
                 //if size is okay, make actual request now.
-                var filename = path.join(path.resolve('tmp/js'), self.chance.word({syllables: 4})+".js");
+                var filename = path.join(path.resolve('/tmp'), self.chance.word({syllables: 4})+".js");
                 var file = fs.createWriteStream(filename),
                     size = 0;
 
