@@ -81,7 +81,7 @@ Choose.prototype.execute = function(context) {
 
     if(!context.arguments.length) {return false;}
 
-    if(context.arguments[0].toLowerCase() === "attack") {
+    if(context.arguments[0].toLowerCase() === "attack" || context.arguments[0].toLowerCase() === "atk") {
         return this.attack(context);
     }
 
