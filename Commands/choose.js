@@ -25,7 +25,7 @@ function Choose() {
     this.helpText = "Chooses from a list of items for you.";
 
     //usage message. only include the parameters. the command name will be automatically added.
-    this.usageText = "<choice1> [choice2, choice3, ...]";
+    this.usageText = "[attack|feel] <item1> [item2, item3, item4...]";
 
     //ways to call this command.
     this.aliases = ['choose', 'pick'];
@@ -41,16 +41,100 @@ function Choose() {
 
     //randomizer
     this.chance = new Chance();
+
+    //possible attack values
+    this.attacks = [
+        'Critical Fail',
+        'Dire Fail',
+        'Horrible Fail',
+        'Bad Fail',
+        'Fail',
+        'Dismal Miss',
+        'Horrible Miss',
+        'Bad Miss',
+        'Miss',
+        'Almost Glance',
+        'Narrowly Glance',
+        'Probably Glance',
+        'Clearly Glance',
+        'Glance',
+        'Hit',
+        'Arm Hit',
+        'Leg Hit',
+        'Stomach Hit',
+        'Chest Hit',
+        'Head Hit'
+    ];
+
+    //possible feeling values
+    this.feels = [
+        'ashamed',
+        'very ashamed',
+        'proud',
+        'very proud',
+        'insane',
+        'daft'
+    ];
 }
 
 Choose.prototype.execute = function(context) {
 
     if(!context.arguments.length) {return false;}
 
-    if(context.arguments.length == 1) {context.getClient().say(context, "The choice is yours!"); return true;}
+    if(context.arguments[0].toLowerCase() === "attack") {
+        return this.attack(context);
+    }
+
+    if(context.arguments[0].toLowerCase() === "feel") {
+        return this.feel(context);
+    }
 
     context.getClient().say(context, context.arguments[this.chance.integer({min:0, max:context.arguments.length-1})]);
 
+    return true;
+};
+
+Choose.prototype.attack = function(context) {
+    //redundancy just because.
+    if(context.arguments.length < 2) {return false;}
+
+    //choose person and attack.
+    var atk = this.attacks[this.chance.integer({min:0, max:this.attacks.length-1})];
+    var person = context.arguments[this.chance.integer({min:1, max:context.arguments.length-1})];
+
+    //say the result.
+    context.getClient().say(context, context.getUser().getNick() + " attacks " + person + ": " + atk + ".");
+    return true;
+};
+
+Choose.prototype.feel = function(context) {
+    //redundancy just because.
+    if(!context.arguments.length) {return false;}
+
+    //choose feeling.
+    var feel = this.feels[this.chance.integer({min:0, max:this.feels.length-1})];
+
+    //blank person for now.
+    var person = "";
+
+    //if there's at least 2 arguments, we can choose a person.
+    if(context.arguments.length >= 2) {
+        person = context.arguments[this.chance.integer({min:1, max:context.arguments.length-1})];
+    }
+
+    //build the string. (oS stands for outputString. I'm lazy.)
+    var oS = context.getUser().getNick() + " ";
+
+    //if we have a person, add 'thinks <person>' to the string.
+    if(person !== "") {
+        oS += "thinks " + person + " ";
+    }
+
+    //add feeling.
+    oS += "should feel " + feel + ".";
+
+    //say the result.
+    context.getClient().say(context, oS);
     return true;
 };
 
