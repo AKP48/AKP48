@@ -19,23 +19,22 @@ var request = require('request-json');
 var c = require('irc-colors');
 var n = require('numeral');
 var m = require('moment');
-
-//TODO: Out with request-json, in with googleapis. https://github.com/google/google-api-nodejs-client
-//Official tools are nice.
+var google = require('googleapis');
 
 function Google(api_key) {
     this.api_key = api_key;
     this.client = request.newClient('https://www.googleapis.com/');
+    this.urlshortener = google.urlshortener({ version: 'v1', auth: this.api_key });
 }
 
+/**
+ * Shorten a URL using Goo.gl.
+ * @param  {String}   url      The URL to shorten.
+ * @param  {Function} callback The callback to call after shortening.
+ */
 Google.prototype.shorten_url = function(url, callback) {
-
-    var request = {
-      longUrl: url
-    };
-
-    this.client.post('/urlshortener/v1/url?key='+this.api_key, request, function(err, res, body) {
-        callback(body.id);
+    this.urlshortener.url.insert({ resource: { longUrl: url } }, function (err, response) {
+      callback(response.id);
     });
 };
 
