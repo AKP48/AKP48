@@ -1,13 +1,11 @@
 {
-  "name": "IRCBot",
-  "version": "1.0.0",
+  "name": "AKP48",
+  "version": "1.1.0",
   "description": "",
   "main": "index.js",
-  "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
-  },
-  "author": "",
-  "license": "ISC",
+  "author": "Austin Peterson (austin@akpwebdesign.com)",
+  "license": "GPL",
+  "private": true,
   "dependencies": {
     "chance": "^0.7.0",
     "imgur-node-api": "^0.1.0",
