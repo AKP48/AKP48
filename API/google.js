@@ -25,6 +25,7 @@ function Google(api_key) {
     this.api_key = api_key;
     this.client = request.newClient('https://www.googleapis.com/');
     this.urlshortener = google.urlshortener({ version: 'v1', auth: this.api_key });
+    this.youtube = google.youtube({version: 'v3', auth: this.api_key});
 }
 
 /**
@@ -48,50 +49,61 @@ Google.prototype.youtube_video_info = function(video_ids, maxLines, callback) {
     var self = {};
     self.client = this.client;
     self.api_key = this.api_key;
+    self.youtube = this.youtube;
 
     for (var i = 0; i < Math.min(video_ids.length, maxLines); i++) {
-        this.client.get('/youtube/v3/videos?id='+video_ids[i]+'&key='+this.api_key+'&fields=items(snippet(title,channelId,publishedAt),contentDetails(duration,dimension,definition),statistics(viewCount,likeCount,dislikeCount))&part=snippet,statistics,contentDetails',
-            function(err, res, body){
-                var video = body;
-                if(video.items[0]) {
-                    self.client.get('/youtube/v3/channels?part=snippet&key='+self.api_key+'&id='+video.items[0].snippet.channelId+'&fields=items(snippet(title))',
-                        function(err, res, body) {
-                            var d = m.duration(video.items[0].contentDetails.duration);
-                            var definition = video.items[0].contentDetails.definition;
-                            var dimension = video.items[0].contentDetails.dimension;
-                            var publishedAt = m(video.items[0].snippet.publishedAt).format("MMMM Do, YYYY");
-                            var timeString = n((d.hours()*60*60)+(d.minutes()*60)+d.seconds()).format("00:00:00");
-                            var outputString = c.black("[") + c.bold("You") + c.red("Tube") + c.black("] ");
-                            outputString += video.items[0].snippet.title + " by " + body.items[0].snippet.title;
-                            if(timeString !== "0:00:00" || definition === 'hd' || dimension === '3d') {
-                                outputString += " (";
 
-                                if(timeString !== "0:00:00") {
-                                    outputString += c.bold(timeString);
-                                }
+        var params = {
+            id: video_ids[i],
+            part: 'snippet,contentDetails,statistics'
+        }
 
-                                if(dimension === '3d') {
-                                    outputString += c.bold(" 3D");
-                                }
+        this.youtube.videos.list(params, function(err, response){
+            if(response.items[0]) {
+                var video = response.items[0];
 
-                                if(definition === 'hd') {
-                                    outputString += c.bold(" HD");
-                                }
-
-                                outputString += ")";
-                            }
-                            outputString += " | ";
-                            outputString += "Views: " + n(video.items[0].statistics.viewCount).format("0,0");
-                            outputString += " | ";
-                            outputString += c.green("Likes: " + n(video.items[0].statistics.likeCount).format("0,0"));
-                            outputString += " | ";
-                            outputString += c.red("Dislikes: " + n(video.items[0].statistics.dislikeCount).format("0,0"));
-                            outputString += " | ";
-                            outputString += "Published on " + publishedAt;
-                            callback(outputString);
-                    });
+                params = {
+                    id: video.snippet.channelId,
+                    part: 'snippet'
                 }
-            });
+                
+                self.youtube.channels.list(params, function(err, response) {
+                    var d = m.duration(video.contentDetails.duration);
+                    var definition = video.contentDetails.definition;
+                    var dimension = video.contentDetails.dimension;
+                    var publishedAt = m(video.snippet.publishedAt).format("MMMM Do, YYYY");
+                    var timeString = n((d.hours()*60*60)+(d.minutes()*60)+d.seconds()).format("00:00:00");
+                    var outputString = c.black("[") + c.bold("You") + c.red("Tube") + c.black("] ");
+                    outputString += video.snippet.title + " by " + response.items[0].snippet.title;
+                    if(timeString !== "0:00:00" || definition === 'hd' || dimension === '3d') {
+                        outputString += " (";
+
+                        if(timeString !== "0:00:00") {
+                            outputString += c.bold(timeString);
+                        }
+
+                        if(dimension === '3d') {
+                            outputString += c.bold(" 3D");
+                        }
+
+                        if(definition === 'hd') {
+                            outputString += c.bold(" HD");
+                        }
+
+                        outputString += ")";
+                    }
+                    outputString += " | ";
+                    outputString += "Views: " + n(video.statistics.viewCount).format("0,0");
+                    outputString += " | ";
+                    outputString += c.green("Likes: " + n(video.statistics.likeCount).format("0,0"));
+                    outputString += " | ";
+                    outputString += c.red("Dislikes: " + n(video.statistics.dislikeCount).format("0,0"));
+                    outputString += " | ";
+                    outputString += "Published on " + publishedAt;
+                    callback(outputString);
+                });
+            }
+        });
     };
 };
 
