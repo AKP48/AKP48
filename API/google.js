@@ -38,6 +38,12 @@ Google.prototype.shorten_url = function(url, callback) {
     });
 };
 
+/**
+ * Get information about a YouTube video.
+ * @param  {String[]} video_ids The array of video ids.
+ * @param  {Integer}  maxLines  The maximum amount of lines to send.
+ * @param  {Function} callback  The callback to call when finished.
+ */
 Google.prototype.youtube_video_info = function(video_ids, maxLines, callback) {
     var self = {};
     self.client = this.client;
@@ -89,6 +95,12 @@ Google.prototype.youtube_video_info = function(video_ids, maxLines, callback) {
     };
 };
 
+/**
+ * Use the Google Geocoding API to find a location.
+ * @param  {String}   location The location to search for.
+ * @param  {String}   region   The 2-letter region code to use.
+ * @param  {Function} callback The callback to call when finished.
+ */
 Google.prototype.geocode = function(location, region, callback) {
     var url = "https://maps.googleapis.com/maps/api/geocode/json?address="+location;
 
@@ -111,7 +123,12 @@ Google.prototype.geocode = function(location, region, callback) {
     });
 };
 
-//I think request-json is still needed here.
+/**
+ * Search for a term on Google.
+ * @param  {String}   query    The string to search for.
+ * @param  {String}   type     images or web.
+ * @param  {Function} callback The callback to call when finished.
+ */
 Google.prototype.search = function(query, type, callback) {
     var url = 'http://ajax.googleapis.com/ajax/services/search/'+type+'?v=1.0&safe=high&q='+encodeURIComponent(query);
     var self = this;
