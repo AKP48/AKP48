@@ -15,6 +15,21 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
+var path = require('path');
+var bunyan = require('bunyan');
+var log = bunyan.createLogger({
+    name: 'AKP48 Riot API Module',
+    streams: [{
+        type: 'rotating-file',
+        path: path.resolve("./log/AKP48.log"),
+        period: '1d',
+        count: 7
+    },
+    {
+        stream: process.stdout
+    }]
+});
+
 var request = require('request-json');
 var c = require('irc-colors');
 var n = require('numeral');
@@ -43,6 +58,7 @@ function Riot(api_key) {
 Riot.prototype.getChampList = function() {
     this.champions = [];
     var self = this;
+    log.info("Retrieving champion list from Riot.");
     this.client.get('/api/lol/static-data/na/v1.2/champion?api_key='+this.api_key, function(err, res, body) {
         for (var property in body.data) {
             if (body.data.hasOwnProperty(property)) {
@@ -54,9 +70,11 @@ Riot.prototype.getChampList = function() {
 
 Riot.prototype.getFreeChamps = function(callback) {
     if(m().subtract(10, 'minutes').isAfter(this.freeChamps.lastAccess)) {
+        log.info("Retrieving free champions from Riot.");
         this.freeChamps = { champions: [], lastAccess: m() };
         var self = this;
         this.client.get('/api/lol/na/v1.2/champion?freeToPlay=true&api_key='+this.api_key, function(err, res, body) {
+            if(err) {log.error(err); return;}
             for (var i = 0; i < body.champions.length; i++) {
                 self.freeChamps.champions.push(self.champions[body.champions[i].id].name);
             };
@@ -73,8 +91,9 @@ Riot.prototype.getServerStatus = function(region, callback) {
     if(region.toLowerCase() === "pbe") {
         extra = '.pbe';
     }
+    log.info("Retrieving server status from Riot for region "+region);
     this.client.get('http://status'+extra+'.leagueoflegends.com/shards/'+region.toLowerCase(), function(err, res, body) {
-        if(err) {callback("Could not get server status for that region!"); return;}
+        if(err) {callback("Could not get server status for that region!"); log.error(err); return;}
         var response = [];
         for (var property in body.services) {
             if (body.services.hasOwnProperty(property)) {

@@ -15,6 +15,21 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
+var path = require('path');
+var bunyan = require('bunyan');
+var log = bunyan.createLogger({
+    name: 'AKP48 Client',
+    streams: [{
+        type: 'rotating-file',
+        path: path.resolve("./log/AKP48.log"),
+        period: '1d',
+        count: 7
+    },
+    {
+        stream: process.stdout
+    }]
+});
+
 var irc = require('irc');
 var CommandProcessor = require("../CommandProcessor");
 var AutoResponseProcessor = require("../AutoResponseProcessor");
@@ -305,6 +320,8 @@ Client.prototype.initialize = function(clientManager) {
             self.getAutoResponseProcessor().process(message, self);
         }
     });
+
+    log.info("Client", this.getNick(), "on", this.getServer()+":"+this.getPort(), "initialized.");
 };
 
 /**

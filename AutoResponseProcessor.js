@@ -15,6 +15,21 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
+var path = require('path');
+var bunyan = require('bunyan');
+var log = bunyan.createLogger({
+    name: 'AKP48 AutoResponseProcessor',
+    streams: [{
+        type: 'rotating-file',
+        path: path.resolve("./log/AKP48.log"),
+        period: '1d',
+        count: 7
+    },
+    {
+        stream: process.stdout
+    }]
+});
+
 function AutoResponseProcessor() {
     this.handlers = require('./AutoResponses');
 }
@@ -58,6 +73,7 @@ AutoResponseProcessor.prototype.executeAll = function(context) {
             //if the handler's regex matches, execute handler.
             if(context.getFullMessage().search(this.handlers[property].regex) != -1) {
                 this.handlers[property].execute(context);
+                log.info("AutoResponse handler executed: ", {user: context.getUser(), command: this.handlers[property].name, fullMsg: context.getFullMessage()});
             }
         }
     }

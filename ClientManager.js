@@ -15,6 +15,21 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
+var path = require('path');
+var bunyan = require('bunyan');
+var log = bunyan.createLogger({
+    name: 'AKP48 ClientManager',
+    streams: [{
+        type: 'rotating-file',
+        path: path.resolve("./log/AKP48.log"),
+        period: '1d',
+        count: 7
+    },
+    {
+        stream: process.stdout
+    }]
+});
+
 var Builder = require("./Client/Builder");
 
 /**
@@ -37,6 +52,7 @@ function ClientManager(config) {
  * @param {JSON} config The config file.
  */
 ClientManager.prototype.loadClients = function(config) {
+    log.info("Loading client information...");
     for (var i = 0; i < config.servers.length; i++) {
         this.addClient(this.builder.buildClient(config.servers[i]));
     };
@@ -47,6 +63,7 @@ ClientManager.prototype.loadClients = function(config) {
  * @param {Client} client The client.
  */
 ClientManager.prototype.addClient = function(client) {
+    log.info("Initializing client", client.getNick(), "on", client.getServer()+":"+client.getPort()+".");
     client.initialize(this);
     this.clients.push(client);
 };
@@ -55,6 +72,7 @@ ClientManager.prototype.addClient = function(client) {
  * Reload the CommandProcessor in each Client that this ClientManager manages.
  */
 ClientManager.prototype.reloadClients = function() {
+    log.info("Reloading all clients.");
     for (var i = 0; i < this.clients.length; i++) {
         this.clients[i].reloadProcessors();
     };
@@ -64,6 +82,8 @@ ClientManager.prototype.reloadClients = function() {
  * Save the configuration of this ClientManager.
  */
 ClientManager.prototype.save = function() {
+    log.info("Saving configuration...");
+
     //get the current config
     var config = require("./config.json");
     //remove the current server config
@@ -84,7 +104,7 @@ ClientManager.prototype.save = function() {
 
     require('fs').writeFile('./config.json', JSON.stringify(config, null, 4), function (err) {
         if (err) return console.log(err);
-        console.log('Saved config!');
+        log.info('Configuration saved.');
     });
 };
 

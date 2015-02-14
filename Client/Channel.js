@@ -15,6 +15,21 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
+var path = require('path');
+var bunyan = require('bunyan');
+var log = bunyan.createLogger({
+    name: 'AKP48 Channel',
+    streams: [{
+        type: 'rotating-file',
+        path: path.resolve("./log/AKP48.log"),
+        period: '1d',
+        count: 7
+    },
+    {
+        stream: process.stdout
+    }]
+});
+
 /**
  * A channel.
  */
@@ -181,6 +196,7 @@ Channel.prototype.banUser = function(user) {
     //get user for sure.
     var banUser = this.getUser(user.getHostmask());
     banUser.addPermission("user.command.banned");
+    log.info("User", banUser.getNick(), "banned from Channel", this.getName()+".");
 };
 
 /**
@@ -191,6 +207,7 @@ Channel.prototype.unbanUser = function(user) {
     //get user for sure.
     var unbanUser = this.getUser(user.getHostmask());
     unbanUser.removePermission("user.command.banned");
+    log.info("User", banUser.getNick(), "unbanned from Channel", this.getName()+".");
 };
 
 /**
@@ -257,6 +274,9 @@ Channel.prototype.floodProtection = function(context) {
 
         //set the fact that they're banned
         context.getUser().floodProtection.isBanned = true;
+
+        //log that we tempbanned someone.
+        log.info("User", banUser.getNick(), "automatically tempbanned from Channel", this.getName()+".");
 
         //return false to let the CommandProcessor know not to execute the command.
         return false;
