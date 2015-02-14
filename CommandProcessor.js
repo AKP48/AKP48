@@ -15,15 +15,10 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-var Commands = require('./Commands');
-var AutoResponse = require('./autoresponse');
-
 /**
  * The Command Processor.
  */
 function CommandProcessor() {
-    this.auto = new AutoResponse();
-
     //command list for help purposes, leaves out aliases.
     this.commands = require('./Commands');
 
@@ -80,6 +75,7 @@ CommandProcessor.prototype.initCommandAliases = function() {
  * Process a message.
  * @param  {IRCMessage} message The message object directly from the IRC module.
  * @param  {Client}     client  The client that this message came from.
+ * @return {Boolean}            Whether or not a command was run.
  */
 CommandProcessor.prototype.process = function(message, client) {
     //the context we will be sending to the command.
@@ -91,90 +87,37 @@ CommandProcessor.prototype.process = function(message, client) {
     //if user isn't banned
     if(!context.getChannel().isBanned(context.getUser())) {
 
-        //parse the message for auto response system
-        this.parseMessage(context);
-
         //if the command exists
         if(context.commandExists()) {
 
             //return if this needs to be a privmsg and isn't.
             if(context.getCommand().isPmOnly && !context.isPm) {
-                return;
+                return false;
             }
 
             //return if command is not allowed as a privmsg and this is one (unless we have the root permission.)
             if(!context.getCommand().allowPm && context.isPm && !context.getUser().hasPermission("root.command.use")) {
-                return;
+                return false;
             }
 
             //check privilege
             if(!context.getUser().hasPermission(context.getCommand().permissionName) && !context.user.hasPermission("root.command.use")) {
-                return;
+                return false;
             }
 
             //do flood protection/execute the command if we haven't returned by now.
             if(context.getChannel().floodProtection(context)) {
                 if(!context.getCommand().execute(context)) {
                     this.sendUsageMessage(context);
+                    return false;
                 }
+                return true;
             }
         }
     }
+
+    return false;
 };
-
-/**
- * Parse a message for automatically sent content.
- *
- * This is the method that handles sending information for
- * YouTube and Steam links. This method will be being changed soon.
- *
- * @param  {Context} context The context.
- */
-CommandProcessor.prototype.parseMessage = function(context) {
-    var youTubeRegEx = /(?:https?:\/\/)?(?:[0-9A-Z-]+\.)?(?:youtu\.be\/|youtube(?:-nocookie)?\.com\S*[^\w\s-])([\w-]{11})(?=[^\w-]|$)(?![?=&+%\w.-]*(?:['"][^<>]*>|<\/a>))[?=&+%\w.-]*/gi;
-    var steamAppRegEx = /(?:store\.steampowered\.com\/app\/)([0-9]+)/gi;
-    var steamPkgRegEx = /(?:store\.steampowered\.com\/sub\/)([0-9]+)/gi;
-
-    var msg = context.getFullMessage();
-
-    if(msg.search(youTubeRegEx) != -1) {
-        var youTubeIds = [];
-        var result = [];
-        while((result = youTubeRegEx.exec(msg)) !== null) {
-            youTubeIds.push(result[1]);
-        }
-        //TODO: better handling of maximum links.
-        this.auto.youtube(youTubeIds, 3, function(res) {
-            context.getClient().getIRCClient().say(context.getChannel().getName(), res);
-        });
-    }
-
-    if(msg.search(steamAppRegEx) != -1) {
-        var steamIds = [];
-        var result = [];
-        while((result = steamAppRegEx.exec(msg)) !== null) {
-            steamIds.push(result[1]);
-        }
-        this.auto.steamApp(steamIds, 3, function(res) {
-            context.getClient().getIRCClient().say(context.getChannel().getName(), res);
-        });
-    }
-
-    if(msg.search(steamPkgRegEx) != -1) {
-        var steamIds = [];
-        var result = [];
-        while((result = steamPkgRegEx.exec(msg)) !== null) {
-            steamIds.push(result[1]);
-        }
-        this.auto.steamPkg(steamIds, 3, function(res) {
-            context.getClient().getIRCClient().say(context.getChannel().getName(), res);
-        });
-    }
-
-    if(msg.search(/ayy/gi) != -1) {
-        context.getClient().getIRCClient().say(context.getChannel().getName(), "ayy lmao");
-    }
-}
 
 /**
  * Send a usage message to a user.

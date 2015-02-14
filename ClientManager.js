@@ -56,7 +56,7 @@ ClientManager.prototype.addClient = function(client) {
  */
 ClientManager.prototype.reloadClients = function() {
     for (var i = 0; i < this.clients.length; i++) {
-        this.clients[i].reloadCommandProcessor();
+        this.clients[i].reloadProcessors();
     };
 };
 

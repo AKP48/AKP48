@@ -17,6 +17,7 @@
 
 var irc = require('irc');
 var CommandProcessor = require("../CommandProcessor");
+var AutoResponseProcessor = require("../AutoResponseProcessor");
 
 /**
  * An IRC client.
@@ -54,6 +55,9 @@ function Client() {
 
     // The client's CommandProcessor.
     this.commandProcessor = new CommandProcessor();
+
+    // The client's AutoResponseProcessor.
+    this.autoResponseProcessor = new AutoResponseProcessor();
 }
 
 /**
@@ -250,12 +254,23 @@ Client.prototype.getCommandProcessor = function() {
 };
 
 /**
- * Reload the client's CommandProcessor.
+ * Get the AutoResponseProcessor for this Client.
+ * @return {AutoResponseProcessor} The AutoResponseProcessor.
  */
-Client.prototype.reloadCommandProcessor = function() {
+Client.prototype.getAutoResponseProcessor = function() {
+    return this.autoResponseProcessor;
+};
+
+/**
+ * Reload the client's CommandProcessor and AutoResponseProcessor.
+ */
+Client.prototype.reloadProcessors = function() {
     delete this.commandProcessor;
+    delete this.autoResponseProcessor;
     var CommandProcessor = require("../CommandProcessor");
+    var AutoResponseProcessor = require("../AutoResponseProcessor");
     this.commandProcessor = new CommandProcessor();
+    this.autoResponseProcessor = new AutoResponseProcessor();
 };
 
 /**
@@ -284,7 +299,11 @@ Client.prototype.initialize = function(clientManager) {
     var self = this;
 
     this.ircClient.on('message', function(nick, to, text, message) {
-        self.getCommandProcessor().process(message, self);
+        //on each IRC message, run the command processor. If the command processor doesn't execute a command,
+        //run the auto response processor.
+        if(!self.getCommandProcessor().process(message, self)) {
+            self.getAutoResponseProcessor().process(message, self);
+        }
     });
 };
 
