@@ -40,7 +40,7 @@ function Reload() {
 
 Reload.prototype.execute = function(context) {
     delete require.cache[require.resolve('../CommandProcessor')];
-    delete require.cache[require.resolve('../autoresponse')];
+    delete require.cache[require.resolve('../AutoResponseProcessor')];
     delete require.cache[require.resolve('../config.json')];
 
     this.removeAPIAndCommandCache();
@@ -60,6 +60,12 @@ Reload.prototype.removeAPIAndCommandCache = function() {
     require('fs').readdirSync(__dirname + '/../API/').forEach(function(file) {
         delete require.cache[require.resolve('../API/' + file)];
     });
+
+    require('fs').readdirSync(__dirname + '/../AutoResponses').forEach(function(file) {
+        delete require.cache[require.resolve('../AutoResponses/' + file)];
+    });
+
+    delete require.cache[require.resolve('../AutoResponses/')];
 };
 
 module.exports = Reload;

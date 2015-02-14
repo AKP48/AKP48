@@ -15,9 +15,11 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-function AlienHandler() {
+var Steam = require('../API/steam');
+
+function SteamPkgHandler() {
     //the name of the handler.
-    this.name = "Alien Handler";
+    this.name = "Steam Package Link Handler";
 
     //name of the permission needed to use this handler. All users have 'user.handler.use' by default. Banned users have 'user.handler.banned' by default.
     this.permissionName = 'user.handler.use';
@@ -26,14 +28,26 @@ function AlienHandler() {
     this.allowPm = true;
 
     //the regex used to match this handler
-    this.regex = /ayy/i;
+    this.regex = /(?:store\.steampowered\.com\/sub\/)([0-9]+)/gi;
 
-    //the handler's priority compared to other handlers. higher => more chance to run.
-    this.priority = 1;
+    //Steam API module
+    this.steam = new Steam();
 }
 
-AlienHandler.prototype.execute = function(context) {
-	context.getClient().getIRCClient().say(context.getChannel().getName(), "ayy lmao");
+SteamPkgHandler.prototype.execute = function(context) {
+	//arrays for steam id finding.
+    var steamIds = [];
+    var result = [];
+    //find the steam ids.
+    while((result = this.regex.exec(context.getFullMessage())) !== null) {
+        steamIds.push(result[1]);
+    }
+
+    for (var q = 0; q < Math.min(steamIds.length, 3); q++) {
+        this.steam.getPkg(steamIds[q], function(res) {
+			context.getClient().getIRCClient().say(context.getChannel().getName(), res);
+        });
+    }
 };
 
-module.exports = AlienHandler;
+module.exports = SteamPkgHandler;

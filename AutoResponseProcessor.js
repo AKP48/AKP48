@@ -15,16 +15,8 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-var irc = require('irc');
-var c = require('irc-colors');
-var n = require('numeral');
-var Steam = require('./API/steam');
-var request = require('request-json');
-
-function AutoResponse() {
-    this.steam = new Steam();
-
-    this.handlers = [];
+function AutoResponseProcessor() {
+    this.handlers = require('./AutoResponses');
 }
 
 /**
@@ -36,35 +28,41 @@ AutoResponseProcessor.prototype.addHandler = function(handler) {
 };
 
 /**
+ * Process a message.
+ * @param  {IRCMessage} message The message object directly from the IRC module.
+ * @param  {Client}     client  The client that this message came from.
+ */
+AutoResponseProcessor.prototype.process = function(message, client) {
+    //the context we will be sending to the handler.
+    var context = client.getClientManager().builder.buildContext(message, client);
+
+    //if we don't get a context, something weird must have happened, and we shouldn't continue.
+    if(!context) {return false;}
+
+    //if user isn't banned
+    if(!context.getChannel().isBanned(context.getUser())) {
+
+        //process the message
+        this.executeAll(context);
+    }
+};
+
+/**
  * Execute all handlers for a given context.
  * @param  {Context} context The context to execute handlers for.
  */
 AutoResponseProcessor.prototype.executeAll = function(context) {
-    for (var i = this.handlers.length - 1; i >= 0; i--) {
-        //if the handler's regex matches, execute handler.
-        if(context.getFullMessage().search(this.handlers[i].regex) != -1) {
-            this.handlers[i].execute(context);
+    // This loop runs through all handlers and attempts to execute them.
+    for (var property in this.handlers) {
+        //if the property exists
+        if (this.handlers.hasOwnProperty(property)) {
+            //if the handler's regex matches, execute handler.
+            if(context.getFullMessage().search(this.handlers[property].regex) != -1) {
+                this.handlers[property].execute(context);
+            }
         }
-    };
-}
-
-AutoResponse.prototype.steamApp = function(appIds, maxLines, callback) {
-    for (var q = 0; q < Math.min(appIds.length, maxLines); q++) {
-        this.steam.getGame(appIds[q], callback);
-    }
-}
-
-AutoResponse.prototype.steamPkg = function(appIds, maxLines, callback) {
-    var apiClient = request.newClient("https://store.steampowered.com/");
-
-    var self = {};
-    self.appIds = appIds;
-    self.callback = callback;
-
-    for (var q = 0; q < Math.min(appIds.length, maxLines); q++) {
-        this.steam.getPkg(appIds[q], callback);
     }
 }
 
 //export the module
-module.exports = AutoResponse;
+module.exports = AutoResponseProcessor;

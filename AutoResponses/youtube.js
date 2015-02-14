@@ -15,7 +15,7 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-var config = require('./config.json');
+var config = require('../config.json');
 var Google = require('../API/google');
 
 function YouTubeHandler() {
@@ -40,7 +40,7 @@ YouTubeHandler.prototype.execute = function(context) {
 	var youTubeIds = [];
     var result = [];
     //find all ids in message.
-    while((result = youTubeRegEx.exec(context.getFullMessage())) !== null) {
+    while((result = this.regex.exec(context.getFullMessage())) !== null) {
         youTubeIds.push(result[1]);
     }
     //TODO: better handling of maximum links.

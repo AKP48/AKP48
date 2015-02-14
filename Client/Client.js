@@ -17,7 +17,7 @@
 
 var irc = require('irc');
 var CommandProcessor = require("../CommandProcessor");
-var AutoResponsesProcessor = require("../AutoResponseProcessor");
+var AutoResponseProcessor = require("../AutoResponseProcessor");
 
 /**
  * An IRC client.
