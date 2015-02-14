@@ -131,23 +131,10 @@ CommandProcessor.prototype.process = function(message, client) {
  * @param  {Context} context The context.
  */
 CommandProcessor.prototype.parseMessage = function(context) {
-    var youTubeRegEx = /(?:https?:\/\/)?(?:[0-9A-Z-]+\.)?(?:youtu\.be\/|youtube(?:-nocookie)?\.com\S*[^\w\s-])([\w-]{11})(?=[^\w-]|$)(?![?=&+%\w.-]*(?:['"][^<>]*>|<\/a>))[?=&+%\w.-]*/gi;
     var steamAppRegEx = /(?:store\.steampowered\.com\/app\/)([0-9]+)/gi;
     var steamPkgRegEx = /(?:store\.steampowered\.com\/sub\/)([0-9]+)/gi;
 
     var msg = context.getFullMessage();
-
-    if(msg.search(youTubeRegEx) != -1) {
-        var youTubeIds = [];
-        var result = [];
-        while((result = youTubeRegEx.exec(msg)) !== null) {
-            youTubeIds.push(result[1]);
-        }
-        //TODO: better handling of maximum links.
-        this.auto.youtube(youTubeIds, 3, function(res) {
-            context.getClient().getIRCClient().say(context.getChannel().getName(), res);
-        });
-    }
 
     if(msg.search(steamAppRegEx) != -1) {
         var steamIds = [];
@@ -169,10 +156,6 @@ CommandProcessor.prototype.parseMessage = function(context) {
         this.auto.steamPkg(steamIds, 3, function(res) {
             context.getClient().getIRCClient().say(context.getChannel().getName(), res);
         });
-    }
-
-    if(msg.search(/ayy/gi) != -1) {
-        context.getClient().getIRCClient().say(context.getChannel().getName(), "ayy lmao");
     }
 }
 

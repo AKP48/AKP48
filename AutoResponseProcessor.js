@@ -18,20 +18,34 @@
 var irc = require('irc');
 var c = require('irc-colors');
 var n = require('numeral');
-var config = require('./config.json');
-var Google = require('./API/google');
 var Steam = require('./API/steam');
 var request = require('request-json');
 
 function AutoResponse() {
-    this.google = new Google(config.google.apiKey);
     this.steam = new Steam();
+
+    this.handlers = [];
 }
 
-AutoResponse.prototype.youtube = function(videoIds, maxLines, callback) {
-    this.google.youtube_video_info(videoIds, maxLines, function(res, last){
-        callback(res, last);
-    });
+/**
+ * Adds a handler to the group of handlers that are called for each message.
+ * @param {Handler} handler The handler to add.
+ */
+AutoResponseProcessor.prototype.addHandler = function(handler) {
+    this.handlers.push(handler);
+};
+
+/**
+ * Execute all handlers for a given context.
+ * @param  {Context} context The context to execute handlers for.
+ */
+AutoResponseProcessor.prototype.executeAll = function(context) {
+    for (var i = this.handlers.length - 1; i >= 0; i--) {
+        //if the handler's regex matches, execute handler.
+        if(context.getFullMessage().search(this.handlers[i].regex) != -1) {
+            this.handlers[i].execute(context);
+        }
+    };
 }
 
 AutoResponse.prototype.steamApp = function(appIds, maxLines, callback) {
