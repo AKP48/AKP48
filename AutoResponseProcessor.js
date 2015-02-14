@@ -41,7 +41,6 @@ AutoResponseProcessor.prototype.process = function(message, client) {
 
     //if user isn't banned
     if(!context.getChannel().isBanned(context.getUser())) {
-
         //process the message
         this.executeAll(context);
     }

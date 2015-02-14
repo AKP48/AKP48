@@ -75,6 +75,7 @@ CommandProcessor.prototype.initCommandAliases = function() {
  * Process a message.
  * @param  {IRCMessage} message The message object directly from the IRC module.
  * @param  {Client}     client  The client that this message came from.
+ * @return {Boolean}            Whether or not a command was run.
  */
 CommandProcessor.prototype.process = function(message, client) {
     //the context we will be sending to the command.
@@ -91,27 +92,31 @@ CommandProcessor.prototype.process = function(message, client) {
 
             //return if this needs to be a privmsg and isn't.
             if(context.getCommand().isPmOnly && !context.isPm) {
-                return;
+                return false;
             }
 
             //return if command is not allowed as a privmsg and this is one (unless we have the root permission.)
             if(!context.getCommand().allowPm && context.isPm && !context.getUser().hasPermission("root.command.use")) {
-                return;
+                return false;
             }
 
             //check privilege
             if(!context.getUser().hasPermission(context.getCommand().permissionName) && !context.user.hasPermission("root.command.use")) {
-                return;
+                return false;
             }
 
             //do flood protection/execute the command if we haven't returned by now.
             if(context.getChannel().floodProtection(context)) {
                 if(!context.getCommand().execute(context)) {
                     this.sendUsageMessage(context);
+                    return false;
                 }
+                return true;
             }
         }
     }
+
+    return false;
 };
 
 /**

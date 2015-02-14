@@ -299,8 +299,11 @@ Client.prototype.initialize = function(clientManager) {
     var self = this;
 
     this.ircClient.on('message', function(nick, to, text, message) {
-        self.getCommandProcessor().process(message, self);
-        self.getAutoResponseProcessor().process(message, self);
+        //on each IRC message, run the command processor. If the command processor doesn't execute a command,
+        //run the auto response processor.
+        if(!self.getCommandProcessor().process(message, self)) {
+            self.getAutoResponseProcessor().process(message, self);
+        }
     });
 };
 

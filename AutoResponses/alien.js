@@ -27,9 +27,6 @@ function AlienHandler() {
 
     //the regex used to match this handler
     this.regex = /ayy/i;
-
-    //the handler's priority compared to other handlers. higher => more chance to run.
-    this.priority = 1;
 }
 
 AlienHandler.prototype.execute = function(context) {
