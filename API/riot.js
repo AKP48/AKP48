@@ -22,7 +22,7 @@ var m = require('moment');
 
 function Riot(api_key) {
     this.api_key = api_key;
-    this.client = request.newClient('https://na.api.pvp.net/');
+    this.client = request.createClient('https://na.api.pvp.net/');
 
     this.champions = [];
 

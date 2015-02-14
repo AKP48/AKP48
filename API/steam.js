@@ -20,7 +20,7 @@ var c = require('irc-colors');
 var n = require('numeral');
 
 function Steam() {
-    this.client = request.newClient('https://store.steampowered.com/');
+    this.client = request.createClient('https://store.steampowered.com/');
 }
 
 Steam.prototype.getGame = function(appId, callback) {

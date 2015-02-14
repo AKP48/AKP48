@@ -23,7 +23,7 @@ var google = require('googleapis');
 
 function Google(api_key) {
     this.api_key = api_key;
-    this.client = request.newClient('https://www.googleapis.com/');
+    this.client = request.createClient('https://www.googleapis.com/');
     this.urlshortener = google.urlshortener({ version: 'v1', auth: this.api_key });
     this.youtube = google.youtube({version: 'v3', auth: this.api_key});
 }
