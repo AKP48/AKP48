@@ -15,6 +15,21 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
+var path = require('path');
+var bunyan = require('bunyan');
+var log = bunyan.createLogger({
+    name: 'AKP48 Builder',
+    streams: [{
+        type: 'rotating-file',
+        path: path.resolve("./log/AKP48.log"),
+        period: '1d',
+        count: 7
+    },
+    {
+        stream: process.stdout
+    }]
+});
+
 var Channel = require("./Channel");
 var Client = require("./Client");
 var Context = require("./Context");
@@ -61,6 +76,7 @@ Builder.prototype.buildClient = function(options) {
             client.addChannel(this.buildChannel(options.channels[i]));
         };
     }
+    log.info("Built client", client.getNick(), "on", client.getServer()+":"+client.getPort()+".");
     //return it.
     return client;
 };

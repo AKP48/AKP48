@@ -15,6 +15,21 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
+var path = require('path');
+var bunyan = require('bunyan');
+var log = bunyan.createLogger({
+    name: 'AKP48 Google API Module',
+    streams: [{
+        type: 'rotating-file',
+        path: path.resolve("./log/AKP48.log"),
+        period: '1d',
+        count: 7
+    },
+    {
+        stream: process.stdout
+    }]
+});
+
 var request = require('request-json');
 var c = require('irc-colors');
 var n = require('numeral');
@@ -34,6 +49,7 @@ function Google(api_key) {
  * @param  {Function} callback The callback to call after shortening.
  */
 Google.prototype.shorten_url = function(url, callback) {
+    log.info("Shortening URL using goo.gl.");
     this.urlshortener.url.insert({ resource: { longUrl: url } }, function (err, response) {
       callback(response.id);
     });
@@ -57,6 +73,8 @@ Google.prototype.youtube_video_info = function(video_ids, maxLines, callback) {
             id: video_ids[i],
             part: 'snippet,contentDetails,statistics'
         }
+
+        log.info("Retrieving information about YouTube video "+video_ids[i]+" from Google.");
 
         this.youtube.videos.list(params, function(err, response){
             if(response.items[0]) {
@@ -122,6 +140,8 @@ Google.prototype.geocode = function(location, region, callback) {
 
     url += "&key="+this.api_key;
 
+    log.info("Getting geocoding information for location "+location+" from Google.");
+
     this.client.get(url, function(err, res, body){
         if(body.results[0]) {
             var outputString = body.results[0].formatted_address;
@@ -144,7 +164,9 @@ Google.prototype.geocode = function(location, region, callback) {
 Google.prototype.search = function(query, type, callback) {
     var url = 'http://ajax.googleapis.com/ajax/services/search/'+type+'?v=1.0&safe=high&q='+encodeURIComponent(query);
     var self = this;
+    log.info("Searching Google for "+query+".");
     this.client.get(url, function(err, res, body){
+        if(err) {log.error(err);}
         if(body.responseData) {
             if(body.responseData.results[0]) {
                 var outputString = "Title: \"" + body.responseData.results[0].titleNoFormatting;
@@ -153,6 +175,8 @@ Google.prototype.search = function(query, type, callback) {
                     callback(outputString);
                 });
             }
+        } else {
+            log.error("Something went wrong!", {response: body});
         }
     });
 }

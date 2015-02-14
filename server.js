@@ -15,17 +15,36 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
+var path = require('path');
+var bunyan = require('bunyan');
+var log = bunyan.createLogger({
+    name: 'AKP48 Server',
+    streams: [{
+        type: 'rotating-file',
+        path: path.resolve("./log/AKP48.log"),
+        period: '1d',
+        count: 7
+    },
+    {
+        stream: process.stdout
+    }]
+});
+
 var ClientManager = require('./ClientManager');
 
+log.info("Initializing polyfill.");
 require('./polyfill.js')();
+
+log.info("Loading configuration.");
 var config = require('./config.json');
 
+log.info("Creating ClientManager.");
 var clientmanager = new ClientManager(config);
 
 //todo: better exception handling plz
 if(config.productionMode) {
     process.on('uncaughtException', function(err) {
-        console.log('Caught exception: ' + err);
-        console.log('Stack:', err.stack);
+        log.error('Caught exception: ' + err);
+        log.error('Stack:', err.stack);
     });
 }

@@ -15,6 +15,21 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
+var path = require('path');
+var bunyan = require('bunyan');
+var log = bunyan.createLogger({
+    name: 'AKP48 CommandProcessor',
+    streams: [{
+        type: 'rotating-file',
+        path: path.resolve("./log/AKP48.log"),
+        period: '1d',
+        count: 7
+    },
+    {
+        stream: process.stdout
+    }]
+});
+
 /**
  * The Command Processor.
  */
@@ -34,6 +49,7 @@ function CommandProcessor() {
  * included in different commands.
  */
 CommandProcessor.prototype.initCommandAliases = function() {
+    log.info("Initializing command aliases...");
 
     // This first loop is simply to remove any modules with missing dependencies,
     // as they will probably error out and not work. This ensures that the commands
@@ -48,7 +64,7 @@ CommandProcessor.prototype.initCommandAliases = function() {
                     //if dependency doesn't exist...
                     if(this.commands[this.commands[property].dependencies[i]] === undefined) {
                         //disable it.
-                        console.log(property + " module does not have all required dependencies! Disabling " + property + " module!");
+                        log.info(property + " module does not have all required dependencies! Disabling " + property + " module!");
                         delete this.commands[property];
                         break;
                     }
@@ -69,6 +85,7 @@ CommandProcessor.prototype.initCommandAliases = function() {
             };
         }
     }
+    log.info("Command aliases initialized.");
 };
 
 /**
@@ -78,6 +95,8 @@ CommandProcessor.prototype.initCommandAliases = function() {
  * @return {Boolean}            Whether or not a command was run.
  */
 CommandProcessor.prototype.process = function(message, client) {
+    log.trace("Received message.", {message: message})
+
     //the context we will be sending to the command.
     var context = client.getClientManager().builder.buildContext(message, client);
 
@@ -110,6 +129,8 @@ CommandProcessor.prototype.process = function(message, client) {
                 if(!context.getCommand().execute(context)) {
                     this.sendUsageMessage(context);
                     return false;
+                } else {
+                    log.info("Command executed: ", {user: context.getUser(), command: context.getCommand().name, args: context.getArguments(), fullMsg: context.getFullMessage()});
                 }
                 return true;
             }
