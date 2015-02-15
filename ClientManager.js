@@ -108,4 +108,14 @@ ClientManager.prototype.save = function() {
     });
 };
 
+ClientManager.prototype.shutdown = function(msg) {
+    log.info("Shutting down all clients.");
+    for (var i = 0; i < this.clients.length; i++) {
+        this.clients[i].shutdown(msg);
+    };
+
+    log.info("Killing process.");
+    process.exit(0);
+};
+
 module.exports = ClientManager;

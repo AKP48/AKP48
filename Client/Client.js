@@ -359,4 +359,13 @@ Client.prototype.clone = function() {
     return client;
 };
 
+/**
+ * Shuts down a client, sending a leave message.
+ * @param  {String} msg The leave message.
+ */
+Client.prototype.shutdown = function(msg) {
+    log.info("Shutdown requested for client", this.getNick(), "on", this.getServer()+":"+this.getPort()+".");
+    this.getIRCClient().disconnect(msg);
+};
+
 module.exports = Client;
