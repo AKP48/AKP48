@@ -44,7 +44,6 @@ var clientmanager = new ClientManager(config);
 //todo: better exception handling plz
 if(config.productionMode) {
     process.on('uncaughtException', function(err) {
-        log.error('Caught exception: ' + err);
-        log.error('Stack:', err.stack);
+        log.error('Exception', {error: err});
     });
 }
