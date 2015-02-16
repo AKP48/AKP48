@@ -26,7 +26,7 @@ function Slogan() {
     this.usageText = "[noun]";
 
     //ways to call this command.
-    this.aliases = ['slogan'];
+    this.aliases = ['slogan', 's', 'sl'];
 
     //disable this command.
     //this.dependencies = [''];
@@ -49,6 +49,12 @@ Slogan.prototype.execute = function(context) {
 
     if(context.arguments[0] !== undefined) {
         object = context.arguments.join(" ");
+    }
+
+    // Special case for a friend. <3
+    if(object.toLowerCase() === "cazif") {
+        context.getClient().say(context, "<cazif> likes men.".replace(/<cazif>/g, object));
+        return true;
     }
 
     if(!this.slogans.length) {
