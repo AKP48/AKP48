@@ -15,22 +15,6 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-function AlienHandler() {
-    //the name of the handler.
-    this.name = "Alien Handler";
+var re_steamapp = /(?:store\.steampowered\.com\/app\/)([0-9]+)/i
 
-    //name of the permission needed to use this handler. All users have 'user.handler.use' by default. Banned users have 'user.handler.banned' by default.
-    this.permissionName = 'user.handler.use';
-
-    //whether or not to allow this handler in a private message.
-    this.allowPm = true;
-
-    //the regex used to match this handler
-    this.regex = /ayy/i;
-}
-
-AlienHandler.prototype.execute = function(word, context) {
-	context.getClient().getIRCClient().say(context.getChannel().getName(), "ayy lmao");
-};
-
-module.exports = AlienHandler;
+module.exports = re_steamapp;

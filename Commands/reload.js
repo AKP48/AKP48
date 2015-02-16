@@ -61,6 +61,10 @@ Reload.prototype.removeAPIAndCommandCache = function() {
         delete require.cache[require.resolve('../API/' + file)];
     });
 
+    require('fs').readdirSync(__dirname + '/../Regex/').forEach(function(file) {
+        delete require.cache[require.resolve('../Regex/' + file)];
+    });
+
     require('fs').readdirSync(__dirname + '/../AutoResponses').forEach(function(file) {
         delete require.cache[require.resolve('../AutoResponses/' + file)];
     });

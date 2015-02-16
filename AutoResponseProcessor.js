@@ -66,17 +66,20 @@ AutoResponseProcessor.prototype.process = function(message, client) {
  * @param  {Context} context The context to execute handlers for.
  */
 AutoResponseProcessor.prototype.executeAll = function(context) {
-    // This loop runs through all handlers and attempts to execute them.
-    for (var property in this.handlers) {
-        //if the property exists
-        if (this.handlers.hasOwnProperty(property)) {
-            //if the handler's regex matches, execute handler.
-            if(context.getFullMessage().search(this.handlers[property].regex) != -1) {
-                this.handlers[property].execute(context);
-                log.info("AutoResponse handler executed: ", {user: context.getUser(), command: this.handlers[property].name, fullMsg: context.getFullMessage()});
+    var things = context.getFullMessage().split(" ");
+    for (var i = 0; i < (Math.min(things.length, 3)); i++) {
+        // This loop runs through all handlers and attempts to execute them.
+        for (var property in this.handlers) {
+            //if the property exists
+            if (this.handlers.hasOwnProperty(property)) {
+                //if the handler's regex matches, execute handler.
+                if(things[i].search(this.handlers[property].regex) != -1) {
+                        this.handlers[property].execute(things[i], context);
+                        log.info("AutoResponse handler executed: ", {user: context.getUser(), command: this.handlers[property].name, fullMsg: context.getFullMessage()});
+                }
             }
         }
-    }
+    };
 }
 
 //export the module
