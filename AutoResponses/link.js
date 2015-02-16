@@ -87,7 +87,8 @@ LinkHandler.prototype.execute = function(word, context) {
 
 LinkHandler.prototype.YouTubeVideo = function(link, context) {
     var id = this.youTubeRegex.exec(link);
-    if(id != null) {
+    var noshow = /noinfo/i.exec(link);
+    if(id != null && noshow == null) {
         this.google.youtube_video_info(id[1], function(res){
             context.getClient().getIRCClient().say(context.getChannel().getName(), res);
         });
@@ -96,19 +97,21 @@ LinkHandler.prototype.YouTubeVideo = function(link, context) {
 
 LinkHandler.prototype.SteamPackage = function(link, context) {
     var id = this.steamPkgRegex.exec(link);
+    var nohist = /nohist/i.exec(link);
     if(id != null) {
         this.steam.getPkg(id[1], function(res) {
             context.getClient().getIRCClient().say(context.getChannel().getName(), res);
-        });
+        }, ((nohist != null) ? true : false));
     }
 };
 
 LinkHandler.prototype.SteamApp = function(link, context) {
     var id = this.steamAppRegex.exec(link);
+    var nohist = /nohist/i.exec(link);
     if(id != null) {
         this.steam.getGame(id[1], function(res) {
             context.getClient().getIRCClient().say(context.getChannel().getName(), res);
-        });
+        }, ((nohist != null) ? true : false));
     }
 };
 

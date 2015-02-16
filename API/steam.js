@@ -33,16 +33,23 @@ var log = bunyan.createLogger({
 var request = require('request-json');
 var c = require('irc-colors');
 var n = require('numeral');
+var Google = require("./google");
+var config = require('../config.json');
 
 function Steam() {
     this.client = request.createClient('https://store.steampowered.com/');
+    this.enhancedSteamAPI = request.createClient('http://api.enhancedsteam.com/');
+    this.google = new Google(config.google.apiKey);
 }
 
-Steam.prototype.getGame = function(appId, callback) {
+Steam.prototype.getGame = function(appId, callback, nohist) {
 
     var self = {};
     self.appId = appId;
     self.callback = callback;
+    self.enhancedSteamAPI = this.enhancedSteamAPI;
+    self.google = this.google;
+    self.nohist = nohist;
 
     log.info("Getting Steam info for game "+appId+".");
 
@@ -122,15 +129,36 @@ Steam.prototype.getGame = function(appId, callback) {
             outputString += " - Release: " + releaseDate;
         }
 
-        self.callback(outputString);
+        self.oS = outputString;
+
+        if(!self.nohist) {
+            self.enhancedSteamAPI.get("/pricev2/?search=app/" + self.appId + "&stores=steam,amazonus,impulse,gamersgate,greenmangaming,gamefly,origin,uplay,indiegalastore,gametap,gamesplanet,getgames,desura,gog,dotemu,fireflower,gameolith,humblewidgets,adventureshop,nuuvem,shinyloot,dlgamer,humblestore,indiegamestand,squenix,bundlestars&cc=us&coupon=true",
+                function(err, res, body){
+                    //if we get an error looking up historical low, output what we have and quit.
+                    if(err) {self.callback(self.oS); return;}
+
+                    //This is still callback hell.
+                    self.google.shorten_url(body.lowest.url, function(shortURL) {
+                        self.oS += " - Historical low: ";
+                        self.oS += c.green(body.lowest.price + " USD " + c.underline("-" + body.lowest.cut + "%")) + " on " + body.lowest.store + " (" + shortURL + "), " + body.lowest.recorded_formatted + ".";
+
+                        self.callback(self.oS);
+                    });
+                });
+        } else {
+            callback(outputString);
+        }
     });
 };
 
-Steam.prototype.getPkg = function(appId, callback) {
+Steam.prototype.getPkg = function(appId, callback, nohist) {
 
     var self = {};
     self.appId = appId;
     self.callback = callback;
+    self.enhancedSteamAPI = this.enhancedSteamAPI;
+    self.google = this.google;
+    self.nohist = nohist;
 
     log.info("Getting Steam info for package "+appId+".");
 
@@ -174,9 +202,26 @@ Steam.prototype.getPkg = function(appId, callback) {
             outputString += "(N/A)";
         }
 
-        self.callback(outputString);
+        self.oS = outputString;
+
+        if(!self.nohist) {
+            self.enhancedSteamAPI.get("/pricev2/?search=sub/" + self.appId + "&stores=steam,amazonus,impulse,gamersgate,greenmangaming,gamefly,origin,uplay,indiegalastore,gametap,gamesplanet,getgames,desura,gog,dotemu,fireflower,gameolith,humblewidgets,adventureshop,nuuvem,shinyloot,dlgamer,humblestore,indiegamestand,squenix,bundlestars&cc=us&coupon=true",
+                function(err, res, body){
+                    //if we get an error looking up historical low, output what we have and quit.
+                    if(err) {self.callback(self.oS); return;}
+
+                    //This is still callback hell.
+                    self.google.shorten_url(body.lowest.url, function(shortURL) {
+                        self.oS += " - Historical low: ";
+                        self.oS += c.green(body.lowest.price + " USD " + c.underline("-" + body.lowest.cut + "%")) + " on " + body.lowest.store + " (" + shortURL + "), " + body.lowest.recorded_formatted + ".";
+
+                        self.callback(self.oS);
+                    });
+                });
+        } else {
+            callback(outputString);
+        }
     });
 };
-
 
 module.exports = Steam;
