@@ -137,13 +137,19 @@ Steam.prototype.getGame = function(appId, callback, nohist) {
                     //if we get an error looking up historical low, output what we have and quit.
                     if(err) {self.callback(self.oS); return;}
 
-                    //This is still callback hell.
-                    self.google.shorten_url(body.lowest.url, function(shortURL) {
-                        self.oS += " - Historical low: ";
-                        self.oS += c.green(body.lowest.price + " USD " + c.underline("-" + body.lowest.cut + "%")) + " on " + body.lowest.store + " (" + shortURL + "), " + body.lowest.recorded_formatted + ".";
+                    self.oS += " - Historical low: ";
+                    self.oS += c.green(body.lowest.price + " USD ");
 
+                    //This is still callback hell.
+                    if(body.lowest.url) {
+                        self.google.shorten_url(body.lowest.url, function(shortURL) {
+                            self.oS += c.underline.green("-" + body.lowest.cut + "%") + " on " + body.lowest.store + " (" + shortURL + "), " + body.lowest.recorded_formatted + ".";
+                            self.callback(self.oS);
+                        });
+                    } else {
+                        self.oS += c.underline.green("-" + body.lowest.cut + "%") + " on " + body.lowest.store + ", " + body.lowest.recorded_formatted + ".";
                         self.callback(self.oS);
-                    });
+                    }
                 });
         } else {
             callback(outputString);
@@ -210,13 +216,19 @@ Steam.prototype.getPkg = function(appId, callback, nohist) {
                     //if we get an error looking up historical low, output what we have and quit.
                     if(err) {self.callback(self.oS); return;}
 
-                    //This is still callback hell.
-                    self.google.shorten_url(body.lowest.url, function(shortURL) {
-                        self.oS += " - Historical low: ";
-                        self.oS += c.green(body.lowest.price + " USD " + c.underline("-" + body.lowest.cut + "%")) + " on " + body.lowest.store + " (" + shortURL + "), " + body.lowest.recorded_formatted + ".";
+                    self.oS += " - Historical low: ";
+                    self.oS += c.green(body.lowest.price + " USD ");
 
+                    //This is still callback hell.
+                    if(body.lowest.url) {
+                        self.google.shorten_url(body.lowest.url, function(shortURL) {
+                            self.oS += c.underline.green("-" + body.lowest.cut + "%") + " on " + body.lowest.store + " (" + shortURL + "), " + body.lowest.recorded_formatted + ".";
+                            self.callback(self.oS);
+                        });
+                    } else {
+                        self.oS += c.underline.green("-" + body.lowest.cut + "%") + " on " + body.lowest.store + ", " + body.lowest.recorded_formatted + ".";
                         self.callback(self.oS);
-                    });
+                    }
                 });
         } else {
             callback(outputString);
