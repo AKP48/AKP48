@@ -62,27 +62,29 @@ LinkHandler.prototype.execute = function(word, context) {
         return this.SteamApp(word, context);
     }
 
-    //libraries to fetch and parse page.
-    var request = require('request');
-    var cheerio = require('cheerio');
+    if(!/noinfo/i.test(word)) {
+        //libraries to fetch and parse page.
+        var request = require('request');
+        var cheerio = require('cheerio');
 
 
-    var self = {};
-    self.word = word;
-    request({
-      uri: word,
-    }, function(error, response, body) {
-      if (!error && response.statusCode == 200) {
-          var $ = cheerio.load(body);
-          if($("title").html()) {
-            var oS = c.pink("[Link] ");
-            oS += self.word + " -> \"";
-            oS += $("title").html();
-            oS += "\"";
-            context.getClient().getIRCClient().say(context.getChannel().getName(), oS);
-          }
-      }       
-    });
+        var self = {};
+        self.word = word;
+        request({
+          uri: word,
+        }, function(error, response, body) {
+          if (!error && response.statusCode == 200) {
+              var $ = cheerio.load(body);
+              if($("title").html()) {
+                var oS = c.pink("[Link] ");
+                oS += self.word + " -> \"";
+                oS += $("title").html();
+                oS += "\"";
+                context.getClient().getIRCClient().say(context.getChannel().getName(), oS);
+              }
+          }       
+        });
+    }
 };
 
 LinkHandler.prototype.YouTubeVideo = function(link, context) {
