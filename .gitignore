@@ -41,5 +41,8 @@ node_modules
 # sftp configuration file
 sftp-config.json
 
-# IRCBot config file
+# AKP48 config file
 config.json
+
+# Custom modules
+custom-*.js 
