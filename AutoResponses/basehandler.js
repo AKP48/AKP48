@@ -29,7 +29,7 @@ function AutoResponseHandler() {
     this.regex = /^insert some regex here$/i;
 }
 
-AutoResponseHandler.prototype.execute = function(context) {
+AutoResponseHandler.prototype.execute = function(word, context) {
     //this function should be overridden to allow the handler to perform functions.
 };
 
