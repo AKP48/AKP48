@@ -99,8 +99,9 @@ LinkHandler.prototype.YouTubeVideo = function(link, context) {
 
 LinkHandler.prototype.SteamPackage = function(link, context) {
     var id = this.steamPkgRegex.exec(link);
+    var noshow = /noinfo/i.exec(link);
     var nohist = /nohist/i.exec(link);
-    if(id != null) {
+    if(id != null && noshow == null) {
         this.steam.getPkg(id[1], function(res) {
             context.getClient().getIRCClient().say(context.getChannel().getName(), res);
         }, ((nohist != null) ? true : false));
@@ -109,8 +110,9 @@ LinkHandler.prototype.SteamPackage = function(link, context) {
 
 LinkHandler.prototype.SteamApp = function(link, context) {
     var id = this.steamAppRegex.exec(link);
+    var noshow = /noinfo/i.exec(link);
     var nohist = /nohist/i.exec(link);
-    if(id != null) {
+    if(id != null && noshow == null) {
         this.steam.getGame(id[1], function(res) {
             context.getClient().getIRCClient().say(context.getChannel().getName(), res);
         }, ((nohist != null) ? true : false));
