@@ -75,7 +75,7 @@ function Client() {
     this.autoResponseProcessor = new AutoResponseProcessor();
 
     // Magic 'color' that represents a bot message
-    this.botID = "\u000399,99";
+    this.botID = "\u000399";
 }
 
 /**
