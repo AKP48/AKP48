@@ -78,7 +78,7 @@ LinkHandler.prototype.execute = function(word, context) {
               if($("title").html()) {
                 var oS = c.pink("[Link] ");
                 oS += self.word + " -> \"";
-                oS += $("title").html();
+                oS += $("title").text();
                 oS += "\"";
                 context.getClient().getIRCClient().say(context.getChannel().getName(), oS);
               }
