@@ -73,6 +73,9 @@ function Client() {
 
     // The client's AutoResponseProcessor.
     this.autoResponseProcessor = new AutoResponseProcessor();
+
+    // Magic 'color' that represents a bot message
+    this.botID = "\u000399,99";
 }
 
 /**
@@ -310,6 +313,10 @@ Client.prototype.initialize = function(clientManager) {
 
     //create the IRC client. This automatically connects, as well.
     this.ircClient = new irc.Client(this.getServer(), this.getNick(), { channels: channels, realName: this.getRealName(), password: password, userName: this.getUserName(), port: this.getPort(), autoRejoin: true, showErrors: true, encoding: 'utf8' });
+    this.ircClient._speak = function(kind, target, text) {
+        // prefix our messages with "botID"
+        ircClient.prototype._speak.call(this, kind, target, this.botID + text);
+    };
 
     var self = this;
 
