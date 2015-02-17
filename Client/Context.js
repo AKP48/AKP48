@@ -72,7 +72,7 @@ Context.prototype.getClient = function() {
 };
 
 Context.prototype.setFullMessage = function(message) {
-    this.fullMessage = message;
+    this.fullMessage = message.toString();
 };
 
 Context.prototype.getFullMessage = function() {
