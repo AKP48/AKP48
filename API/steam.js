@@ -114,12 +114,7 @@ Steam.prototype.getGame = function(appId, callback, nohist) {
             outputString += "("+c.green("Free")+")";
         } else {
             if(body[self.appId].data.price_overview) {
-                if(discountPercent) {
-                    outputString += "("+c.gray(n(initialPrice/100).format('0.00') + " " + currency)+") - ";
-                    outputString += c.green(n(finalPrice/100).format('0.00') + " " + currency + " " + c.underline("-"+discountPercent+"%"));
-                } else {
-                    outputString += "("+c.green(n(finalPrice/100).format('0.00') + " " + currency)+")";
-                }
+                outputString += writeDiscount(finalPrice, currency, initialPrice, discountPercent);
             } else {
                 outputString += "(N/A)";
             }
@@ -139,15 +134,16 @@ Steam.prototype.getGame = function(appId, callback, nohist) {
 
                     self.oS += " - Historical low: ";
                     self.oS += c.green(body.lowest.price + " USD ");
+                    self.oS += c.underline.green("-" + body.lowest.cut + "%") + " on " + body.lowest.store;
 
                     //This is still callback hell.
                     if(body.lowest.url) {
                         self.google.shorten_url(body.lowest.url, function(shortURL) {
-                            self.oS += c.underline.green("-" + body.lowest.cut + "%") + " on " + body.lowest.store + " (" + shortURL + "), " + body.lowest.recorded_formatted + ".";
+                            self.oS += " (" + shortURL + "), " + body.lowest.recorded_formatted + ".";
                             self.callback(self.oS);
                         });
                     } else {
-                        self.oS += c.underline.green("-" + body.lowest.cut + "%") + " on " + body.lowest.store + ", " + body.lowest.recorded_formatted + ".";
+                        self.oS += ", " + body.lowest.recorded_formatted + ".";
                         self.callback(self.oS);
                     }
                 });
@@ -194,16 +190,9 @@ Steam.prototype.getPkg = function(appId, callback, nohist) {
         outputString += name;
 
         if(body[self.appId].data.price) {
-            if(discountPercent) {
-                outputString += " ("+c.gray(n(initialPrice/100).format('0.00') + " " + currency)+") - ";
-                outputString += c.green(n(finalPrice/100).format('0.00') + " " + currency + " " + c.underline("-"+discountPercent+"%"));
-            } else {
-                outputString += " ("+c.green(n(finalPrice/100).format('0.00') + " " + currency)+")";
-            }
-
+            outputString += writeDiscount(finalPrice, currency, initialPrice, discountPercent);
             outputString += " - ";
-            outputString += c.green(n((indivPrice - finalPrice)/100).format('0.00') + " " + currency + " Saved");
-
+            outputString += c.green(formatMoney(indivPrice - finalPrice, currency) + " Saved");
         } else {
             outputString += "(N/A)";
         }
@@ -217,7 +206,7 @@ Steam.prototype.getPkg = function(appId, callback, nohist) {
                     if(err) {self.callback(self.oS); return;}
 
                     self.oS += " - Historical low: ";
-                    self.oS += c.green(body.lowest.price + " USD ");
+                    self.oS += c.green(body.lowest.price + " " + body[".meta"].currency +" ");
 
                     //This is still callback hell.
                     if(body.lowest.url) {
@@ -235,5 +224,20 @@ Steam.prototype.getPkg = function(appId, callback, nohist) {
         }
     });
 };
+
+function writeDiscount(finalPrice, currency, initialPrice, discountPercent) {
+    var outputString;
+    if(discountPercent) {
+        outputString += " ("+c.gray(formatMoney(initialPrice) + ") - ";
+        outputString += c.green(formatMoney(finalPrice) + c.underline("-"+discountPercent+"%"));
+    } else {
+        outputString += " ("+c.green(formatMoney(finalPrice))+")";
+    }
+    return outputString;
+}
+
+function formatMoney(number, currency) {
+    return n(number/100).format('0.00') + " " + currency;
+}
 
 module.exports = Steam;
