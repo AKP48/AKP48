@@ -226,7 +226,7 @@ Steam.prototype.getPkg = function(appId, callback, nohist) {
 };
 
 function writeDiscount(finalPrice, currency, initialPrice, discountPercent) {
-    var outputString;
+    var outputString = "";
     if(discountPercent) {
         outputString += " ("+c.gray(formatMoney(initialPrice, currency)) + ") - ";
         outputString += c.green(formatMoney(finalPrice, currency) + c.underline("-"+discountPercent+"%"));
