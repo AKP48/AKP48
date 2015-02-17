@@ -315,7 +315,7 @@ Client.prototype.initialize = function(clientManager) {
     this.ircClient = new irc.Client(this.getServer(), this.getNick(), { channels: channels, realName: this.getRealName(), password: password, userName: this.getUserName(), port: this.getPort(), autoRejoin: true, showErrors: true, encoding: 'utf8' });
     this.ircClient._speak = function(kind, target, text) {
         // prefix our messages with "botID"
-        irc.Client.prototype._speak.call(this, kind, target, this.botID + text);
+        irc.Client.prototype._speak.call(this, kind, target, Client.this.botID + text);
     };
 
     var self = this;
