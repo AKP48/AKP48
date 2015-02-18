@@ -89,7 +89,7 @@ Help.prototype.execute = function(context) {
                 }
 
                 if(send) {
-                    responses.push(commands[property].name + ": " + commands[property].helpText + " | Usage: " + context.getChannel().getCommandDelimiter() + commands[property].aliases[0] + " " + commands[property].usageText);
+                    responses.push(commands[property].name + ": " + commands[property].helpText + " | Usage: " + context.getChannel().getCommandDelimiter() + commands[property].aliases[0] + " " + commands[property].usageText.replace("/\r?\n", " | "));
                 }
             }
         }
