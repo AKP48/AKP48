@@ -316,8 +316,13 @@ Client.prototype.initialize = function(clientManager) {
 
     var botID = this.botID;
     this.ircClient._speak = function(kind, target, text) {
-        // prefix our messages with "botID"
-        irc.Client.prototype._speak.call(this, kind, target, botID + text);
+        // If the message is CTCP... filter it through
+        if (text.startswith("\u0001")) {
+             irc.Client.prototype._speak.call(this, kind, target, text);
+        } else {
+            // prefix our messages with "botID"
+            irc.Client.prototype._speak.call(this, kind, target, botID + text);
+        }
     };
 
     var self = this;
