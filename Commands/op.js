@@ -39,26 +39,22 @@ function Op() {
 }
 
 Op.prototype.execute = function(context) {
+    var users = [];
     for (var i = 0; i < context.arguments.length; i++) {
+        var name = context.arguments[i];
         //get the user
-        var user = context.getChannel().getUser(context.arguments[i]);
-        //if we didn't get a user, we make one and add them to the channel.
-        if(!user) {
-            //this means it's a hostmask
-            if(context.arguments[i].indexOf("!") !== -1 && context.arguments[i].indexOf("@") !== -1 && context.arguments[i].indexOf(".") !== -1) {
-                user = context.getClient().getClientManager().builder.buildUser(null, null, {hostmask: context.arguments[i]});
-            } else {
-                //otherwise, we take it as a nick
-                user = context.getClient().getClientManager().builder.buildUser(null, null, {nick: context.arguments[i]});
-            }
-
-            //add user to channel
-            context.getChannel().addUser(user);
+        var user = context.getChannel().getUser(name, true);
+        if (user) {
+            //op the user.
+            context.getChannel().opUser(user);
+            users.push(name);
         }
-        //ban the user.
-        context.getChannel().opUser(user);
-    };
-    context.getClient().getIRCClient().notice(context.getUser().getNick(), "Opped "+context.arguments.join(", "));
+    }
+    if (users.length == 0) {
+        users.push("none");
+    }
+    
+    context.getClient().getIRCClient().notice(context.getUser().getNick(), "Opped "+users.join(", "));
     context.getClient().getClientManager().save();
     return true;
 };
