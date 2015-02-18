@@ -117,7 +117,7 @@ Channel.prototype.getUser = function(nickOrHost, create) {
         if (nickOrHost.contains("!")) {
             user.setHostmask(nickOrHost);
         } else {
-            user.setNick(nick: nickOrHost);
+            user.setNick(nickOrHost);
         }
         this.addUser(user);
         return user;
