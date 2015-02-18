@@ -62,9 +62,9 @@ function Polyfill() {
     var chance = new (require('chance'));
     Array.prototype.randomElement = function(low, high) {
       low = low || 0;
-      high = high || array.length - 1;
-      if (high > array.length - 1) {
-        high = array.length - 1;
+      high = high || this.length - 1;
+      if (high > this.length - 1) {
+        high = this.length - 1;
       }
       return this[chance.integer({min:low, max:high})];
     }
