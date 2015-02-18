@@ -70,6 +70,12 @@ function Polyfill() {
     }
   }
 
+  if (!String.prototype.contains) {
+    String.prototype.contains = function(needle) {
+      return this.indexOf(needle) !== -1;
+    }
+  }
+
   // Register startsWith function
   if (!String.prototype.startsWith) {
     Object.defineProperty(String.prototype, 'startsWith', {
