@@ -102,15 +102,26 @@ Channel.prototype.removeUser = function(user) {
 
 /**
  * Get a user.
- * @param  {String} nickOrHost The user's nick or hostmask.
- * @return {User}              The user, null if no user.
+ * @param  {String}  nickOrHost The user's nick or hostmask.
+ * @param  {Boolean} create     True to create user
+ * @return {User}               The user, null if no user.
  */
-Channel.prototype.getUser = function(nickOrHost) {
+Channel.prototype.getUser = function(nickOrHost, create) {
     for (var i = 0; i < this.users.length; i++) {
         if(this.users[i].getHostmask() === nickOrHost || this.users[i].getNick() === nickOrHost) {
             return this.users[i];
         }
-    };
+    }
+    if (create === true) {
+        var user = new User();
+        if (nickOrHost.contains("!")) {
+            user.setHostmask(nickOrHost);
+        } else {
+            user.setNick(nick: nickOrHost);
+        }
+        this.addUser(user);
+        return user;
+    }
     return null;
 };
 
