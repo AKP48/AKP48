@@ -58,6 +58,18 @@ function Polyfill() {
     }
   }
 
+  if (!Array.prototype.randomElement) {
+    var chance = new (require('chance'));
+    Array.prototype.randomElement = function(low, high) {
+      low = low || 0;
+      high = high || array.length - 1;
+      if (high > array.length - 1) {
+        high = array.length - 1;
+      }
+      return this[chance.integer({min:low, max:high})];
+    }
+  }
+
   // Register startsWith function
   if (!String.prototype.startsWith) {
     Object.defineProperty(String.prototype, 'startsWith', {

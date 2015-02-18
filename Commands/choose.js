@@ -15,8 +15,6 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-var Chance = require('chance');
-
 function Choose() {
     //the name of the command.
     this.name = "Choose";
@@ -38,9 +36,6 @@ function Choose() {
 
     //whether or not to only allow this command if it's in a private message.
     this.isPmOnly = false;
-
-    //randomizer
-    this.chance = new Chance();
 
     //possible attack values
     this.attacks = [
@@ -89,7 +84,7 @@ Choose.prototype.execute = function(context) {
         return this.feel(context);
     }
 
-    context.getClient().say(context, context.arguments[this.chance.integer({min:0, max:context.arguments.length-1})]);
+    context.getClient().say(context, context.arguments.randomElement());
 
     return true;
 };
@@ -99,8 +94,8 @@ Choose.prototype.attack = function(context) {
     if(context.arguments.length < 2) {return false;}
 
     //choose person and attack.
-    var atk = this.attacks[this.chance.integer({min:0, max:this.attacks.length-1})];
-    var person = context.arguments[this.chance.integer({min:1, max:context.arguments.length-1})];
+    var atk = this.attacks.randomElement();
+    var person = context.arguments.randomElement(1);
 
     //say the result.
     context.getClient().getIRCClient().say(context.getChannel().getName(), context.getUser().getNick() + " attacks " + person + ": " + atk + ".");
@@ -112,14 +107,14 @@ Choose.prototype.feel = function(context) {
     if(!context.arguments.length) {return false;}
 
     //choose feeling.
-    var feel = this.feels[this.chance.integer({min:0, max:this.feels.length-1})];
+    var feel = this.feels.randomElement();
 
     //blank person for now.
     var person = "";
 
     //if there's at least 2 arguments, we can choose a person.
     if(context.arguments.length >= 2) {
-        person = context.arguments[this.chance.integer({min:1, max:context.arguments.length-1})];
+        person = context.arguments.randomElement(1);
     }
 
     //build the string. (oS stands for outputString. I'm lazy.)
