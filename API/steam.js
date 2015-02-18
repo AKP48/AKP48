@@ -130,7 +130,7 @@ Steam.prototype.getGame = function(appId, callback, nohist) {
             self.enhancedSteamAPI.get("/pricev2/?search=app/" + self.appId + "&stores=steam,amazonus,impulse,gamersgate,greenmangaming,gamefly,origin,uplay,indiegalastore,gametap,gamesplanet,getgames,desura,gog,dotemu,fireflower,gameolith,humblewidgets,adventureshop,nuuvem,shinyloot,dlgamer,humblestore,indiegamestand,squenix,bundlestars&cc=us&coupon=true",
                 function(err, res, body){
                     //if we get an error looking up historical low, output what we have and quit.
-                    if(err) {self.callback(self.oS); return;}
+                    if(err || body === null || !body.lowest) {self.callback(self.oS); return;}
 
                     self.oS += " - Historical low: ";
                     self.oS += c.green(body.lowest.price + " USD ");
