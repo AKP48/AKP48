@@ -44,7 +44,7 @@ Me.prototype.execute = function(context) {
     //if we don't have any arguments, return.
     if(!context.arguments.length) {return false;}
 
-    if (context.arguments[0].indexOf("#") == 0) {
+    if (context.arguments[0].isChannel()) {
       if (!context.isPm) {
         return false;
       }
