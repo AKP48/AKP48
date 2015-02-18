@@ -88,6 +88,14 @@ function Polyfill() {
       }
     });
   }
+
+  if (!String.prototype.isChannel) {
+    String.prototype.isChannel = function() {
+      return (this.startsWith("#") || this.startsWith("+") || this.startsWith("&") || this.startsWith("!")) // Starts with #, +, & or !
+        && !(this.contains(" ") || this.contains(",") || this.contains(":")) // Does not contain <space>, <colon> or <comma>
+        && this.length <= 50; // Up to 50 characters
+    }
+  }
 }
 
 module.exports = Polyfill;
