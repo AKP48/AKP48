@@ -1,5 +1,5 @@
 # Logs
-logs
+log
 *.log
 
 # Runtime data
@@ -45,4 +45,4 @@ sftp-config.json
 config.json
 
 # Custom modules
-custom-*.js 
+*custom-*.js 
