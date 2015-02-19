@@ -31,6 +31,7 @@ var log = bunyan.createLogger({
 });
 
 var Client = require("./Client/Client");
+var Builder = require("./Client/Builder");
 
 /**
  * The ClientManager.
@@ -42,6 +43,9 @@ function ClientManager(config) {
 
     // load all of the clients on creation of this object.
     this.loadClients(config);
+
+    //builder
+    this.builder = new Builder();
 }
 
 /**

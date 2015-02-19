@@ -329,7 +329,10 @@ module.exports.build = function build(options) {
     }
     if(options.users) {
         for (i in options.users) {
-            channel.addUser(User.build(options.users[i]));
+            //ensure that the property is actually part of the array.
+            if (options.users.hasOwnProperty(i)) {
+                channel.addUser(User.build(options.users[i]));
+            }
         }
     }
     if(options.mcBots) {

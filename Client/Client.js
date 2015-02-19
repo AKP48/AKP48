@@ -310,9 +310,12 @@ Client.prototype.initialize = function(clientManager) {
     //loop to get channel names
     var _channels = this.getChannels();
     for (i in _channels) {
-        var channel = _channels[i];
-        if(channel.getName() && channel.getName() !== "global") {
-            channels.push(channel.getName());
+        //ensure that the property is actually part of the array.
+        if (_channels.hasOwnProperty(i)) {
+            var channel = _channels[i];
+            if(channel.getName() && channel.getName() !== "global") {
+                channels.push(channel.getName());
+            }
         }
     };
 
