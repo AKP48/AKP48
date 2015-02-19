@@ -419,7 +419,7 @@ module.exports.build = function build(options) {
     }
     if(options.channels) {
         for (var i = 0; i < options.channels.length; i++) {
-            client.addChannel(options.channels[i]);
+            client.addChannel(Channel.build(options.channels[i]));
         };
     }
     log.info("Built client", client.getNick(), "on", client.getServer()+":"+client.getPort()+".");
