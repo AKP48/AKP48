@@ -328,9 +328,9 @@ module.exports.build = function build(options) {
         channel.setName(options.name);
     }
     if(options.users) {
-        for (user in options.users) {
-            channel.addUser(User.build(user));
-        };
+        for (i in options.users) {
+            channel.addUser(User.build(options.users[i]));
+        }
     }
     if(options.mcBots) {
         channel.setMcBots(options.mcBots);
