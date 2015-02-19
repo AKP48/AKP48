@@ -50,7 +50,8 @@ function ClientManager(config) {
  */
 ClientManager.prototype.loadClients = function(config) {
     log.info("Loading client information...");
-    for (server in config.servers) {
+    for (i in config.servers) {
+        var server = config.servers[i];
         this.addClient(Client.build(server));
     };
 };
@@ -70,8 +71,8 @@ ClientManager.prototype.addClient = function(client) {
  */
 ClientManager.prototype.reloadClients = function() {
     log.info("Reloading all clients.");
-    for (client in this.clients) {
-        client.reloadProcessors();
+    for (i in this.clients) {
+        this.clients[i].reloadProcessors();
     };
 };
 
