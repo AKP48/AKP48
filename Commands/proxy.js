@@ -47,8 +47,8 @@ Proxy.prototype.execute = function(context) {
     //remove channel from arguments
     context.arguments.splice(0, 1);
 
-    //if we're in the channel that was asked for
-    if(context.getClient().getChannel(channel)) {
+    //if we're in the channel that was asked for, or we're (hopefully) sending a PM
+    if(!channel.isChannel() || context.getClient().getChannel(channel)) {
         //check for /me
         if(context.arguments[0] == "/me") {
             //remove /me from arguments
