@@ -26,7 +26,7 @@ function Source() {
     this.usageText = "";
 
     //ways to call this command.
-    this.aliases = ['source', 'src'];
+    this.aliases = ['source', 'src', 'repo'];
 
     //dependencies that this module has.
     this.dependencies = ['googl'];
