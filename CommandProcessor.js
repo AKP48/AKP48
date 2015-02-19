@@ -95,7 +95,7 @@ CommandProcessor.prototype.initCommandAliases = function() {
  * @return {Boolean}            Whether or not a command was run.
  */
 CommandProcessor.prototype.process = function(message, client) {
-    log.trace("Received message.", {message: message})
+    log.trace({message: message}, "Received message.")
 
     //the context we will be sending to the command.
     var context = client.getClientManager().builder.buildContext(message, client);
@@ -130,7 +130,7 @@ CommandProcessor.prototype.process = function(message, client) {
                     this.sendUsageMessage(context);
                     return false;
                 } else {
-                    log.info({user: context.getUser().getNick(), command: context.getCommand().name, args: context.getArguments(), fullMsg: context.getFullMessage()}, "Command executed.");
+                    log.info({user: context.getUser().getNick(), command: context.getCommand().name, args: "'" + context.getArguments().join("', '") + "'";, fullMsg: context.getFullMessage()}, "Command executed.");
                 }
                 return true;
             }
