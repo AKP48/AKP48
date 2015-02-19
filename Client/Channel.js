@@ -30,6 +30,8 @@ var log = bunyan.createLogger({
     }]
 });
 
+var User = require('User');
+
 /**
  * A channel.
  */
@@ -312,3 +314,33 @@ Channel.prototype.resetViolationLevels = function() {
 };
 
 module.exports = Channel;
+
+/**
+ * Builds a Channel.
+ * @param  {Options} options The options to use
+ * @return {User}            The User.
+ */
+module.exports.build = function build(options) {
+    //Make ourselves a new Channel...
+    var channel = new Channel();
+    //set the options, if we get them.
+    if(options.name) {
+        channel.setName(options.name);
+    }
+    if(options.users) {
+        for (user in options.users) {
+            channel.addUser(User.build(user));
+        };
+    }
+    if(options.mcBots) {
+        channel.setMcBots(options.mcBots);
+    }
+    if(options.commandDelimiter) {
+        channel.setCommandDelimiter(options.commandDelimiter);
+    }
+    if(options.floodProtection) {
+        channel.setFloodProtectionParams(options.floodProtection);
+    }
+    //return the channel
+    return channel;
+ };

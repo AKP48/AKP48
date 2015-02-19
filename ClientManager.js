@@ -30,7 +30,7 @@ var log = bunyan.createLogger({
     }]
 });
 
-var Builder = require("./Client/Builder");
+var Client = require("./Client/Client");
 
 /**
  * The ClientManager.
@@ -39,9 +39,6 @@ var Builder = require("./Client/Builder");
 function ClientManager(config) {
     // array of all clients
     this.clients = [];
-
-    // a builder for us to use.
-    this.builder = new Builder();
 
     // load all of the clients on creation of this object.
     this.loadClients(config);
@@ -53,8 +50,8 @@ function ClientManager(config) {
  */
 ClientManager.prototype.loadClients = function(config) {
     log.info("Loading client information...");
-    for (var i = 0; i < config.servers.length; i++) {
-        this.addClient(this.builder.buildClient(config.servers[i]));
+    for (server in config.servers) {
+        this.addClient(Client.build(server));
     };
 };
 
@@ -73,8 +70,8 @@ ClientManager.prototype.addClient = function(client) {
  */
 ClientManager.prototype.reloadClients = function() {
     log.info("Reloading all clients.");
-    for (var i = 0; i < this.clients.length; i++) {
-        this.clients[i].reloadProcessors();
+    for (client in this.clients) {
+        client.reloadProcessors();
     };
 };
 
@@ -89,6 +86,7 @@ ClientManager.prototype.save = function() {
     //remove the current server config
     config.servers = [];
 
+    // TODO: fix this
     for (var i = 0; i < this.clients.length; i++) {
         //copy the client, keeping only properties.
         var client = this.clients[i].clone();

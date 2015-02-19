@@ -33,6 +33,7 @@ var log = bunyan.createLogger({
 var irc = require('irc');
 var CommandProcessor = require("../CommandProcessor");
 var AutoResponseProcessor = require("../AutoResponseProcessor");
+var Channel = require('Channel');
 
 /**
  * An IRC client.
@@ -200,11 +201,13 @@ Client.prototype.getChannels = function() {
 /**
  * Add a channel.
  * @param {Channel} channel Channel to add.
- * @TODO Make IRC client actually connect upon changing here.
  */
 Client.prototype.addChannel = function(channel) {
     //just return if this channel is already in the array.
-    if(this.channels.indexOf(channel) !== -1) {return;}
+    if (typeof channel === 'string') {
+        channel = Channel.build({name: channel});
+        channel.client = this;
+    }
     this.channels.push(channel);
 };
 
@@ -305,9 +308,9 @@ Client.prototype.initialize = function(clientManager) {
     var channels = [];
 
     //loop to get channel names
-    for (var i = 0; i < this.getChannels().length; i++) {
-        if(this.getChannels()[i].getName() && this.getChannels()[i].getName() !== "global") {
-            channels.push(this.getChannels()[i].getName());
+    for (channel in this.getChannels()) {
+        if(channel.getName() && channel.getName() !== "global") {
+            channels.push(channel.getName());
         }
     };
 
@@ -383,3 +386,41 @@ Client.prototype.shutdown = function(msg) {
 };
 
 module.exports = Client;
+
+/**
+ * Build a Client.
+ * @param  {Object}     options     The options that will configure the client.
+ * @return {Client}                 The Client.
+ */
+module.exports.build = function build(options) {
+    //Make ourselves a new Client...
+    var client = new Client();
+
+    //set the options, if we get them.
+    if(options.nick) {
+        client.setNick(options.nick);
+    }
+    if(options.realname) {
+        client.setRealName(options.realname);
+    }
+    if(options.username) {
+        client.setUserName(options.username);
+    }
+    if(options.server) {
+        client.setServer(options.server);
+    }
+    if(options.port) {
+        client.setPort(options.port);
+    }
+    if(options.password) {
+        client.setPassword(options.password);
+    }
+    if(options.channels) {
+        for (var i = 0; i < options.channels.length; i++) {
+            client.addChannel(options.channels[i]);
+        };
+    }
+    log.info("Built client", client.getNick(), "on", client.getServer()+":"+client.getPort()+".");
+    //return it.
+    return client;
+}

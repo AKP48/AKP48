@@ -30,10 +30,8 @@ var log = bunyan.createLogger({
     }]
 });
 
-var Channel = require("./Channel");
-var Client = require("./Client");
-var Context = require("./Context");
 var User = require("./User");
+var Context = require("./Context");
 
 /**
  * Used to build various objects.
@@ -41,45 +39,6 @@ var User = require("./User");
 function Builder() {
 
 }
-
-/**
- * Build a Client.
- * @param  {Object}     options     The options that will configure the client.
- * @return {Client}                 The Client.
- */
-Builder.prototype.buildClient = function(options) {
-    //Make ourselves a new Client...
-    var client = new Client();
-
-    //set the options, if we get them.
-    if(options.nick) {
-        client.setNick(options.nick);
-    }
-    if(options.realname) {
-        client.setRealName(options.realname);
-    }
-    if(options.username) {
-        client.setUserName(options.username);
-    }
-    if(options.server) {
-        client.setServer(options.server);
-    }
-    if(options.port) {
-        client.setPort(options.port);
-    }
-    if(options.password) {
-        client.setPassword(options.password);
-    }
-    if(options.channels) {
-        client.setChannels([]);
-        for (var i = 0; i < options.channels.length; i++) {
-            client.addChannel(this.buildChannel(options.channels[i]));
-        };
-    }
-    log.info("Built client", client.getNick(), "on", client.getServer()+":"+client.getPort()+".");
-    //return it.
-    return client;
-};
 
 /**
  * Builds a Context.
@@ -141,7 +100,7 @@ Builder.prototype.buildContext = function(message, client) {
     //if there is no user with this hostmask
     if(user === null) {
         //create a new one and add it.
-        user = this.buildUser(message, context, {});
+        user = User.build(message, context, {});
         channel.addUser(user);
     }
 
@@ -192,88 +151,6 @@ Builder.prototype.buildContext = function(message, client) {
     }
 
     return context;
-};
-
-/**
- * Builds a User using a message and Client.
- * @param  {Message} message The IRC message to use.
- * @param  {Context} context The context to use.
- * @param  {JSON}    options The options to use.
- * @return {User}            The User.
- */
-Builder.prototype.buildUser = function(message, context, options) {
-    //Make ourselves a new User...
-    var user = new User();
-
-    if(message && context) {
-        //if the user this came from is a Minecraft bot,
-        if(context.getChannel().getMcBots().indexOf(message.nick) !== -1){
-            //say so.
-            user.setIsRealIRCUser(false);
-
-            //find nick
-            start = message.args[1].indexOf('(');
-            end = message.args[1].indexOf(')');
-
-            //set nick
-            user.setNick(message.args[1].substring(start + 1, end));
-
-            //set hostmask
-            user.setHostmask(user.getNick()+"!"+message.user+"@"+message.host);
-        } else {
-            //the user is legit, so just use their nick and hostmask.
-            user.setNick(message.nick);
-            user.setHostmask(message.prefix);
-        }
-    }
-
-    if(options.nick) {
-        user.setNick(options.nick)
-    }
-    if(options.hostmask) {
-        user.setHostmask(options.hostmask);
-    }
-    if(options.permissions) {
-        user.setPermissions(options.permissions);
-    }
-    if(options.violationLevel) {
-        user.setViolationLevel(options.violationLevel);
-    }
-    if(options.isRealIRCUser) {
-        user.setIsRealIRCUser(options.isRealIRCUser);
-    }
-
-    return user;
-};
-
-/**
- * Builds a Channel.
- * @param  {Options} options The options to use
- * @return {User}            The User.
- */
-Builder.prototype.buildChannel = function(options) {
-    //Make ourselves a new Channel...
-    var channel = new Channel();
-    //set the options, if we get them.
-    if(options.name) {
-        channel.setName(options.name);
-    }
-    if(options.users) {
-        for (var i = 0; i < options.users.length; i++) {
-            channel.addUser(this.buildUser(null, null, options.users[i]));
-        };
-    }
-    if(options.mcBots) {
-        channel.setMcBots(options.mcBots);
-    }
-    if(options.commandDelimiter) {
-        channel.setCommandDelimiter(options.commandDelimiter);
-    }
-    if(options.floodProtection) {
-        channel.setFloodProtectionParams(options.floodProtection);
-    }
-    //return the channel
-    return channel;
 };
 
 module.exports = Builder;

@@ -154,3 +154,58 @@ User.prototype.setIsRealIRCUser = function(isRealIRCUser) {
 };
 
 module.exports = User;
+
+/**
+ * Builds a User using a message and Client.
+ * Message and Context are optional
+ * @param  {Message} message The IRC message to use.
+ * @param  {Context} context The context to use.
+ * @param  {JSON}    options The options to use.
+ * @return {User}            The User.
+ */
+module.exports.build = function build(message, context, options) {
+    //Make ourselves a new User...
+    var user = new User();
+
+    if(message && context) {
+        //if the user this came from is a Minecraft bot,
+        if(context.getChannel().getMcBots().indexOf(message.nick) !== -1){
+            //say so.
+            user.setIsRealIRCUser(false);
+
+            //find nick
+            start = message.args[1].indexOf('(');
+            end = message.args[1].indexOf(')');
+
+            //set nick
+            user.setNick(message.args[1].substring(start + 1, end));
+
+            //set hostmask
+            user.setHostmask(user.getNick()+"!"+message.user+"@"+message.host);
+        } else {
+            //the user is legit, so just use their nick and hostmask.
+            user.setNick(message.nick);
+            user.setHostmask(message.prefix);
+        }
+    } else if (message && !options) {
+        options = message;
+    }
+
+    if(options.nick) {
+        user.setNick(options.nick)
+    }
+    if(options.hostmask) {
+        user.setHostmask(options.hostmask);
+    }
+    if(options.permissions) {
+        user.setPermissions(options.permissions);
+    }
+    if(options.violationLevel) {
+        user.setViolationLevel(options.violationLevel);
+    }
+    if(options.isRealIRCUser) {
+        user.setIsRealIRCUser(options.isRealIRCUser);
+    }
+
+    return user;
+}
