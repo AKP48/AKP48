@@ -33,7 +33,7 @@ var log = bunyan.createLogger({
 var irc = require('irc');
 var CommandProcessor = require("../CommandProcessor");
 var AutoResponseProcessor = require("../AutoResponseProcessor");
-var Channel = require('Channel');
+var Channel = require('./Channel');
 
 /**
  * An IRC client.

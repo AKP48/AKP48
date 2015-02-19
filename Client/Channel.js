@@ -30,7 +30,7 @@ var log = bunyan.createLogger({
     }]
 });
 
-var User = require('User');
+var User = require('./User');
 
 /**
  * A channel.
