@@ -64,7 +64,7 @@ CommandProcessor.prototype.initCommandAliases = function() {
                     //if dependency doesn't exist...
                     if(this.commands[this.commands[property].dependencies[i]] === undefined) {
                         //disable it.
-                        log.info(property + " module does not have all required dependencies! Disabling " + property + " module!");
+                        log.info({command: property, reason: "Missing dependency", missingDependency: this.commands[property].dependencies[i]}, "Command Module disabled.");
                         delete this.commands[property];
                         break;
                     }
@@ -130,7 +130,7 @@ CommandProcessor.prototype.process = function(message, client) {
                     this.sendUsageMessage(context);
                     return false;
                 } else {
-                    log.info("Command executed: ", {user: context.getUser(), command: context.getCommand().name, args: context.getArguments(), fullMsg: context.getFullMessage()});
+                    log.info({user: context.getUser().getNick(), command: context.getCommand().name, args: context.getArguments(), fullMsg: context.getFullMessage()}, "Command executed.");
                 }
                 return true;
             }
