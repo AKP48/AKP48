@@ -27,6 +27,9 @@ function AutoResponseHandler() {
 
     //the regex used to match this handler
     this.regex = /^insert some regex here$/i;
+
+    // the amount of times we should respond with this handler, 0 is no limit
+    this.limit = 0;
 }
 
 AutoResponseHandler.prototype.execute = function(word, context) {

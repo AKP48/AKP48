@@ -69,16 +69,22 @@ AutoResponseProcessor.prototype.process = function(message, client) {
 AutoResponseProcessor.prototype.executeAll = function(context) {
     var things = context.getFullMessage().split(" ");
     var responses = 0;
+    var runs = {};
     for (var i = 0; i < things.length && responses < 3; i++) {
         // This loop runs through all handlers and attempts to execute them.
         for (var property in this.handlers) {
-            //if the property exists
             if (this.handlers.hasOwnProperty(property)) {
+                // Assign property if we haven't yet
+                if (!runs.hasOwnProperty(property)) {
+                    runs[property] = 0;
+                }
+                var handler = this.handlers[property];
                 //if the handler's regex matches, execute handler.
-                if(things[i].search(this.handlers[property].regex) != -1) {
-                        this.handlers[property].execute(things[i], context);
-                        log.info("AutoResponse handler executed: ", {user: context.getUser(), command: this.handlers[property].name, fullMsg: context.getFullMessage()});
-                        responses++;
+                if (things[i].search(handler.regex) != -1 && (!handler.limit || runs[property] < handler.limit)) {
+                    handler.execute(things[i], context);
+                    log.info("AutoResponse handler executed: ", {user: context.getUser(), command: handler.name, fullMsg: context.getFullMessage()});
+                    runs[property]++;
+                    responses++;
                 }
             }
         }
