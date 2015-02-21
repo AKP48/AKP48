@@ -124,12 +124,26 @@ function Polyfill() {
 
   if (!Object.prototype.forEach) {
     Object.prototype.forEach = function(callback, thisArg) {
-      if (typeof callback !== 'function') return;
+      'use strict';
+      if (this == null) throw new TypeError('Object.prototype.forEach called on null or undefined');
+      if (typeof callback !== 'function') throw new TypeError();
       thisArg = thisArg || void 0;
       Object.keys(this).forEach(function (key, id, array) {
         callback.call(thisArg, this[key], key, this);
       }, this);
     }
+  }
+
+  if (!Object.prototype.some) {
+    Object.prototype.some = function(callback, thisArg) {
+      'use strict';
+      if (this == null) throw new TypeError('Object.prototype.some called on null or undefined');
+      if (typeof callback !== 'function') throw new TypeError();
+      thisArg = thisArg || void 0;
+      return Object.keys(this).some(function (key, id, array) {
+        return callback.call(thisArg, this[key], key, this);
+      }, this);
+    };
   }
 }
 
