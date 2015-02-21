@@ -123,12 +123,12 @@ function Polyfill() {
   }
 
   if (!Object.prototype.forEach) {
-    Object.prototype.forEach = function(callback) {
+    Object.prototype.forEach = function(callback, thisArg) {
       if (typeof callback !== 'function') return;
-      var self = this;
+      thisArg = thisArg || void 0;
       Object.keys(this).forEach(function (key, id, array) {
-        callback(self[key], key, self);
-      });
+        callback.call(thisArg, this[key], key, this);
+      }, this);
     }
   }
 }
