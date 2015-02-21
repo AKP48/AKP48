@@ -58,6 +58,22 @@ function Polyfill() {
     }
   }
 
+  if (!String.prototype.prepend) {
+    // Prepend only if str is not empty
+    String.prototype.prepend = function(text) {
+      var str = this.toString();
+      return str ? text+str : str;
+    }
+  }
+
+  if (!String.prototype.append) {
+    // Append only if str is not empty
+    String.prototype.append = function(text) {
+      var str = this.toString();
+      return str ? str+text : str;
+    }
+  }
+
   if (!Array.prototype.randomElement) {
     var chance = new (require('chance'));
     Array.prototype.randomElement = function(low, high) {
@@ -94,6 +110,25 @@ function Polyfill() {
       return (this.startsWith("#") || this.startsWith("+") || this.startsWith("&") || this.startsWith("!")) // Starts with #, +, & or !
         && !(this.contains(" ") || this.contains(",") || this.contains(":")) // Does not contain <space>, <colon> or <comma>
         && this.length <= 50; // Up to 50 characters
+    }
+  }
+
+  if (!String.prototype.pluralize) {
+    String.prototype.pluralize = function(count, plural) {
+      if (plural == null)
+        plural = this + 's';
+
+      return (count == 1 ? this : plural) 
+    }
+  }
+
+  if (!Object.prototype.forEach) {
+    Object.prototype.forEach = function(callback) {
+      if (typeof callback !== 'function') return;
+      var self = this;
+      Object.keys(this).forEach(function (key, id, array) {
+        callback(self[key], key, self);
+      });
     }
   }
 }
