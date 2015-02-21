@@ -39,37 +39,9 @@ function Reload() {
 }
 
 Reload.prototype.execute = function(context) {
-    delete require.cache[require.resolve('../CommandProcessor')];
-    delete require.cache[require.resolve('../AutoResponseProcessor')];
-    delete require.cache[require.resolve('../config.json')];
-
-    this.removeAPIAndCommandCache();
-
-    context.getClient().say(context, "All channels reloading!");
-    context.getClient().getClientManager().reloadClients();
+    context.getClient().getIRCClient().notice(context.getUser().getNick(), "Performing soft reload!");
+    context.getClient().getClientManager().softReload();
     return true;
-};
-
-Reload.prototype.removeAPIAndCommandCache = function() {
-    require('fs').readdirSync(__dirname).forEach(function(file) {
-        delete require.cache[require.resolve('./'+file)];
-    });
-
-    delete require.cache[__dirname];
-
-    require('fs').readdirSync(__dirname + '/../API/').forEach(function(file) {
-        delete require.cache[require.resolve('../API/' + file)];
-    });
-
-    require('fs').readdirSync(__dirname + '/../Regex/').forEach(function(file) {
-        delete require.cache[require.resolve('../Regex/' + file)];
-    });
-
-    require('fs').readdirSync(__dirname + '/../AutoResponses').forEach(function(file) {
-        delete require.cache[require.resolve('../AutoResponses/' + file)];
-    });
-
-    delete require.cache[require.resolve('../AutoResponses/')];
 };
 
 module.exports = Reload;

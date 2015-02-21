@@ -54,10 +54,11 @@ AddServer.prototype.execute = function(context) {
 
     context.getClient().getClientManager().save();
 
+    var nick = context.getUser().getNick();
     if(!created) {
-        context.client.getIRCClient().say(context.nick, "There was a problem creating the client!");
+        context.client.getIRCClient().say(nick, "There was a problem creating the client!");
     } else {
-        context.client.getIRCClient().say(context.nick, "Client created!");
+        context.client.getIRCClient().say(nick, "Client created!");
     }
     return true;
 };

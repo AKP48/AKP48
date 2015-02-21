@@ -47,7 +47,7 @@ ChangeDelimiter.prototype.execute = function(context) {
     console.log(context.arguments[0]);
     context.client.delimiter = context.arguments[0];
     context.getClient().getClientManager().save();
-    context.client.getIRCClient().say(context.nick, "Delimiter changed!");
+    context.client.getIRCClient().say(context.getUser().getNick(), "Delimiter changed!");
     console.log("Delimiter changed! -> "+context.arguments[0]);
     context.commands.reload.execute();
     return true;

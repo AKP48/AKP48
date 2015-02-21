@@ -77,6 +77,9 @@ function Client() {
 
     // Magic 'color' that represents a bot message
     this.botID = "\u000399";
+
+    // Channels to alert on update
+    this.alert = [];
 }
 
 /**
@@ -297,7 +300,7 @@ Client.prototype.reloadProcessors = function() {
 /**
  * Initialize the Client by creating an IRC client.
  */
-Client.prototype.initialize = function(clientManager) {
+Client.prototype.initialize = function(clientManager, holdIRCClient) {
     //set the client manager.
     this.clientManager = clientManager;
 
@@ -319,22 +322,16 @@ Client.prototype.initialize = function(clientManager) {
         }
     };
 
-    //create the IRC client. This automatically connects, as well.
-    this.ircClient = new irc.Client(this.getServer(), this.getNick(), { channels: channels, realName: this.getRealName(), password: password, userName: this.getUserName(), port: this.getPort(), autoRejoin: true, showErrors: true, encoding: 'utf8' });
+    if(!holdIRCClient) {
+        //create the IRC client. This automatically connects, as well.
+        this.ircClient = new irc.Client(this.getServer(), this.getNick(), { channels: channels, realName: this.getRealName(), password: password, userName: this.getUserName(), port: this.getPort(), autoRejoin: true, showErrors: true, encoding: 'utf8' });
+    }
 
-    var botID = this.botID;
-    this.ircClient._speak = function(kind, target, text) {
-        // If the message is CTCP... filter it through
-        if (text.startsWith("\u0001")) {
-             irc.Client.prototype._speak.call(this, kind, target, text);
-        } else {
-            // prefix our messages with "botID"
-            irc.Client.prototype._speak.call(this, kind, target, botID + text);
-        }
-    };
+    //attempt to remove eventListeners, then add new one.
+    this.ircClient.removeAllListeners('message');
 
     var self = this;
-
+    
     this.ircClient.on('message', function(nick, to, text, message) {
         //on each IRC message, run the command processor. If the command processor doesn't execute a command,
         //run the auto response processor.
@@ -342,6 +339,17 @@ Client.prototype.initialize = function(clientManager) {
             self.getAutoResponseProcessor().process(message, self);
         }
     });
+    
+    var botID = this.botID;
+    this.ircClient._splitLongLines = function(words, maxLen, dest) {
+        var ret = irc.Client.prototype._splitLongLines.call(this, words, maxLen-botID.length-1, dest);
+        for (i = 0; i < ret.length; i++) {
+            if (!ret[i].startsWith("\u0001")) {
+                ret[i] = botID + '\u0003' + ret[i];
+            }
+        }
+        return ret;
+    };
 
     log.info("Client", this.getNick(), "on", this.getServer()+":"+this.getPort(), "initialized.");
 };
@@ -377,6 +385,10 @@ Client.prototype.clone = function() {
         }
     };
 
+    this.alert.forEach(function (channel) {
+        client.alert.push(channel);
+    });
+
     //return the new client
     return client;
 };
@@ -389,6 +401,43 @@ Client.prototype.shutdown = function(msg) {
     log.info("Shutdown requested for client", this.getNick(), "on", this.getServer()+":"+this.getPort()+".");
     this.getIRCClient().disconnect(msg);
 };
+
+/**
+ * Destroys this client.
+ */
+Client.prototype.destroy = function() {
+    this.nick = null;
+    this.server = null;
+    this.port = null;
+    this.username = null;
+    this.realname = null;
+    this.password = null;
+    this.channels = null;
+    this.ircClient = null;
+    this.clientManager = null;
+    this.isTemporary = null;
+    this.commandProcessor = null;
+    this.autoResponseProcessor = null;
+    this.botID = null;
+    this.alert = null;
+
+    delete this.nick;
+    delete this.server;
+    delete this.port;
+    delete this.username;
+    delete this.realname;
+    delete this.password;
+    delete this.channels;
+    delete this.ircClient;
+    delete this.clientManager;
+    delete this.isTemporary;
+    delete this.commandProcessor;
+    delete this.autoResponseProcessor;
+    delete this.botID;
+    delete this.alert;
+
+    delete this;
+}
 
 module.exports = Client;
 
@@ -419,6 +468,13 @@ module.exports.build = function build(options) {
     }
     if(options.password) {
         client.setPassword(options.password);
+    }
+    if (options.alert) {
+        options.alert.forEach(function(arg){
+            if (typeof arg === 'string') {
+                client.alert.push(arg);
+            }
+        });
     }
     if(options.channels) {
         for (var i = 0; i < options.channels.length; i++) {

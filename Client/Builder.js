@@ -49,7 +49,7 @@ function Builder() {
 Builder.prototype.buildContext = function(message, client) {
     //Before we do anything else, check to see if we sent this message.
     //We can safely toss this out if we are the sender.
-    if(message.nick == client.getNick()){return false;}
+    if(message.nick === client.getNick()){return false;}
 
     //Make ourselves a new Context...
     var context = new Context();

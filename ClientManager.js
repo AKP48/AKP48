@@ -32,6 +32,7 @@ var log = bunyan.createLogger({
 
 var Client = require("./Client/Client");
 var Builder = require("./Client/Builder");
+var GitListener = require('./GitListener');
 
 /**
  * The ClientManager.
@@ -46,6 +47,9 @@ function ClientManager(config) {
 
     //builder
     this.builder = new Builder();
+
+    log.info("Creating Git Listener");
+    this.gitListener = new GitListener(this);
 }
 
 /**
@@ -55,8 +59,10 @@ function ClientManager(config) {
 ClientManager.prototype.loadClients = function(config) {
     log.info("Loading client information...");
     for (i in config.servers) {
-        var server = config.servers[i];
-        this.addClient(Client.build(server));
+        if(config.servers.hasOwnProperty(i)) {
+            var server = config.servers[i];
+            this.addClient(Client.build(server));
+        }
     };
 };
 
@@ -70,14 +76,106 @@ ClientManager.prototype.addClient = function(client) {
     this.clients.push(client);
 };
 
+ClientManager.prototype.softReload = function() {
+    //remove all sorts of cached objects from the cache
+    //starting with all commands
+    require('fs').readdirSync(__dirname+"/Commands").forEach(function(file) {
+        log.trace("Deleting Commands/"+file+" from require cache.")
+        delete require.cache[require.resolve('./Commands/'+file)];
+    });
+
+    //all api objects
+    require('fs').readdirSync(__dirname + '/API/').forEach(function(file) {
+        log.trace("Deleting API/"+file+" from require cache.")
+        delete require.cache[require.resolve('./API/' + file)];
+    });
+
+    //all AKP48 client objects
+    require('fs').readdirSync(__dirname + '/Client/').forEach(function(file) {
+        log.trace("Deleting Client/"+file+" from require cache.")
+        delete require.cache[require.resolve('./Client/' + file)];
+    });
+
+    //all regular expression objects
+    require('fs').readdirSync(__dirname + '/Regex/').forEach(function(file) {
+        log.trace("Deleting Regex/"+file+" from require cache.")
+        delete require.cache[require.resolve('./Regex/' + file)];
+    });
+
+    //all autoresponses
+    require('fs').readdirSync(__dirname + '/AutoResponses').forEach(function(file) {
+        log.trace("Deleting AutoResponses/"+file+" from require cache.")
+        delete require.cache[require.resolve('./AutoResponses/' + file)];
+    });
+
+    //the command processor, autoresponse processor, and configuration file
+    log.trace("Deleting CommandProcessor from require cache.")
+    delete require.cache[require.resolve('./CommandProcessor')];
+    log.trace("Deleting AutoResponseProcessor from require cache.")
+    delete require.cache[require.resolve('./AutoResponseProcessor')];
+    log.trace("Deleting config.json from require cache.")
+    delete require.cache[require.resolve('./config.json')];
+
+    //the polyfill file
+    log.trace("Deleting polyfill.js from require cache.")
+    delete require.cache[require.resolve('./polyfill.js')];
+
+    //the package.json file
+    log.trace("Deleting package.json from require cache.")
+    delete require.cache[require.resolve('./package.json')];
+
+    //and finally, the autoresponse and command loaders.
+    log.trace("Deleting AutoResponses index from require cache.")
+    delete require.cache[require.resolve('./AutoResponses/')];
+    log.trace("Deleting Commands index from require cache.")
+    delete require.cache[require.resolve('./Commands/')];
+
+    //now we can reload all the clients.
+    this.reloadClients();
+};
+
 /**
  * Reload the CommandProcessor in each Client that this ClientManager manages.
  */
 ClientManager.prototype.reloadClients = function() {
     log.info("Reloading all clients.");
-    for (i in this.clients) {
-        this.clients[i].reloadProcessors();
+
+    //require the code to refresh it
+    var Client = require("./Client/Client");
+    var Builder = require("./Client/Builder");
+
+    //assign a new builder from refreshed code
+    this.builder = new Builder();
+
+    for (var i = 0; i < this.clients.length; i++) {
+        //keep a reference to the IRC client, so it doesn't disconnect.
+        var tempIRCClient = this.clients[i].getIRCClient();
+
+        //build a new client using the values from this client.
+        var tempClient = Client.build({
+            nick: this.clients[i].getNick(),
+            realname: this.clients[i].getRealName(),
+            username: this.clients[i].getUserName(),
+            password: this.clients[i].getPassword(),
+            server: this.clients[i].getServer(),
+            port: this.clients[i].getPort(),
+            alert: this.clients[i].alert,
+            channels: this.clients[i].getChannels()
+        });
+
+        tempClient.ircClient = tempIRCClient;
+
+        this.clients[i].destroy();
+
+        this.clients[i] = tempClient;
+
+        this.clients[i].initialize(this, true);
     };
+
+    log.info("Reinitializing polyfill.");
+    require('./polyfill.js')();
+
+    log.info("Soft reload complete.");
 };
 
 /**

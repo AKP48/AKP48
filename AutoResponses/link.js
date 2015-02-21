@@ -49,6 +49,7 @@ function LinkHandler() {
     this.steam = new Steam();
 }
 
+// TODO: cache responses
 LinkHandler.prototype.execute = function(word, context) {
     if(this.youTubeRegex.test(word)) {
         return this.YouTubeVideo(word, context);
