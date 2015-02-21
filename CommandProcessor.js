@@ -130,7 +130,7 @@ CommandProcessor.prototype.process = function(message, client) {
                     this.sendUsageMessage(context);
                     return false;
                 } else {
-                    log.info({user: context.getUser().getNick(), command: context.getCommand().name, args: "'" + context.getArguments().join("', '") + "'";, fullMsg: context.getFullMessage()}, "Command executed.");
+                    log.info({user: context.getUser().getNick(), command: context.getCommand().name, args: "'" + context.getArguments().join("', '") + "'", fullMsg: context.getFullMessage()}, "Command executed.");
                 }
                 return true;
             }
