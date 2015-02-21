@@ -311,16 +311,12 @@ Client.prototype.initialize = function(clientManager, holdIRCClient) {
     var channels = [];
 
     //loop to get channel names
-    var _channels = this.getChannels();
-    for (i in _channels) {
-        //ensure that the property is actually part of the array.
-        if (_channels.hasOwnProperty(i)) {
-            var channel = _channels[i];
-            if(channel.getName() && channel.getName() !== "global") {
-                channels.push(channel.getName());
-            }
+    this.getChannels().forEach(function (channel) {
+        var name = channel.getName();
+        if(name && name.isChannel()) {
+            channels.push(name);
         }
-    };
+    });
 
     if(!holdIRCClient) {
         //create the IRC client. This automatically connects, as well.

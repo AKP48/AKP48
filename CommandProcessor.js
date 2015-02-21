@@ -54,37 +54,32 @@ CommandProcessor.prototype.initCommandAliases = function() {
     // This first loop is simply to remove any modules with missing dependencies,
     // as they will probably error out and not work. This ensures that the commands
     // they provide will not be executible, and will not show up in the help list.
-    for (var property in this.commands) {
-        //ensure that the property exists in our object.
-        if (this.commands.hasOwnProperty(property)) {
-            //if dependencies are defined...
-            if(this.commands[property] !== undefined && this.commands[property].dependencies !== undefined) {
-                //for each dependency...
-                for (var i = 0; i < this.commands[property].dependencies.length; i++) {
-                    //if dependency doesn't exist...
-                    if(this.commands[this.commands[property].dependencies[i]] === undefined) {
-                        //disable it.
-                        log.info({command: property, reason: "Missing dependency", missingDependency: this.commands[property].dependencies[i]}, "Command Module disabled.");
-                        delete this.commands[property];
-                        break;
-                    }
-                };
+    this.commands.forEach(function (command, property) {
+        // if dependencies are defined...
+        if(command !== undefined && command.dependencies !== undefined) {
+            //for each dependency...
+            for (var i = 0; i < command.dependencies.length; i++) {
+                //if dependency doesn't exist...
+                var dependency = command.dependencies[i];
+                if(this.commands[dependency] === undefined) {
+                    //disable it.
+                    log.info({command: property, reason: "Missing dependency", missingDependency: dependency}, "Command Module disabled.");
+                    delete this.commands[property];
+                    break;
+                }
             }
         }
-    }
+    }, this);
 
     // This loop is the one that actually adds all of the aliases for each command
     // and allows them to be executed.
-    for (var property in this.commands) {
-        //if the property exists
-        if (this.commands.hasOwnProperty(property)) {
-            //for each of the command's aliases
-            for (var i = 0; i < this.commands[property].aliases.length; i++) {
-                //add the original command to the aliasedCommands array with the alias as it's name.
-                this.aliasedCommands[this.commands[property].aliases[i]] = this.commands[property];
-            };
-        }
-    }
+    this.commands.forEach(function (command) {
+        //for each of the command's aliases
+        command.aliases.forEach(function (alias) {
+            log.info("Aliased " + alias.append(" to ").append(command.name));
+            this.aliasedCommands[alias] = command;
+        }, this);
+    }, this);
     log.info("Command aliases initialized.");
 };
 

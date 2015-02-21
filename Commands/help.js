@@ -64,36 +64,27 @@ Help.prototype.execute = function(context) {
     //array for output
     var responses = [];
 
-    //get the current commands
-    var commands = context.getCommandProcessor().commands;
-
     //for each command
-    for (var property in commands) {
-        if (commands.hasOwnProperty(property)) {
-            //if command is really there
-            if(commands[property] !== undefined) {
+    context.getCommandProcessor().commands.forEach(function (command) {
+            //to tell us whether or not to send this message.
+            var send = true;
 
-                //to tell us whether or not to send this message.
-                var send = true;
-
-                //check permission on user
-                if(!context.getUser().hasPermission(commands[property].permissionName)) {
-                    send = false;
-                }
-
-                //get user from global channel
-                var globalUser = context.getClient().getChannel("global").getUser(context.getUser().getNick());
-                //check permission on global channel user
-                if(globalUser && !globalUser.hasPermission(commands[property].permissionName)) {
-                    send = false;
-                }
-
-                if(send) {
-                    responses.push(commands[property].name + ": " + commands[property].helpText + " | Usage: " + context.getChannel().getCommandDelimiter() + commands[property].aliases[0] + " " + commands[property].usageText.replace(/\r?\n/, " | "));
-                }
+            //check permission on user
+            if(!context.getUser().hasPermission(command.permissionName)) {
+                send = false;
             }
-        }
-    }
+
+            //get user from global channel
+            var globalUser = context.getClient().getChannel("global").getUser(context.getUser().getNick());
+            //check permission on global channel user
+            if(globalUser && !globalUser.hasPermission(command.permissionName)) {
+                send = false;
+            }
+
+            if(send) {
+                responses.push(command.name + ": " + command.helpText + " | Usage: " + context.getChannel().getCommandDelimiter() + command.aliases[0] + " " + command.usageText.replace(/\r?\n/, " | "));
+            }
+    });
 
     var numberOfPages = Math.ceil(responses.length / this.perPage);
 

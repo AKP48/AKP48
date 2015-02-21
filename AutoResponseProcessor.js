@@ -72,22 +72,21 @@ AutoResponseProcessor.prototype.executeAll = function(context) {
     var runs = {};
     for (var i = 0; i < things.length && responses < 3; i++) {
         // This loop runs through all handlers and attempts to execute them.
-        for (var property in this.handlers) {
-            if (this.handlers.hasOwnProperty(property)) {
-                // Assign property if we haven't yet
-                if (!runs.hasOwnProperty(property)) {
-                    runs[property] = 0;
-                }
-                var handler = this.handlers[property];
-                //if the handler's regex matches, execute handler.
-                if (things[i].search(handler.regex) != -1 && (!handler.limit || runs[property] < handler.limit)) {
-                    handler.execute(things[i], context);
-                    log.info("AutoResponse handler executed: ", {user: context.getUser(), command: handler.name, fullMsg: context.getFullMessage()});
-                    runs[property]++;
-                    responses++;
-                }
+        this.handlers.every(function (handler) {
+            // Assign property if we haven't yet
+            if (!runs.hasOwnProperty(handler)) {
+                runs[handler] = 0;
             }
-        }
+
+            //if the handler's regex matches, execute handler.
+            if (things[i].search(handler.regex) != -1 && (!handler.limit || runs[handler] < handler.limit)) {
+                handler.execute(things[i], context);
+                log.info("AutoResponse handler executed: ", {user: context.getUser(), command: handler.name, fullMsg: context.getFullMessage()});
+                runs[handler]++;
+                responses++;
+            }
+            return responses < 3;
+        });
     };
 }
 
