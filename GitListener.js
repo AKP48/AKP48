@@ -160,14 +160,11 @@ GitListener.prototype.handle = function (branch, data) {
         exec('npm install');
     }
 
-
-    setTimeout(function(){
-        if (shutdown) {
-            manager.shutdown("Restarting due to update.");
-        } else {
-            manager.softReload();
-        }
-    }, 50);
+    if (shutdown) {
+        manager.shutdown("Restarting due to update.");
+    } else {
+        manager.softReload();
+    }
 };
 
 module.exports = GitListener;

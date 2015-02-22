@@ -212,8 +212,10 @@ ClientManager.prototype.shutdown = function(msg) {
         this.clients[i].shutdown(msg);
     };
 
-    log.info("Killing process.");
-    process.exit(0);
+    setTimeout(function () {
+        log.info("Killing process.");
+        process.exit(0);
+    }, 50);
 };
 
 module.exports = ClientManager;
