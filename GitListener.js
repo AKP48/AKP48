@@ -36,6 +36,7 @@ require('shelljs/global');
 var config = require("./config.json");
 var GitHooks = require("githubhook");
 var Git = new (require("./API/git"))();
+var Google = require("./API/google");
 
 var c = require("irc-colors");
 
@@ -67,6 +68,9 @@ function GitListener(clientmanager) {
     if(git.listenForChanges) {
         this.startListening();
     }
+
+    //google API module for using Google APIs.
+    this.googleAPI = new Google(config.google.apiKey);
 }
 
 GitListener.prototype.startListening = function() {
@@ -102,69 +106,71 @@ GitListener.prototype.handle = function (branch, data) {
     var manager = this.manager;
     // Alert channels of update
     var commits_string = " commit".pluralize(data.commits.length).prepend(data.commits.length);
-    var message = c.pink("[GitHub]").append(" ").append(commits_string).append(data.forced && !data.created ? " force" : "").append(" pushed to")
-        .append(data.created ? " new" : "").append(" ").append(data.ref.startsWith("refs/tags/") ? "tag" : "branch").append(" ").append(c.bold(branch))
-        .append(" by ").append(data.pusher.name);
+    this.googleAPI.shorten_url(data.compare, function(url) {
+        var message = c.pink("[GitHub]").append(" ").append(commits_string).append(data.forced && !data.created ? " force" : "").append(" pushed to")
+            .append(data.created ? " new" : "").append(" ").append(data.ref.startsWith("refs/tags/") ? "tag" : "branch").append(" ").append(c.bold(branch))
+            .append(" by ").append(data.pusher.name).append(" (").append(url).append(")");
 
-    for (var i = 0; i < data.commits.length && i < 3; i++) {
-        var _c = data.commits[data.commits.length - 1 - i];
-        var _m = _c.message;
-        var end = _m.indexOf("\n");
-        var commit_message = _c.author.username.append(": ").append(_m.substring(0, end === -1 ? _m.length : end)).prepend(c.green("[".append(_c.id.substring(0, 7)).append("] ")));
-        message += "\n".append(commit_message);
-    };
+        for (var i = 0; i < data.commits.length && i < 3; i++) {
+            var _c = data.commits[data.commits.length - 1 - i];
+            var _m = _c.message;
+            var end = _m.indexOf("\n");
+            var commit_message = _c.author.username.append(": ").append(_m.substring(0, end === -1 ? _m.length : end)).prepend(c.green("[".append(_c.id.substring(0, 7)).append("] ")));
+            message += "\n".append(commit_message);
+        };
 
-    manager.clients.forEach(function (client) {
-        client.alert.forEach(function (channel) {
-            client.getIRCClient().say(channel, message);
+        manager.clients.forEach(function (client) {
+            client.alert.forEach(function (channel) {
+                client.getIRCClient().say(channel, message);
+            });
         });
-    });
 
-    if (!Git.isRepo()) {
-        return;
-    }
+        if (!Git.isRepo()) {
+            return;
+        }
 
-    var changing_branch = branch !== Git.getBranch();
-    var update = this.autoUpdate && (data.commits.length !== 0 || changing_branch);
-    
-    if (!update) {
-        return;
-    }
+        var changing_branch = branch !== Git.getBranch();
+        var update = this.autoUpdate && (data.commits.length !== 0 || changing_branch);
+        
+        if (!update) {
+            return;
+        }
 
-    var shutdown = changing_branch;
-    var npm = changing_branch;
-    var hot_files = ['server.js', 'GitListener.js', 'ClientManager.js'];
+        var shutdown = changing_branch;
+        var npm = changing_branch;
+        var hot_files = ['server.js', 'GitListener.js', 'ClientManager.js'];
 
-    if (!shutdown) {
-        data.commits.some(function (commit) {
-            commit.modified.some(function (file) {
-                if (hot_files.indexOf(file) !== -1) {
-                    shutdown = true;
-                } else if (file === 'package.json') {
-                    npm = true;
-                }
+        if (!shutdown) {
+            data.commits.some(function (commit) {
+                commit.modified.some(function (file) {
+                    if (hot_files.indexOf(file) !== -1) {
+                        shutdown = true;
+                    } else if (file === 'package.json') {
+                        npm = true;
+                    }
+                    return shutdown;
+                });
                 return shutdown;
             });
-            return shutdown;
-        });
-    }
-    
-    log.info("Updating to branch: ".append(branch));
-    
-    // Fetch, Checkout
-    if (!Git.checkout(branch)) {
-        return;
-    }
+        }
+        
+        log.info("Updating to branch: ".append(branch));
+        
+        // Fetch, Checkout
+        if (!Git.checkout(branch)) {
+            return;
+        }
 
-    if (npm) {
-        exec('npm install');
-    }
+        if (npm) {
+            exec('npm install');
+        }
 
-    if (shutdown) {
-        manager.shutdown("Restarting due to update.");
-    } else {
-        manager.softReload();
-    }
+        if (shutdown) {
+            manager.shutdown("Restarting due to update.");
+        } else {
+            manager.softReload();
+        }
+    });
 };
 
 module.exports = GitListener;
