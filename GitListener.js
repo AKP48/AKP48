@@ -155,6 +155,7 @@ GitListener.prototype.handle = function (branch, data) {
                         shutdown = true;
                     } else if (file === 'package.json') {
                         npm = true;
+                        shutdown = true;
                     }
                     return shutdown;
                 });
