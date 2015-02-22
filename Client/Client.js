@@ -15,21 +15,6 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-var path = require('path');
-var bunyan = require('bunyan');
-var log = bunyan.createLogger({
-    name: 'AKP48 Client',
-    streams: [{
-        type: 'rotating-file',
-        path: path.resolve("./log/AKP48.log"),
-        period: '1d',
-        count: 7
-    },
-    {
-        stream: process.stdout
-    }]
-});
-
 var irc = require('irc');
 var CommandProcessor = require("../CommandProcessor");
 var AutoResponseProcessor = require("../AutoResponseProcessor");
@@ -38,7 +23,10 @@ var Channel = require('./Channel');
 /**
  * An IRC client.
  */
-function Client() {
+function Client(logger) {
+    // The logger this client uses.
+    this.log = logger.child({module: "Client"});
+
     // The nickname this client uses.
     this.nick = "IRCBot9000";
 
@@ -70,10 +58,10 @@ function Client() {
     this.isTemporary = false;
 
     // The client's CommandProcessor.
-    this.commandProcessor = new CommandProcessor();
+    this.commandProcessor = new CommandProcessor(); //TODO: add logger here
 
     // The client's AutoResponseProcessor.
-    this.autoResponseProcessor = new AutoResponseProcessor();
+    this.autoResponseProcessor = new AutoResponseProcessor(); //TODO: add logger here
 
     // Magic 'color' that represents a bot message
     this.botID = "\u000399";
@@ -347,7 +335,7 @@ Client.prototype.initialize = function(clientManager, holdIRCClient) {
         return ret;
     };
 
-    log.info("Client", this.getNick(), "on", this.getServer()+":"+this.getPort(), "initialized.");
+    this.log.info("Client", this.getNick(), "on", this.getServer()+":"+this.getPort(), "initialized.");
 };
 
 /**
@@ -395,7 +383,7 @@ function (channel) {
  * @param  {String} msg The leave message.
  */
 Client.prototype.shutdown = function(msg) {
-    log.info("Shutdown requested for client", this.getNick(), "on", this.getServer()+":"+this.getPort()+".");
+    this.log.info("Shutdown requested for client", this.getNick(), "on", this.getServer()+":"+this.getPort()+".");
     this.getIRCClient().disconnect(msg);
 };
 
@@ -443,9 +431,11 @@ module.exports = Client;
  * @param  {Object}     options     The options that will configure the client.
  * @return {Client}                 The Client.
  */
-module.exports.build = function build(options) {
+module.exports.build = function build(options, logger) {
     //Make ourselves a new Client...
-    var client = new Client();
+    var client = new Client(logger);
+
+    var log = logger.child({module: "Client.build"});
 
     //set the options, if we get them.
     if(options.nick) {

@@ -15,8 +15,11 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-function Polyfill() {
+function Polyfill(logger) {
+  var log = logger.child({module: "Polyfill"});
+
   if (!String.prototype.repeat) {
+    log.debug("String.prototype.repeat not found. Adding...");
     String.prototype.repeat = function(count) {
       'use strict';
       if (this == null) {
@@ -59,6 +62,7 @@ function Polyfill() {
   }
 
   if (!String.prototype.prepend) {
+    log.debug("String.prototype.prepend not found. Adding...");
     // Prepend only if str is not empty
     String.prototype.prepend = function(text) {
       var str = this.toString();
@@ -67,6 +71,7 @@ function Polyfill() {
   }
 
   if (!String.prototype.append) {
+    log.debug("String.prototype.append not found. Adding...");
     // Append only if str is not empty
     String.prototype.append = function(text) {
       var str = this.toString();
@@ -75,6 +80,7 @@ function Polyfill() {
   }
 
   if (!Array.prototype.randomElement) {
+    log.debug("Array.prototype.randomElement not found. Adding...");
     var chance = new (require('chance'));
     Array.prototype.randomElement = function(low, high) {
       low = low || 0;
@@ -87,6 +93,7 @@ function Polyfill() {
   }
 
   if (!String.prototype.contains) {
+    log.debug("String.prototype.contains not found. Adding...");
     String.prototype.contains = function(needle) {
       return this.indexOf(needle) !== -1;
     }
@@ -94,6 +101,7 @@ function Polyfill() {
 
   // Register startsWith function
   if (!String.prototype.startsWith) {
+    log.debug("String.prototype.startsWith not found. Adding...");
     Object.defineProperty(String.prototype, 'startsWith', {
       enumerable: false,
       configurable: false,
@@ -106,6 +114,7 @@ function Polyfill() {
   }
 
   if (!String.prototype.isChannel) {
+    log.debug("String.prototype.isChannel not found. Adding...");
     String.prototype.isChannel = function() {
       return (this.startsWith("#") || this.startsWith("+") || this.startsWith("&") || this.startsWith("!")) // Starts with #, +, & or !
         && !(this.contains(" ") || this.contains(",") || this.contains(":")) // Does not contain <space>, <colon> or <comma>
@@ -114,6 +123,7 @@ function Polyfill() {
   }
 
   if (!String.prototype.pluralize) {
+    log.debug("String.prototype.pluralize not found. Adding...");
     String.prototype.pluralize = function(count, plural) {
       if (plural == null)
         plural = this + 's';
@@ -123,6 +133,7 @@ function Polyfill() {
   }
 
   if (!Object.prototype.each) {
+    log.debug("Object.prototype.each not found. Adding...");
     Object.prototype.each = function(callback, thisArg) {
       'use strict';
       if (this == null) throw new TypeError('Object.prototype.each called on null or undefined');
@@ -135,6 +146,7 @@ function Polyfill() {
   }
 
   if (!Array.prototype.each) {
+    log.debug("Array.prototype.each not found. Adding...");
     Array.prototype.each = function(callback, thisArg) {
       'use strict';
       if (this == null) throw new TypeError('Object.prototype.each called on null or undefined');
@@ -145,6 +157,7 @@ function Polyfill() {
   }
 
   if (!Object.prototype.some) {
+    log.debug("Object.prototype.some not found. Adding...");
     // Return true to stop looping
     Object.prototype.some = function(callback, thisArg) {
       'use strict';
@@ -158,6 +171,7 @@ function Polyfill() {
   }
 
   if (!Object.prototype.every) {
+    log.debug("Object.prototype.every not found. Adding...");
     // Return false to stop looping
     Object.prototype.every = function(callback, thisArg) {
       'use strict';
@@ -169,6 +183,8 @@ function Polyfill() {
       }, this);
     };
   }
+
+  log.info("Finished initializing Polyfill.");
 }
 
 module.exports = Polyfill;

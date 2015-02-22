@@ -15,41 +15,30 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-var path = require('path');
-var bunyan = require('bunyan');
-var log = bunyan.createLogger({
-    name: 'AKP48 ClientManager',
-    streams: [{
-        type: 'rotating-file',
-        path: path.resolve("./log/AKP48.log"),
-        period: '1d',
-        count: 7
-    },
-    {
-        stream: process.stdout
-    }]
-});
-
 var Client = require("./Client/Client");
 var Builder = require("./Client/Builder");
 var GitListener = require('./GitListener');
 
 /**
  * The ClientManager.
- * @param {JSON} config The IRCBot configuration.
+ * @param {JSON}   config The IRCBot configuration.
+ * @param {Logger} logger The bunyan logger.
  */
-function ClientManager(config) {
+function ClientManager(config, logger) {
+    // The logger.
+    this.log = logger.child({module: "ClientManager"});
+
     // array of all clients
     this.clients = [];
 
     // load all of the clients on creation of this object.
     this.loadClients(config);
 
-    //builder
-    this.builder = new Builder();
+    // builder
+    this.builder = new Builder(logger);
 
-    log.info("Creating Git Listener");
-    this.gitListener = new GitListener(this);
+    this.log.info("Creating Git Listener");
+    this.gitListener = new GitListener(this, logger);
 }
 
 /**
@@ -59,7 +48,7 @@ function ClientManager(config) {
 ClientManager.prototype.loadClients = function(config) {
     log.info("Loading client information...");
     config.servers.each(function (server) {
-        this.addClient(Client.build(server));
+        this.addClient(Client.build(server, this.log));
     }, this);
 };
 
@@ -68,40 +57,42 @@ ClientManager.prototype.loadClients = function(config) {
  * @param {Client} client The client.
  */
 ClientManager.prototype.addClient = function(client) {
-    log.info("Initializing client", client.getNick(), "on", client.getServer()+":"+client.getPort()+".");
+    this.log.info("Initializing client", client.getNick(), "on", client.getServer()+":"+client.getPort()+".");
     client.initialize(this);
     this.clients.push(client);
 };
 
 ClientManager.prototype.softReload = function() {
+    this.log.info("Beginning soft reload...");
+    var log = this.log;
     //remove all sorts of cached objects from the cache
     //starting with all commands
     require('fs').readdirSync(__dirname+"/Commands").each(function(file) {
-        log.trace("Deleting Commands/"+file+" from require cache.")
+        log.trace("Deleting Commands/"+file+" from require cache.");
         delete require.cache[require.resolve('./Commands/'+file)];
     });
 
     //all api objects
     require('fs').readdirSync(__dirname + '/API/').each(function(file) {
-        log.trace("Deleting API/"+file+" from require cache.")
+        log.trace("Deleting API/"+file+" from require cache.");
         delete require.cache[require.resolve('./API/' + file)];
     });
 
     //all AKP48 client objects
     require('fs').readdirSync(__dirname + '/Client/').each(function(file) {
-        log.trace("Deleting Client/"+file+" from require cache.")
+        log.trace("Deleting Client/"+file+" from require cache.");
         delete require.cache[require.resolve('./Client/' + file)];
     });
 
     //all regular expression objects
     require('fs').readdirSync(__dirname + '/Regex/').each(function(file) {
-        log.trace("Deleting Regex/"+file+" from require cache.")
+        log.trace("Deleting Regex/"+file+" from require cache.");
         delete require.cache[require.resolve('./Regex/' + file)];
     });
 
     //all autoresponses
     require('fs').readdirSync(__dirname + '/AutoResponses').each(function(file) {
-        log.trace("Deleting AutoResponses/"+file+" from require cache.")
+        log.trace("Deleting AutoResponses/"+file+" from require cache.");
         delete require.cache[require.resolve('./AutoResponses/' + file)];
     });
 
@@ -135,7 +126,7 @@ ClientManager.prototype.softReload = function() {
  * Reload the CommandProcessor in each Client that this ClientManager manages.
  */
 ClientManager.prototype.reloadClients = function() {
-    log.info("Reloading all clients.");
+    this.log.info("Reloading all clients.");
 
     //require the code to refresh it
     var Client = require("./Client/Client");
@@ -169,17 +160,17 @@ ClientManager.prototype.reloadClients = function() {
         this.clients[i].initialize(this, true);
     };
 
-    log.info("Reinitializing polyfill.");
-    require('./polyfill.js')();
+    this.log.info("Reinitializing polyfill.");
+    require('./polyfill.js')(this.log);
 
-    log.info("Soft reload complete.");
+    this.log.info("Soft reload complete.");
 };
 
 /**
  * Save the configuration of this ClientManager.
  */
 ClientManager.prototype.save = function() {
-    log.info("Saving configuration...");
+    this.log.info("Saving configuration...");
 
     //get the current config
     var config = require("./config.json");
@@ -202,18 +193,18 @@ ClientManager.prototype.save = function() {
 
     require('fs').writeFile('./config.json', JSON.stringify(config, null, 4), function (err) {
         if (err) return console.log(err);
-        log.info('Configuration saved.');
+        this.log.info('Configuration saved.');
     });
 };
 
 ClientManager.prototype.shutdown = function(msg) {
-    log.info("Shutting down all clients.");
+    this.log.info("Shutting down all clients.");
     for (var i = 0; i < this.clients.length; i++) {
         this.clients[i].shutdown(msg);
     };
 
     setTimeout(function () {
-        log.info("Killing process.");
+        this.log.info("Killing process.");
         process.exit(0);
     }, 50);
 };

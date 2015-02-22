@@ -78,6 +78,9 @@
             ]
         }
     ],
+    "log": {
+        "logToFile": true // Whether or not to output logs to a file.
+    },
     "google": {
         "apiKey": "PutYourGoogleAPIKeyHere" // API key to use for Google API-related commands. If non-existent, Google-related commands will be disabled.
         // See https://developers.google.com/console/help/ for more information on obtaining a Google API key.

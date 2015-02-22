@@ -17,35 +17,45 @@
 
 var path = require('path');
 var bunyan = require('bunyan');
-var log = bunyan.createLogger({
-    name: 'AKP48 Server',
-    streams: [{
+var config = require('./config.json');
+
+var streams = [{
+    stream: process.stdout,
+    level: 'info'
+}];
+
+if(config.log && config.log.logToFile) {
+    streams.push({
         type: 'rotating-file',
+        level: 'trace',
         path: path.resolve("./log/AKP48.log"),
         period: '1d',
         count: 7
-    },
-    {
-        stream: process.stdout
-    }]
+    });
+}
+
+var log = bunyan.createLogger({
+    name: 'AKP48',
+    module: 'Server',
+    streams: streams,
+    serializers: {
+        err: bunyan.stdSerializers.err
+    }
 });
 
 log.info("Starting server.");
 
 var ClientManager = require('./ClientManager');
 
-log.info("Initializing polyfill.");
-require('./polyfill.js')();
-
-log.info("Loading configuration.");
-var config = require('./config.json');
+log.info("Initializing polyfill...");
+require('./polyfill.js')(log);
 
 log.info("Creating Client Manager.");
-var clientmanager = new ClientManager(config);
+var clientmanager = new ClientManager(config, log);
 
 //todo: better exception handling plz
 if(config.productionMode) {
     process.on('uncaughtException', function(err) {
-        log.error({error: err.stack}, "Exception thrown.");
+        log.error({err: err}, "Exception caught: %s", err);
     });
 }
