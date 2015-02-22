@@ -76,7 +76,7 @@ CommandProcessor.prototype.initCommandAliases = function() {
     this.commands.forEach(function (command) {
         //for each of the command's aliases
         command.aliases.forEach(function (alias) {
-            log.info("Aliased " + alias.append(" to ").append(command.name));
+            log.debug("Aliased " + alias.append(" to ").append(command.name));
             this.aliasedCommands[alias] = command;
         }, this);
     }, this);
