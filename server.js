@@ -21,13 +21,13 @@ var config = require('./config.json');
 
 var streams = [{
     stream: process.stdout,
-    level: 'info'
+    level: (config.log.level || 'info')
 }];
 
 if(config.log && config.log.logToFile) {
     streams.push({
         type: 'rotating-file',
-        level: 'trace',
+        level: (config.log.level || 'info'),
         path: path.resolve("./log/AKP48.log"),
         period: '1d',
         count: 7

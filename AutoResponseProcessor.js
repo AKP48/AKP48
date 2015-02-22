@@ -15,22 +15,9 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-var path = require('path');
-var bunyan = require('bunyan');
-var log = bunyan.createLogger({
-    name: 'AKP48 AutoResponseProcessor',
-    streams: [{
-        type: 'rotating-file',
-        path: path.resolve("./log/AKP48.log"),
-        period: '1d',
-        count: 7
-    },
-    {
-        stream: process.stdout
-    }]
-});
-
-function AutoResponseProcessor() {
+function AutoResponseProcessor(logger) {
+    //logger
+    this.log = logger.child({module: "AutoResponseProcessor"});
     this.handlers = require('./AutoResponses');
 }
 
@@ -53,12 +40,25 @@ AutoResponseProcessor.prototype.process = function(message, client) {
 
     //if we don't get a context, something weird must have happened, and we shouldn't continue.
     //if we get a message that identifies as a bot, we shouldn't process it
-    if(!context || context.getFullMessage().startsWith(client.botID)) {return false;}
+    if(!context || context.getFullMessage().startsWith(client.botID)) {
+        this.log.debug({
+            user: context.getUser().getNick(), 
+            fullMsg: context.getFullMessage(),
+            reason: "User identifies as a bot, or a context wasn't created."
+        }, "AutoResponse execution blocked.");
+        return false;
+    }
 
     //if user isn't banned
     if(!context.getChannel().isBanned(context.getUser())) {
         //process the message
         this.executeAll(context);
+    } else {
+        this.log.debug({
+            user: context.getUser().getNick(), 
+            fullMsg: context.getFullMessage(),
+            reason: "User is banned."
+        }, "AutoResponse execution blocked.");
     }
 };
 
@@ -70,6 +70,7 @@ AutoResponseProcessor.prototype.executeAll = function(context) {
     var things = context.getFullMessage().split(" ");
     var responses = 0;
     var runs = {};
+    var log = this.log;
     for (var i = 0; i < things.length && responses < 3; i++) {
         // This loop runs through all handlers and attempts to execute them.
         this.handlers.every(function (handler) {
@@ -81,7 +82,7 @@ AutoResponseProcessor.prototype.executeAll = function(context) {
             //if the handler's regex matches, execute handler.
             if (things[i].search(handler.regex) != -1 && (!handler.limit || runs[handler] < handler.limit)) {
                 handler.execute(things[i], context);
-                log.info("AutoResponse handler executed: ", {user: context.getUser(), command: handler.name, fullMsg: context.getFullMessage()});
+                log.info({user: context.getUser().getNick(), command: handler.name, fullMsg: context.getFullMessage()}, "AutoResponse handler executed.");
                 runs[handler]++;
                 responses++;
             }

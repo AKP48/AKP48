@@ -15,25 +15,13 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-var path = require('path');
-var bunyan = require('bunyan');
-var log = bunyan.createLogger({
-    name: 'AKP48 CommandProcessor',
-    streams: [{
-        type: 'rotating-file',
-        path: path.resolve("./log/AKP48.log"),
-        period: '1d',
-        count: 7
-    },
-    {
-        stream: process.stdout
-    }]
-});
-
 /**
  * The Command Processor.
  */
-function CommandProcessor() {
+function CommandProcessor(logger) {
+    //logger
+    this.log = logger.child({module: "CommandProcessor"});
+
     //command list for help purposes, leaves out aliases.
     this.commands = require('./Commands');
 
@@ -49,7 +37,7 @@ function CommandProcessor() {
  * included in different commands.
  */
 CommandProcessor.prototype.initCommandAliases = function() {
-    log.info("Initializing command aliases...");
+    this.log.info("Initializing command aliases...");
 
     // This first loop is simply to remove any modules with missing dependencies,
     // as they will probably error out and not work. This ensures that the commands
@@ -63,7 +51,7 @@ CommandProcessor.prototype.initCommandAliases = function() {
                 var dependency = command.dependencies[i];
                 if(this.commands[dependency] === undefined) {
                     //disable it.
-                    log.info({command: property, reason: "Missing dependency", missingDependency: dependency}, "Command Module disabled.");
+                    this.log.info({command: property, reason: "Missing dependency", missingDependency: dependency}, "Command Module disabled.");
                     delete this.commands[property];
                     break;
                 }
@@ -76,11 +64,11 @@ CommandProcessor.prototype.initCommandAliases = function() {
     this.commands.each(function (command) {
         //for each of the command's aliases
         command.aliases.each(function (alias) {
-            log.debug("Aliased " + alias.append(" to ").append(command.name));
+            this.log.debug("Aliased " + alias.append(" to ").append(command.name));
             this.aliasedCommands[alias] = command;
         }, this);
     }, this);
-    log.info("Command aliases initialized.");
+    this.log.info("Command aliases initialized.");
 };
 
 /**
@@ -90,13 +78,13 @@ CommandProcessor.prototype.initCommandAliases = function() {
  * @return {Boolean}            Whether or not a command was run.
  */
 CommandProcessor.prototype.process = function(message, client) {
-    log.trace({message: message}, "Received message.")
+    this.log.trace({message: message}, "Received message.");
 
     //the context we will be sending to the command.
     var context = client.getClientManager().builder.buildContext(message, client);
 
     //if we don't get a context, something weird must have happened, and we shouldn't continue.
-    if(!context) {return false;}
+    if(!context) {return false; this.log.warn({msg: message}, "No context created.");}
 
     //if user isn't banned
     if(!context.getChannel().isBanned(context.getUser())) {
@@ -106,16 +94,37 @@ CommandProcessor.prototype.process = function(message, client) {
 
             //return if this needs to be a privmsg and isn't.
             if(context.getCommand().isPmOnly && !context.isPm) {
+                this.log.debug({
+                    user: context.getUser().getNick(), 
+                    command: context.getCommand().name, 
+                    args: "'" + context.getArguments().join("', '") + "'", 
+                    fullMsg: context.getFullMessage(),
+                    reason: "PM-only command attempted outside of PM."
+                }, "Command execution attempt failed.");
                 return false;
             }
 
             //return if command is not allowed as a privmsg and this is one (unless we have the root permission.)
             if(!context.getCommand().allowPm && context.isPm && !context.getUser().hasPermission("root.command.use")) {
+                this.log.debug({
+                    user: context.getUser().getNick(), 
+                    command: context.getCommand().name, 
+                    args: "'" + context.getArguments().join("', '") + "'", 
+                    fullMsg: context.getFullMessage(),
+                    reason: "Non-PMable command attempted in PM."
+                }, "Command execution attempt failed.");
                 return false;
             }
 
             //check privilege
             if(!context.getUser().hasPermission(context.getCommand().permissionName) && !context.user.hasPermission("root.command.use")) {
+                this.log.debug({
+                    user: context.getUser().getNick(), 
+                    command: context.getCommand().name, 
+                    args: "'" + context.getArguments().join("', '") + "'", 
+                    fullMsg: context.getFullMessage(),
+                    reason: "User does not have permission."
+                }, "Command execution attempt failed.");
                 return false;
             }
 
@@ -123,13 +132,44 @@ CommandProcessor.prototype.process = function(message, client) {
             if(context.getChannel().floodProtection(context)) {
                 if(!context.getCommand().execute(context)) {
                     this.sendUsageMessage(context);
+                    this.log.debug({
+                        user: context.getUser().getNick(), 
+                        command: context.getCommand().name, 
+                        args: "'" + context.getArguments().join("', '") + "'", 
+                        fullMsg: context.getFullMessage(),
+                        reason: "User provided incorrect arguments."
+                    }, "Command execution attempt failed.");
                     return false;
                 } else {
-                    log.info({user: context.getUser().getNick(), command: context.getCommand().name, args: "'" + context.getArguments().join("', '") + "'", fullMsg: context.getFullMessage()}, "Command executed.");
+                    this.log.debug({user: context.getUser().getNick(), command: context.getCommand().name, args: "'" + context.getArguments().join("', '") + "'", fullMsg: context.getFullMessage()}, "Command executed.");
                 }
                 return true;
+            } else {
+                this.log.debug({
+                    user: context.getUser().getNick(), 
+                    command: context.getCommand().name, 
+                    args: "'" + context.getArguments().join("', '") + "'", 
+                    fullMsg: context.getFullMessage(),
+                    reason: "User has been limited by flood protection."
+                }, "Command execution attempt failed.");
             }
+        } else {
+            this.log.trace({
+                user: context.getUser().getNick(), 
+                command: context.getCommand().name, 
+                args: "'" + context.getArguments().join("', '") + "'", 
+                fullMsg: context.getFullMessage(),
+                reason: "Command does not exist."
+            }, "Command execution attempt failed.");
         }
+    } else {
+        this.log.debug({
+            user: context.getUser().getNick(), 
+            command: context.getCommand().name, 
+            args: "'" + context.getArguments().join("', '") + "'", 
+            fullMsg: context.getFullMessage(),
+            reason: "User is banned."
+        }, "Command execution attempt failed.");
     }
 
     return false;

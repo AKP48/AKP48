@@ -15,21 +15,6 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-var path = require('path');
-var bunyan = require('bunyan');
-var log = bunyan.createLogger({
-    name: 'AKP48 Git Webhook Listener',
-    streams: [{
-        type: 'rotating-file',
-        path: path.resolve("./log/AKP48.log"),
-        period: '1d',
-        count: 7
-    },
-    {
-        stream: process.stdout
-    }]
-});
-
 // We need the shell
 require('shelljs/global');
 
@@ -40,8 +25,12 @@ var Google = require("./API/google");
 
 var c = require("irc-colors");
 
-function GitListener(clientmanager) {
+function GitListener(clientmanager, logger) {
+    //client manager
     this.manager = clientmanager;
+
+    //logger
+    this.log = logger.child({module: "GitListener"});
 
     //listener
     this.githubListener = null;
@@ -78,11 +67,11 @@ function GitListener(clientmanager) {
  */
 GitListener.prototype.startListening = function() {
     if (this.githubListener) {
-        log.error("Attempted to listen while already listening.");
+        this.log.error("Attempted to listen while already listening.");
         return;
     }
 
-    log.info({repo: this.repository, port: this.port, branch: this.branch}, "Initializing GitHub Webhook listener");
+    this.log.info({repo: this.repository, port: this.port, branch: this.branch}, "Initializing GitHub Webhook listener");
 
     this.githubListener = GitHooks({
         path: this.path,
@@ -97,7 +86,7 @@ GitListener.prototype.startListening = function() {
         if (data.deleted) {
             return;
         }
-        log.info({head_commit_message: data.head_commit.message, ref: ref}, "GitHub Webhook received.");
+        self.log.info({head_commit_message: data.head_commit.message, ref: ref}, "GitHub Webhook received.");
         var branch = ref.substring(ref.indexOf('/', 5) + 1);
         if (self.branch === "*" || self.branch === branch) {
             self.handle(branch, data);
@@ -111,6 +100,7 @@ GitListener.prototype.startListening = function() {
  * @param  {Object} data   The Webhook.
  */
 GitListener.prototype.handle = function (branch, data) {
+    this.log.info({branch: branch}, "Handling Webhook.");
     var manager = this.manager;
     // Alert channels of update
     var commits_string = " commit".pluralize(data.commits.length).prepend(data.commits.length);
@@ -126,6 +116,8 @@ GitListener.prototype.handle = function (branch, data) {
             var commit_message = _c.author.username.append(": ").append(_m.substring(0, end === -1 ? _m.length : end)).prepend(c.green("[".append(_c.id.substring(0, 7)).append("] ")));
             message += "\n".append(commit_message);
         };
+        
+        this.log.info({message: message}, "Alerting clients of Git changes.");
 
         manager.clients.each(function (client) {
             client.alert.each(function (channel) {
@@ -163,7 +155,7 @@ GitListener.prototype.handle = function (branch, data) {
             });
         }
         
-        log.info("Updating to branch: ".append(branch));
+        this.log.info("Updating to branch: ".append(branch));
         
         // Fetch, Checkout
         if (!Git.checkout(branch)) {
@@ -171,6 +163,7 @@ GitListener.prototype.handle = function (branch, data) {
         }
 
         if (npm) {
+            this.log.info("Executing npm install.");
             exec('npm install');
         }
 

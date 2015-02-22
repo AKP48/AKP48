@@ -46,7 +46,7 @@ function ClientManager(config, logger) {
  * @param {JSON} config The config file.
  */
 ClientManager.prototype.loadClients = function(config) {
-    log.info("Loading client information...");
+    this.log.info("Loading client information...");
     config.servers.each(function (server) {
         this.addClient(Client.build(server, this.log));
     }, this);
@@ -133,7 +133,7 @@ ClientManager.prototype.reloadClients = function() {
     var Builder = require("./Client/Builder");
 
     //assign a new builder from refreshed code
-    this.builder = new Builder();
+    this.builder = new Builder(this.log);
 
     for (var i = 0; i < this.clients.length; i++) {
         //keep a reference to the IRC client, so it doesn't disconnect.
@@ -149,7 +149,7 @@ ClientManager.prototype.reloadClients = function() {
             port: this.clients[i].getPort(),
             alert: this.clients[i].alert,
             channels: this.clients[i].getChannels()
-        });
+        }, this.log);
 
         tempClient.ircClient = tempIRCClient;
 
@@ -203,8 +203,10 @@ ClientManager.prototype.shutdown = function(msg) {
         this.clients[i].shutdown(msg);
     };
 
+    var log = this.log;
+
     setTimeout(function () {
-        this.log.info("Killing process.");
+        log.info("Killing process.");
         process.exit(0);
     }, 50);
 };

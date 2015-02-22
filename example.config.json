@@ -79,7 +79,8 @@
         }
     ],
     "log": {
-        "logToFile": true // Whether or not to output logs to a file.
+        "logToFile": true, // Whether or not to output logs to a file.
+        "level": "info" // The logging level to use. Can be trace, debug, info, warn, error, or fatal.
     },
     "google": {
         "apiKey": "PutYourGoogleAPIKeyHere" // API key to use for Google API-related commands. If non-existent, Google-related commands will be disabled.
