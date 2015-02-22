@@ -175,7 +175,7 @@ GitListener.prototype.handle = function (branch, data) {
         }
 
         if (shutdown) {
-            manager.shutdown("Restarting due to update.");
+            manager.shutdown("I'm updating! :3");
         } else {
             manager.softReload();
         }
