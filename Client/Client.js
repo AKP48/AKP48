@@ -320,7 +320,7 @@ Client.prototype.initialize = function(clientManager, holdIRCClient) {
 
     if(!holdIRCClient) {
         //create the IRC client. This automatically connects, as well.
-        this.ircClient = new irc.Client(this.getServer(), this.getNick(), { channels: channels, realName: this.getRealName(), password: password, userName: this.getUserName(), port: this.getPort(), autoRejoin: true, showErrors: true, encoding: 'utf8' });
+        this.ircClient = new irc.Client(this.getServer(), this.getNick(), { channels: channels, realName: this.getRealName(), password: password, userName: this.getUserName(), port: this.getPort(), autoRejoin: true, showErrors: true});
     }
 
     //attempt to remove eventListeners, then add new one.
