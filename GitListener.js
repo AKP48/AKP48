@@ -73,6 +73,9 @@ function GitListener(clientmanager) {
     this.googleAPI = new Google(config.google.apiKey);
 }
 
+/**
+ * Start listening for GH Webhooks.
+ */
 GitListener.prototype.startListening = function() {
     if (this.githubListener) {
         log.error("Attempted to listen while already listening.");
@@ -102,6 +105,11 @@ GitListener.prototype.startListening = function() {
     });
 }
 
+/**
+ * Handle a GH Webhook.
+ * @param  {String} branch The branch this Webhook is for.
+ * @param  {Object} data   The Webhook.
+ */
 GitListener.prototype.handle = function (branch, data) {
     var manager = this.manager;
     // Alert channels of update

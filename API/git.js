@@ -36,9 +36,7 @@ require('shelljs/global');
 var getRepoInfo = require('git-repo-info');
 var isRepo = -1;
 
-function Git() {
-    //TODO: things.
-}
+function Git() {}
 
 /**
  * Fetch code from all remotes.
@@ -68,6 +66,10 @@ Git.prototype.getBranch = function() {
     return getRepoInfo().branch;
 };
 
+/**
+ * Whether or not we are in a Git repository.
+ * @return {Boolean} Git repository status.
+ */
 Git.prototype.isRepo = function() {
     if (isRepo === -1) {
         isRepo = getRepoInfo._findRepo(".") !== null;
@@ -83,6 +85,11 @@ Git.prototype.getTag = function() {
     return getRepoInfo().tag;
 };
 
+/**
+ * Checkout code using Git.
+ * @param  {String} branch Branch (or anything else Git will checkout.)
+ * @return {Boolean}       Whether or not we were able to checkout.
+ */
 Git.prototype.checkout = function(branch) {
     if (!branch || !this.fetch()) {
         return;
