@@ -48,10 +48,10 @@ function Google(api_key) {
  * @param  {String}   url      The URL to shorten.
  * @param  {Function} callback The callback to call after shortening.
  */
-Google.prototype.shorten_url = function(url, callback) {
+Google.prototype.shorten_url = function(url, callback, thisArg) {
     log.info("Shortening URL using goo.gl.");
     this.urlshortener.url.insert({ resource: { longUrl: url } }, function (err, response) {
-      callback(response.id);
+      callback.call(thisArg, response.id);
     });
 };
 

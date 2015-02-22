@@ -170,7 +170,7 @@ GitListener.prototype.handle = function (branch, data) {
         } else {
             manager.softReload();
         }
-    });
+    }, this);
 };
 
 module.exports = GitListener;
