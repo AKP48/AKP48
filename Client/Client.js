@@ -311,7 +311,7 @@ Client.prototype.initialize = function(clientManager, holdIRCClient) {
     var channels = [];
 
     //loop to get channel names
-    this.getChannels().forEach(function (channel) {
+    this.getChannels().each(function (channel) {
         var name = channel.getName();
         if(name && name.isChannel()) {
             channels.push(name);
@@ -381,7 +381,8 @@ Client.prototype.clone = function() {
         }
     };
 
-    this.alert.forEach(function (channel) {
+    this.alert.each(
+function (channel) {
         client.alert.push(channel);
     });
 
@@ -466,7 +467,7 @@ module.exports.build = function build(options) {
         client.setPassword(options.password);
     }
     if (options.alert) {
-        options.alert.forEach(function(arg){
+        options.alert.each(function(arg){
             if (typeof arg === 'string') {
                 client.alert.push(arg);
             }

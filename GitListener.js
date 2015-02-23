@@ -127,8 +127,8 @@ GitListener.prototype.handle = function (branch, data) {
             message += "\n".append(commit_message);
         };
 
-        manager.clients.forEach(function (client) {
-            client.alert.forEach(function (channel) {
+        manager.clients.each(function (client) {
+            client.alert.each(function (channel) {
                 client.getIRCClient().say(channel, message);
             });
         });

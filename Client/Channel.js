@@ -328,7 +328,7 @@ module.exports.build = function build(options) {
         channel.setName(options.name);
     }
     if(options.users) {
-        options.users.forEach(function(user) {
+        options.users.each(function(user) {
             channel.addUser(User.build(user));
         });
     }

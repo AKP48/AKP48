@@ -15,7 +15,7 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-require('fs').readdirSync(__dirname + '/').forEach(function(file) {
+require('fs').readdirSync(__dirname + '/').each(function(file) {
     if (file.match(/.+\.js/g) !== null && file !== 'index.js') {
         var name = file.replace('.js', '');
         var loadModule = require('./' + file);

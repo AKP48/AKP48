@@ -75,7 +75,7 @@ Alert.prototype.execute = function(context) {
     if (context.getArguments().length == 0) {
         context.getClient().getIRCClient().notice(nick, "Currently alerting: " + (context.getClient().alert.join(", ") || "none"));
     } else {
-        context.getArguments().forEach(function (arg) {
+        context.getArguments().each(function (arg) {
             if (arg.startsWith("-")) {
                 _remove(arg.substring(1));
             } else {

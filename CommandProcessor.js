@@ -54,7 +54,7 @@ CommandProcessor.prototype.initCommandAliases = function() {
     // This first loop is simply to remove any modules with missing dependencies,
     // as they will probably error out and not work. This ensures that the commands
     // they provide will not be executible, and will not show up in the help list.
-    this.commands.forEach(function (command, property) {
+    this.commands.each(function (command, property) {
         // if dependencies are defined...
         if(command !== undefined && command.dependencies !== undefined) {
             //for each dependency...
@@ -73,9 +73,9 @@ CommandProcessor.prototype.initCommandAliases = function() {
 
     // This loop is the one that actually adds all of the aliases for each command
     // and allows them to be executed.
-    this.commands.forEach(function (command) {
+    this.commands.each(function (command) {
         //for each of the command's aliases
-        command.aliases.forEach(function (alias) {
+        command.aliases.each(function (alias) {
             log.debug("Aliased " + alias.append(" to ").append(command.name));
             this.aliasedCommands[alias] = command;
         }, this);

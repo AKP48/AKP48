@@ -61,7 +61,7 @@ Riot.prototype.getChampList = function() {
     log.info("Retrieving champion list from Riot.");
     this.client.get('/api/lol/static-data/na/v1.2/champion?api_key='+this.api_key, function (err, res, body) {
         if (err || !body || !body.data) return;
-        body.data.forEach(function (data) {
+        body.data.each(function (data) {
             self.champions[data.id] = data;
         });
     });
@@ -74,7 +74,7 @@ Riot.prototype.getFreeChamps = function(callback) {
         var self = this;
         this.client.get('/api/lol/na/v1.2/champion?freeToPlay=true&api_key='+this.api_key, function (err, res, body) {
             if(err) { callback("Could not get free champions!"); return log.error(err); }
-            body.champions.forEach(function (champ) {
+            body.champions.each(function (champ) {
                 self.freeChamps.champions.push(self.champions[champ.id].name);
             });
 
@@ -94,7 +94,7 @@ Riot.prototype.getServerStatus = function(region, callback) {
     this.client.get('http://status'+extra+'.leagueoflegends.com/shards/'+region.toLowerCase(), function (err, res, body) {
         if(err) {callback("Could not get server status for that region!"); return log.error(err);}
         var response = [];
-        body.services.forEach(function (service) {
+        body.services.each(function (service) {
             var oS = service.name + ": " + service.status;
             if(service.status === "online") {
                 oS = c.green(oS);

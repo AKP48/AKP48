@@ -58,7 +58,7 @@ function ClientManager(config) {
  */
 ClientManager.prototype.loadClients = function(config) {
     log.info("Loading client information...");
-    config.servers.forEach(function (server) {
+    config.servers.each(function (server) {
         this.addClient(Client.build(server));
     }, this);
 };
@@ -76,31 +76,31 @@ ClientManager.prototype.addClient = function(client) {
 ClientManager.prototype.softReload = function() {
     //remove all sorts of cached objects from the cache
     //starting with all commands
-    require('fs').readdirSync(__dirname+"/Commands").forEach(function(file) {
+    require('fs').readdirSync(__dirname+"/Commands").each(function(file) {
         log.trace("Deleting Commands/"+file+" from require cache.")
         delete require.cache[require.resolve('./Commands/'+file)];
     });
 
     //all api objects
-    require('fs').readdirSync(__dirname + '/API/').forEach(function(file) {
+    require('fs').readdirSync(__dirname + '/API/').each(function(file) {
         log.trace("Deleting API/"+file+" from require cache.")
         delete require.cache[require.resolve('./API/' + file)];
     });
 
     //all AKP48 client objects
-    require('fs').readdirSync(__dirname + '/Client/').forEach(function(file) {
+    require('fs').readdirSync(__dirname + '/Client/').each(function(file) {
         log.trace("Deleting Client/"+file+" from require cache.")
         delete require.cache[require.resolve('./Client/' + file)];
     });
 
     //all regular expression objects
-    require('fs').readdirSync(__dirname + '/Regex/').forEach(function(file) {
+    require('fs').readdirSync(__dirname + '/Regex/').each(function(file) {
         log.trace("Deleting Regex/"+file+" from require cache.")
         delete require.cache[require.resolve('./Regex/' + file)];
     });
 
     //all autoresponses
-    require('fs').readdirSync(__dirname + '/AutoResponses').forEach(function(file) {
+    require('fs').readdirSync(__dirname + '/AutoResponses').each(function(file) {
         log.trace("Deleting AutoResponses/"+file+" from require cache.")
         delete require.cache[require.resolve('./AutoResponses/' + file)];
     });

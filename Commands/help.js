@@ -42,7 +42,6 @@ function Help() {
 }
 
 Help.prototype.execute = function(context) {
-
     if(!context.getUser().isRealIRCUser) {
         context.getClient().say(context, "Getting help from the Minecraft server is not yet possible! To get help, please join the IRC channel.");
         return true;
@@ -65,7 +64,7 @@ Help.prototype.execute = function(context) {
     var responses = [];
 
     //for each command
-    context.getCommandProcessor().commands.forEach(function (command) {
+    context.getCommandProcessor().commands.each(function (command) {
             //to tell us whether or not to send this message.
             var send = true;
 
