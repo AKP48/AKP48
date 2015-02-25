@@ -18,7 +18,6 @@
 var config = require('../config.json');
 var Google = require('../API/google');
 var Steam = require('../API/steam');
-var jsdom = require("jsdom");
 var c = require('irc-colors');
 
 function LinkHandler() {
@@ -65,20 +64,27 @@ LinkHandler.prototype.execute = function(word, context) {
     }
 
     if(!/noinfo/i.test(word)) {
-        jsdom.env(word, function (errors, window) {
-                if(window.document.getElementsByTagName("title")[0] && !errors) {
-                    var oS = c.pink("[Link] ");
-                    oS += word + " -> \"";
-                    var title = window.document.getElementsByTagName("title")[0].innerHTML;
-                    title.split(/\r?\n/).each(function (line, n) {
-                        if (n > 0) oS += " ";
-                        oS += line.trim();
-                    });
-                    oS += "\"";
-                    context.getClient().getIRCClient().say(context.getChannel().getName(), oS);
-                }
-            }
-        );
+        //libraries to fetch and parse page.
+        var request = require('request');
+        var cheerio = require('cheerio');
+
+
+        var self = {};
+        self.word = word;
+        request({
+          uri: word,
+        }, function(error, response, body) {
+          if (!error && response.statusCode == 200) {
+              var $ = cheerio.load(body);
+              if($("title").html()) {
+                var oS = c.pink("[Link] ");
+                oS += self.word + " -> \"";
+                oS += $("title").text();
+                oS += "\"";
+                context.getClient().getIRCClient().say(context.getChannel().getName(), oS);
+              }
+          }
+        });
     }
 };
 
