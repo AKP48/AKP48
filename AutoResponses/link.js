@@ -18,6 +18,7 @@
 var config = require('../config.json');
 var Google = require('../API/google');
 var Steam = require('../API/steam');
+var Imgur = require('../API/imgur');
 var c = require('irc-colors');
 
 function LinkHandler() {
@@ -45,11 +46,17 @@ function LinkHandler() {
     //Twitter regex
     this.twitterRegex = require("../Regex/regex-twitter");
 
+    //Imgur regex
+    this.imgurRegex = require("../Regex/regex-imgur");
+
     //Google API module.
     this.google = new Google(config.google.apiKey);
 
     //Steam API module.
     this.steam = new Steam();
+
+    //Imgur API module.
+    this.imgur = new Imgur(config.imgur.clientID);
 }
 
 // TODO: cache responses
@@ -68,6 +75,10 @@ LinkHandler.prototype.execute = function(word, context) {
 
     if(this.twitterRegex.test(word)) {
         return this.Twitter(word, context);
+    }
+
+    if(this.imgurRegex.test(word)) {
+        return this.ImgurLink(word, context);
     }
 
     if(!/noinfo/i.test(word)) {
@@ -137,6 +148,87 @@ LinkHandler.prototype.SteamApp = function(link, context) {
 
 LinkHandler.prototype.Twitter = function(link, context) {
     //Don't do anything for now. Simply ignore Twitter links.
+}
+
+LinkHandler.prototype.ImgurLink = function(link, context) {
+    var id = this.imgurRegex.exec(link);
+    var noshow = /noinfo/i.exec(link);
+    var self = this;
+    if(id != null && noshow == null) {
+        //id[1] == direct image.
+        if(id[1]) {
+            this.imgur.getImageInfo(id[1], function(image) {
+                if(image) {
+                    context.getClient().getIRCClient().say(context.getChannel().getName(), self.constructImgurString(image));
+                }
+            });
+        } else {
+            //id[2] == gallery, album, or direct image.
+            if(id[2]) { //sanity check
+                var info = id[2].split('/');
+                //if info is more than one part, we know it is either a gallery link or an album.
+                if(info.length > 1) {
+                    //gallery image
+                    if(info[0] == "gallery") {
+                        this.imgur.getGalleryInfo(info[1], function(image) {
+                            if(image) {
+                                context.getClient().getIRCClient().say(context.getChannel().getName(), self.constructImgurString(image));
+                            }
+                        });
+                    }
+
+                    if(info[0] == "a") {
+                        this.imgur.getAlbumInfo(info[1], function(image) {
+                            if(image) {
+                                context.getClient().getIRCClient().say(context.getChannel().getName(), self.constructImgurString(image));
+                            }
+                        });
+                    }
+                } else {
+                    //if info is only one part, we know it has to be a direct image.
+                    this.imgur.getImageInfo(info[0], function(image) {
+                        if(image) {
+                            context.getClient().getIRCClient().say(context.getChannel().getName(), self.constructImgurString(image));
+                        }
+                    });
+                }
+            }
+        }
+    }
+};
+
+LinkHandler.prototype.constructImgurString = function(image) {
+    //set up prefix
+    var type = "[Imgur ";
+    if(image.is_gallery) {type += "Gallery ";}
+    if(image.is_album) {type += "Album] ";} else {type += "Image] ";}
+
+    var oS = c.pink(type);
+    if(image.title) { oS += "Title: \"" + image.title + "\"" + " | ";}
+    if(image.width && image.height) {oS += "Dimensions: " + image.width + "px x " + image.height + "px | ";}
+    if(image.type) {oS += "Type: " + image.type + " | ";}
+    if(image.size) {oS += "File Size: " + image.size + " | ";}
+    if(image.nsfw) {oS += c.red("NSFW") + " | ";}
+    if(image.views) {oS += "Views: " + image.views + " | ";}
+    if(image.ups) {oS += c.green("Upvotes: " + image.ups) + " | ";}
+    if(image.downs) {oS += c.red("Downvotes: " + image.downs) + " | ";}
+    if(image.score && image.raw_score) {
+        if(image.raw_score > 0) {
+            oS += c.green("Score: " + image.score) + " | ";
+        } else {
+            oS += c.red("Score: " + image.score) + " | ";
+        }
+    }
+    if(image.comment_count) {oS += image.comment_count + " Comments | ";}
+    if(image.images_count) {oS += image.images_count + " Images | ";}
+    if(image.datetime || image.account_url) {
+        oS += "Uploaded ";
+        if(image.datetime) {oS += image.datetime;}
+        if(image.account_url) {oS += " by " + image.account_url;}
+        oS += ".";
+    }
+
+    return oS;
 };
 
 module.exports = LinkHandler;

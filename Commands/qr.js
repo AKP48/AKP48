@@ -16,6 +16,7 @@
  */
 
 var config = require('../config.json');
+var Imgur = require('../API/imgur');
 
 function QR() {
     //the name of the command.
@@ -43,8 +44,7 @@ function QR() {
     this.isPmOnly = false;
 
     //imgur API
-    this.imgurAPI = require('imgur-node-api');
-    this.imgurAPI.setClientID(config.imgur.clientID);
+    this.imgurAPI = new Imgur(config.imgur.clientID);
 }
 
 QR.prototype.execute = function(context) {
@@ -55,11 +55,14 @@ QR.prototype.execute = function(context) {
     var imageURL = "http://chart.googleapis.com/chart?cht=qr&chs=500x500&chl=" + encodeURIComponent(context.arguments.join(" "));
 
     //upload the image to imgur
-    this.imgurAPI.upload(imageURL, function (err,res) {
-        context.getClient().getCommandProcessor().aliasedCommands['googl'].shortenURL(context, res.data.link);
+    this.imgurAPI.uploadImageFromURL(imageURL, function (url) {
+        if(url) {
+            context.getClient().getCommandProcessor().aliasedCommands['googl'].shortenURL(context, url);
+        } else {
+            context.getClient().getCommandProcessor().aliasedCommands['googl'].shortenURL(context, imageURL);
+        }
     });
-
-    //add content here.
+    
     return true;
 };
 
