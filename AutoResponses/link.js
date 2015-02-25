@@ -69,7 +69,11 @@ LinkHandler.prototype.execute = function(word, context) {
                 if(window.document.getElementsByTagName("title")[0] && !errors) {
                     var oS = c.pink("[Link] ");
                     oS += word + " -> \"";
-                    oS += window.document.getElementsByTagName("title")[0].innerHTML.replace(/\r?\n/gm, "").trim();
+                    var title = window.document.getElementsByTagName("title")[0].innerHTML;
+                    title.split(/\r?\n/).each(function (line, n) {
+                        if (n > 0) oS += " ";
+                        oS += line.trim();
+                    });
                     oS += "\"";
                     context.getClient().getIRCClient().say(context.getChannel().getName(), oS);
                 }
