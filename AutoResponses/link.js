@@ -42,6 +42,9 @@ function LinkHandler() {
     //Steam pkg regex
     this.steamPkgRegex = require("../Regex/regex-steampkg");
 
+    //Twitter regex
+    this.twitterRegex = require("../Regex/regex-twitter");
+
     //Google API module.
     this.google = new Google(config.google.apiKey);
 
@@ -61,6 +64,10 @@ LinkHandler.prototype.execute = function(word, context) {
 
     if(this.steamAppRegex.test(word)) {
         return this.SteamApp(word, context);
+    }
+
+    if(this.twitterRegex.test(word)) {
+        return this.Twitter(word, context);
     }
 
     if(!/noinfo/i.test(word)) {
@@ -118,6 +125,10 @@ LinkHandler.prototype.SteamApp = function(link, context) {
             context.getClient().getIRCClient().say(context.getChannel().getName(), res);
         }, ((nohist != null) ? true : false));
     }
+};
+
+LinkHandler.prototype.Twitter = function(link, context) {
+    //Don't do anything for now. Simply ignore Twitter links.
 };
 
 module.exports = LinkHandler;
