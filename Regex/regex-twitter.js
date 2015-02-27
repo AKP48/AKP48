@@ -15,6 +15,6 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-var re_twitter = /(?:twitter\.com|t\.co)/i
+var re_twitter = /(?:twitter\.com|t\.co)\//i
 
 module.exports = re_twitter;
