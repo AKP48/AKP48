@@ -83,13 +83,21 @@ LinkHandler.prototype.execute = function(word, context) {
         }, function(error, response, body) {
           if (!error && response.statusCode == 200) {
               var $ = cheerio.load(body);
-              if($("title").html()) {
-                var oS = c.pink("[Link] ");
-                oS += self.word + " -> \"";
-                oS += $("title").text().replace(/\r?\n/gm, "").trim().replace(/\s{2,}/g, ' ');
-                oS += "\"";
+              if($("title").text()) {
+                var oS = c.pink("[Link] ").append(self.word).append(" -> \"");
+                oS += $("title").text().replace(/\r?\n/gm, "").trim().replace(/\s{2,}/g, ' ').append("\"");
                 context.getClient().getIRCClient().say(context.getChannel().getName(), oS);
+              } else {
+                  // TODO: make function for this...
+                  context.getCLient().alert.each(function (channel) {
+                      context.getClient().getIRCClient().say(channel, "Title unavailable for " + word);
+                  });
               }
+          } else {
+              // TODO: make function for this...
+              context.getCLient().alert.each(function (channel) {
+                  context.getClient().getIRCClient().say(channel, "[".append(response.statusCode).append("] Error: ").append(error));
+              });
           }
         });
     }
