@@ -89,13 +89,13 @@ LinkHandler.prototype.execute = function(word, context) {
                 context.getClient().getIRCClient().say(context.getChannel().getName(), oS);
               } else {
                   // TODO: make function for this...
-                  context.getCLient().alert.each(function (channel) {
+                  context.getClient().alert.each(function (channel) {
                       context.getClient().getIRCClient().say(channel, "Title unavailable for " + word);
                   });
               }
           } else {
               // TODO: make function for this...
-              context.getCLient().alert.each(function (channel) {
+              context.getClient().alert.each(function (channel) {
                   context.getClient().getIRCClient().say(channel, "[".append(response.statusCode).append("] Error: ").append(error));
               });
           }
