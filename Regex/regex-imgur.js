@@ -15,6 +15,6 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-var re_imgurID = /http:\/\/(?:i\.imgur\.com\/(.*?)\.(?:jpg|png|gifv?)|imgur\.com\/(.*))/i
+var re_imgurID = /https?:\/\/(?:i\.imgur\.com\/(.*?)\.(?:jpg|png|gifv?)|imgur\.com\/(.*))/i
 
 module.exports = re_imgurID;
