@@ -90,7 +90,7 @@ LinkHandler.prototype.execute = function(word, context) {
         var self = {};
         self.word = word;
         request({ uri: word }, function(error, response, body) {
-            var type = response.headers["Content-Type"];
+            var type = response.headers['content-type'];
             if (!type.contains("text/html") && !type.contains("text/xml")) {
                 return;
             }
