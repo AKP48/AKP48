@@ -89,27 +89,29 @@ LinkHandler.prototype.execute = function(word, context) {
 
         var self = {};
         self.word = word;
-        request({
-          uri: word,
-        }, function(error, response, body) {
-          if (!error && response.statusCode == 200) {
-              var $ = cheerio.load(body);
-              if($("title").text()) {
-                var oS = c.pink("[Link] ").append(self.word).append(" -> \"");
-                oS += $("title").text().replace(/\r?\n/gm, "").trim().replace(/\s{2,}/g, ' ').append("\"");
-                context.getClient().getIRCClient().say(context.getChannel().getName(), oS);
-              } else {
-                  // TODO: make function for this...
-                  context.getClient().alert.each(function (channel) {
-                      context.getClient().getIRCClient().say(channel, "Title unavailable for " + word);
-                  });
-              }
-          } else {
-              // TODO: make function for this...
-              context.getClient().alert.each(function (channel) {
-                  context.getClient().getIRCClient().say(channel, "[".append(response.statusCode).append("] Error: ").append(error));
-              });
-          }
+        request({ uri: word }, function(error, response, body) {
+            var type = response.headers["Content-Type"];
+            if (!type.contains("text/html") && !type.contains("text/xml")) {
+                return;
+            }
+            if (!error && response.statusCode == 200) {
+                var $ = cheerio.load(body);
+                if($("title").text()) {
+                    var oS = c.pink("[Link] ").append(self.word).append(" -> \"");
+                    oS += $("title").text().replace(/\r?\n/gm, "").trim().replace(/\s{2,}/g, ' ').append("\"");
+                    context.getClient().getIRCClient().say(context.getChannel().getName(), oS);
+                } else {
+                    // TODO: make function for this...
+                    context.getClient().alert.each(function (channel) {
+                        context.getClient().getIRCClient().say(channel, "Title unavailable for " + word);
+                    });
+                }
+            } else {
+                // TODO: make function for this...
+                context.getClient().alert.each(function (channel) {
+                    context.getClient().getIRCClient().say(channel, "[".append(response.statusCode).append("] Error: ").append(error));
+                });
+            }
         });
     }
 };
