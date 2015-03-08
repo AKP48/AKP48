@@ -15,7 +15,7 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-function AlienHandler() {
+function AlienHandler(logger) {
     //the name of the handler.
     this.name = "Alien Handler";
 
@@ -30,9 +30,13 @@ function AlienHandler() {
 
     // the amount of times we should respond with this handler, 0 is no limit
     this.limit = 1;
+
+    //logger
+    this.log = logger;
 }
 
 AlienHandler.prototype.execute = function(word, context) {
+    this.log.trace("ayy lmao");
 	context.getClient().getIRCClient().say(context.getChannel().getName(), "ayy lmao");
 };
 

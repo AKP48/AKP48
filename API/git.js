@@ -15,37 +15,25 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-var path = require('path');
-var bunyan = require('bunyan');
-var log = bunyan.createLogger({
-    name: 'AKP48 Git API Module',
-    streams: [{
-        type: 'rotating-file',
-        path: path.resolve("./log/AKP48.log"),
-        period: '1d',
-        count: 7
-    },
-    {
-        stream: process.stdout
-    }]
-});
-
 // We need the shell
 require('shelljs/global');
 
 var getRepoInfo = require('git-repo-info');
 var isRepo = -1;
 
-function Git() {}
+function Git(logger) {
+    //logger
+    this.log = logger.child({module: "Git API"});
+}
 
 /**
  * Fetch code from all remotes.
  */
 Git.prototype.fetch = function() {
     if(exec('git fetch').code) {
-        return log.error("Attempted git fetch failed!");
+        return this.log.error("Attempted git fetch failed!");
     } else {
-        log.debug("Fetched");
+        this.log.debug("Fetched");
     }
     return true;
 };
@@ -96,15 +84,15 @@ Git.prototype.checkout = function(branch) {
     }
     if (this.getBranch() !== branch) {
         if (exec('git checkout -q '.append(branch)).code) {
-            return log.error("Attempted git reset failed!");
+            return this.log.error("Attempted git reset failed!");
         } else {
-            log.debug("Checked out ".append(branch));
+            this.log.debug("Checked out ".append(branch));
         }
     }
     if ((this.getBranch() || this.getTag()) && exec('git reset -q origin/'.append(branch).append(' --hard')).code) {
-        return log.error("Attempted git reset failed!");
+        return this.log.error("Attempted git reset failed!");
     } else {
-        log.debug("Reset to ".append(branch));
+        this.log.debug("Reset to ".append(branch));
     }
     return true;
 };

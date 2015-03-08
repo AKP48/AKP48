@@ -18,7 +18,7 @@
 var Google = require('../API/google');
 var config = require('../config.json');
 
-function GoogleSearch() {
+function GoogleSearch(logger) {
     //the name of the command.
     this.name = "Google Search";
 
@@ -41,7 +41,7 @@ function GoogleSearch() {
     this.isPmOnly = false;
 
     //google API module for using Google APIs.
-    this.googleAPI = new Google(config.google.apiKey);
+    this.googleAPI = new Google(config.google.apiKey, logger);
 }
 
 GoogleSearch.prototype.execute = function(context) {

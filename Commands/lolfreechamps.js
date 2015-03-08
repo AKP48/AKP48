@@ -18,7 +18,7 @@
 var config = require('../config.json');
 var Riot = require('../API/riot');
 
-function LoLFreeChamps() {
+function LoLFreeChamps(logger) {
     //the name of the command.
     this.name = "LoL Free Champion Rotation";
 
@@ -41,7 +41,7 @@ function LoLFreeChamps() {
     this.isPmOnly = false;
 
     //Riot API.
-    this.riotAPI = new Riot(config.riot.apiKey);
+    this.riotAPI = new Riot(config.riot.apiKey, logger);
 }
 
 LoLFreeChamps.prototype.execute = function(context) {

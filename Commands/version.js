@@ -17,7 +17,7 @@
 
 var Git = require("../API/git");
 
-function Version() {
+function Version(logger) {
     //the name of the command.
     this.name = "Version";
 
@@ -43,7 +43,7 @@ function Version() {
     this.version_base = require('../package.json').version;
 
     //Git API
-    this.git = new Git();
+    this.git = new Git(logger);
 
     this.version = this.buildVersion();
 }

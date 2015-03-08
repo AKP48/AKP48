@@ -18,7 +18,7 @@
 var Google = require('../API/google');
 var config = require('../config.json');
 
-function GoogleImages() {
+function GoogleImages(logger) {
     //the name of the command.
     this.name = "Google Images Search";
 
@@ -41,7 +41,7 @@ function GoogleImages() {
     this.isPmOnly = false;
 
     //google API module for using Google APIs.
-    this.googleAPI = new Google(config.google.apiKey);
+    this.googleAPI = new Google(config.google.apiKey, logger);
 }
 
 GoogleImages.prototype.execute = function(context) {

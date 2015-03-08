@@ -15,12 +15,29 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-require('fs').readdirSync(__dirname + '/').each(function(file) {
-    if (file.match(/.+\.js/g) !== null && file !== 'index.js') {
-        var name = file.replace('.js', '');
-        var loadModule = require('./' + file);
-        var tempModule = new loadModule();
+/**
+ * Load all AutoResponse handlers.
+ * @param  {Logger} logger The logger to pass to loaded autoresponse handlers.
+ * @return {Object}        The autoresponse handlers.
+ */
+var loadHandlers = function(logger) {
+    var handlers = {};
+    var _log = logger.child({module: "AutoResponse Handler Loader"});
+    require('fs').readdirSync(__dirname + '/').each(function(file) {
+        if (file.match(/.+\.js/g) !== null && file !== 'index.js') {
+            _log.trace("Loading " + file);
+            var name = file.replace('.js', '');
 
-        exports[name] = tempModule;
-    }
-});
+            //set up logger
+            var log = logger.child({module: "AutoResponses/"+name});
+
+            var loadModule = require('./' + file);
+            var tempModule = new loadModule(log);
+
+            handlers[name] = tempModule;
+        }
+    });
+    return handlers;
+};
+
+module.exports = loadHandlers;

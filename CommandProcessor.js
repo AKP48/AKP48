@@ -23,7 +23,7 @@ function CommandProcessor(logger) {
     this.log = logger.child({module: "CommandProcessor"});
 
     //command list for help purposes, leaves out aliases.
-    this.commands = require('./Commands');
+    this.commands = require('./Commands')(logger);
 
     //full command list with aliases included.
     this.aliasedCommands = {};
@@ -64,7 +64,7 @@ CommandProcessor.prototype.initCommandAliases = function() {
     this.commands.each(function (command) {
         //for each of the command's aliases
         command.aliases.each(function (alias) {
-            this.log.debug("Aliased " + alias.append(" to ").append(command.name));
+            this.log.trace("Aliased " + alias.append(" to ").append(command.name));
             this.aliasedCommands[alias] = command;
         }, this);
     }, this);
@@ -78,8 +78,6 @@ CommandProcessor.prototype.initCommandAliases = function() {
  * @return {Boolean}            Whether or not a command was run.
  */
 CommandProcessor.prototype.process = function(message, client) {
-    this.log.trace({message: message}, "Received message.");
-
     //the context we will be sending to the command.
     var context = client.getClientManager().builder.buildContext(message, client);
 
@@ -95,10 +93,8 @@ CommandProcessor.prototype.process = function(message, client) {
             //return if this needs to be a privmsg and isn't.
             if(context.getCommand().isPmOnly && !context.isPm) {
                 this.log.debug({
-                    user: context.getUser().getNick(), 
-                    command: context.getCommand().name, 
-                    args: "'" + context.getArguments().join("', '") + "'", 
-                    fullMsg: context.getFullMessage(),
+                    user: context.getUser().getNick(),
+                    command: context.getCommand().name,
                     reason: "PM-only command attempted outside of PM."
                 }, "Command execution attempt failed.");
                 return false;
@@ -107,10 +103,8 @@ CommandProcessor.prototype.process = function(message, client) {
             //return if command is not allowed as a privmsg and this is one (unless we have the root permission.)
             if(!context.getCommand().allowPm && context.isPm && !context.getUser().hasPermission("root.command.use")) {
                 this.log.debug({
-                    user: context.getUser().getNick(), 
-                    command: context.getCommand().name, 
-                    args: "'" + context.getArguments().join("', '") + "'", 
-                    fullMsg: context.getFullMessage(),
+                    user: context.getUser().getNick(),
+                    command: context.getCommand().name,
                     reason: "Non-PMable command attempted in PM."
                 }, "Command execution attempt failed.");
                 return false;
@@ -119,10 +113,8 @@ CommandProcessor.prototype.process = function(message, client) {
             //check privilege
             if(!context.getUser().hasPermission(context.getCommand().permissionName) && !context.user.hasPermission("root.command.use")) {
                 this.log.debug({
-                    user: context.getUser().getNick(), 
-                    command: context.getCommand().name, 
-                    args: "'" + context.getArguments().join("', '") + "'", 
-                    fullMsg: context.getFullMessage(),
+                    user: context.getUser().getNick(),
+                    command: context.getCommand().name,
                     reason: "User does not have permission."
                 }, "Command execution attempt failed.");
                 return false;
@@ -133,10 +125,8 @@ CommandProcessor.prototype.process = function(message, client) {
                 if(!context.getCommand().execute(context)) {
                     this.sendUsageMessage(context);
                     this.log.debug({
-                        user: context.getUser().getNick(), 
-                        command: context.getCommand().name, 
-                        args: "'" + context.getArguments().join("', '") + "'", 
-                        fullMsg: context.getFullMessage(),
+                        user: context.getUser().getNick(),
+                        command: context.getCommand().name,
                         reason: "User provided incorrect arguments."
                     }, "Command execution attempt failed.");
                     return false;
@@ -146,28 +136,16 @@ CommandProcessor.prototype.process = function(message, client) {
                 return true;
             } else {
                 this.log.debug({
-                    user: context.getUser().getNick(), 
-                    command: context.getCommand().name, 
-                    args: "'" + context.getArguments().join("', '") + "'", 
-                    fullMsg: context.getFullMessage(),
+                    user: context.getUser().getNick(),
+                    command: context.getCommand().name,
                     reason: "User has been limited by flood protection."
                 }, "Command execution attempt failed.");
             }
-        } else {
-            this.log.trace({
-                user: context.getUser().getNick(), 
-                command: context.getCommand().name, 
-                args: "'" + context.getArguments().join("', '") + "'", 
-                fullMsg: context.getFullMessage(),
-                reason: "Command does not exist."
-            }, "Command execution attempt failed.");
         }
     } else {
         this.log.debug({
-            user: context.getUser().getNick(), 
-            command: context.getCommand().name, 
-            args: "'" + context.getArguments().join("', '") + "'", 
-            fullMsg: context.getFullMessage(),
+            user: context.getUser().getNick(),
+            command: context.getCommand().name,
             reason: "User is banned."
         }, "Command execution attempt failed.");
     }

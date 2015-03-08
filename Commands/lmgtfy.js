@@ -18,7 +18,7 @@
 var Google = require('../API/google');
 var config = require('../config.json');
 
-function LMGTFY() {
+function LMGTFY(logger) {
     //the name of the command.
     this.name = "LMGTFY";
 
@@ -41,7 +41,7 @@ function LMGTFY() {
     this.isPmOnly = false;
 
     //google API module for using Google APIs.
-    this.googleAPI = new Google(config.google.apiKey);
+    this.googleAPI = new Google(config.google.apiKey, logger);
 }
 
 LMGTFY.prototype.execute = function(context) {

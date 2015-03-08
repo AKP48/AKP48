@@ -18,7 +18,7 @@
 var Google = require('../API/google');
 var config = require('../config.json');
 
-function Geocode() {
+function Geocode(logger) {
     //the name of the command.
     this.name = "Geocode";
 
@@ -41,7 +41,7 @@ function Geocode() {
     this.isPmOnly = false;
 
     //google API module for using Google APIs.
-    this.googleAPI = new Google(config.google.apiKey);
+    this.googleAPI = new Google(config.google.apiKey, logger);
 }
 
 Geocode.prototype.execute = function(context) {

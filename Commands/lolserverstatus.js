@@ -18,7 +18,7 @@
 var config = require('../config.json');
 var Riot = require('../API/riot');
 
-function LoLServerStatus() {
+function LoLServerStatus(logger) {
     //the name of the command.
     this.name = "LoL Server Status";
 
@@ -41,7 +41,7 @@ function LoLServerStatus() {
     this.isPmOnly = false;
 
     //Riot API.
-    this.riotAPI = new Riot(config.riot.apiKey);
+    this.riotAPI = new Riot(config.riot.apiKey, logger);
 }
 
 LoLServerStatus.prototype.execute = function(context) {

@@ -15,32 +15,18 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-var path = require('path');
-var bunyan = require('bunyan');
-var log = bunyan.createLogger({
-    name: 'AKP48 Google API Module',
-    streams: [{
-        type: 'rotating-file',
-        path: path.resolve("./log/AKP48.log"),
-        period: '1d',
-        count: 7
-    },
-    {
-        stream: process.stdout
-    }]
-});
-
 var request = require('request-json');
 var c = require('irc-colors');
 var n = require('numeral');
 var m = require('moment');
 var google = require('googleapis');
 
-function Google(api_key) {
+function Google(api_key, logger) {
     this.api_key = api_key;
     this.client = request.createClient('https://www.googleapis.com/');
     this.urlshortener = google.urlshortener({ version: 'v1', auth: this.api_key });
     this.youtube = google.youtube({version: 'v3', auth: this.api_key});
+    this.log = logger.child({module: "Google API"});
 }
 
 /**
@@ -50,7 +36,7 @@ function Google(api_key) {
  * @param  {Object}   thisArg  Optional. Value to use as this when executing callback.
  */
 Google.prototype.shorten_url = function(url, callback, thisArg) {
-    log.info("Shortening URL using goo.gl.");
+    this.log.info("Shortening URL using goo.gl.");
     this.urlshortener.url.insert({ resource: { longUrl: url } }, function (err, response) {
       callback.call(thisArg, response.id);
     });
@@ -73,7 +59,7 @@ Google.prototype.youtube_video_info = function(video_id, callback) {
         part: 'snippet,contentDetails,statistics'
     }
 
-    log.info("Retrieving information about YouTube video "+video_id+" from Google.");
+    this.log.info("Retrieving information about YouTube video "+video_id+" from Google.");
 
     this.youtube.videos.list(params, function(err, response){
         if(response.items[0]) {
@@ -83,7 +69,7 @@ Google.prototype.youtube_video_info = function(video_id, callback) {
                 id: video.snippet.channelId,
                 part: 'snippet'
             }
-            
+
             self.youtube.channels.list(params, function(err, response) {
                 var d = m.duration(video.contentDetails.duration);
                 var definition = video.contentDetails.definition;
@@ -138,7 +124,7 @@ Google.prototype.geocode = function(location, region, callback) {
 
     url += "&key="+this.api_key;
 
-    log.info("Getting geocoding information for location "+location+" from Google.");
+    this.log.info("Getting geocoding information for location "+location+" from Google.");
 
     this.client.get(url, function(err, res, body){
         if(body.results[0]) {
@@ -162,9 +148,9 @@ Google.prototype.geocode = function(location, region, callback) {
 Google.prototype.search = function(query, type, callback) {
     var url = 'http://ajax.googleapis.com/ajax/services/search/'+type+'?v=1.0&safe=high&q='+encodeURIComponent(query);
     var self = this;
-    log.info("Searching Google for "+query+".");
+    this.log.info("Searching Google for "+query+".");
     this.client.get(url, function(err, res, body){
-        if(err) {log.error(err);}
+        if(err) {this.log.error(err);}
         if(body.responseData) {
             if(body.responseData.results[0]) {
                 var outputString = "Title: \"" + body.responseData.results[0].titleNoFormatting;
@@ -174,7 +160,7 @@ Google.prototype.search = function(query, type, callback) {
                 });
             }
         } else {
-            log.error("Something went wrong!", {response: body});
+            this.log.error("Something went wrong!", {response: body});
         }
     });
 }

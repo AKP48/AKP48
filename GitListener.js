@@ -20,7 +20,7 @@ require('shelljs/global');
 
 var config = require("./config.json");
 var GitHooks = require("githubhook");
-var Git = new (require("./API/git"))();
+var Git = require("./API/git");
 var Google = require("./API/google");
 
 var c = require("irc-colors");
@@ -59,7 +59,10 @@ function GitListener(clientmanager, logger) {
     }
 
     //google API module for using Google APIs.
-    this.googleAPI = new Google(config.google.apiKey);
+    this.googleAPI = new Google(config.google.apiKey, logger);
+
+    //git API module.
+    this.gitAPI = new Git(logger);
 }
 
 /**
@@ -116,7 +119,7 @@ GitListener.prototype.handle = function (branch, data) {
             var commit_message = _c.author.username.append(": ").append(_m.substring(0, end === -1 ? _m.length : end)).prepend(c.green("[".append(_c.id.substring(0, 7)).append("] ")));
             message += "\n".append(commit_message);
         };
-        
+
         this.log.info({message: message}, "Alerting clients of Git changes.");
 
         manager.clients.each(function (client) {
@@ -125,13 +128,13 @@ GitListener.prototype.handle = function (branch, data) {
             });
         });
 
-        if (!Git.isRepo()) {
+        if (!this.gitAPI.isRepo()) {
             return;
         }
 
-        var changing_branch = branch !== Git.getBranch();
+        var changing_branch = branch !== this.gitAPI.getBranch();
         var update = this.autoUpdate && (data.commits.length !== 0 || changing_branch);
-        
+
         if (!update) {
             return;
         }
@@ -154,11 +157,11 @@ GitListener.prototype.handle = function (branch, data) {
                 return shutdown;
             });
         }
-        
+
         this.log.info("Updating to branch: ".append(branch));
-        
+
         // Fetch, Checkout
-        if (!Git.checkout(branch)) {
+        if (!this.gitAPI.checkout(branch)) {
             return;
         }
 

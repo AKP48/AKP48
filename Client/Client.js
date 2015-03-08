@@ -316,7 +316,7 @@ Client.prototype.initialize = function(clientManager, holdIRCClient) {
     this.ircClient.removeAllListeners('message');
 
     var self = this;
-    
+
     this.ircClient.on('message', function(nick, to, text, message) {
         //on each IRC message, run the command processor. If the command processor doesn't execute a command,
         //run the auto response processor.
@@ -324,7 +324,7 @@ Client.prototype.initialize = function(clientManager, holdIRCClient) {
             self.getAutoResponseProcessor().process(message, self);
         }
     });
-    
+
     var botID = this.botID;
     this.ircClient._splitLongLines = function(words, maxLen, dest) {
         var ret = irc.Client.prototype._splitLongLines.call(this, words, maxLen-botID.length-1, dest);
@@ -468,7 +468,7 @@ module.exports.build = function build(options, logger) {
     }
     if(options.channels) {
         for (var i = 0; i < options.channels.length; i++) {
-            client.addChannel(Channel.build(options.channels[i]));
+            client.addChannel(Channel.build(options.channels[i], log));
         };
     }
     log.debug("Built client", client.getNick(), "on", client.getServer()+":"+client.getPort()+".");

@@ -33,7 +33,6 @@ function Builder(logger) {
  * @return {Context}         The Context, false if failed to create a Context.
  */
 Builder.prototype.buildContext = function(message, client) {
-    this.log.trace({message: message}, "Building context.");
     //Before we do anything else, check to see if we sent this message.
     //We can safely toss this out if we are the sender.
     if(message.nick === client.getNick()){

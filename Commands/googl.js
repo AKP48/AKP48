@@ -18,7 +18,7 @@
 var Google = require('../API/google');
 var config = require('../config.json');
 
-function Googl() {
+function Googl(logger) {
     //the name of the command.
     this.name = "Goo.gl Link Shortener";
 
@@ -41,7 +41,7 @@ function Googl() {
     this.isPmOnly = false;
 
     //google API module for using Google APIs.
-    this.googleAPI = new Google(config.google.apiKey);
+    this.googleAPI = new Google(config.google.apiKey, logger);
 }
 
 Googl.prototype.execute = function(context) {

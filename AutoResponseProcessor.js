@@ -18,7 +18,7 @@
 function AutoResponseProcessor(logger) {
     //logger
     this.log = logger.child({module: "AutoResponseProcessor"});
-    this.handlers = require('./AutoResponses');
+    this.handlers = require('./AutoResponses')(logger);
 }
 
 /**
@@ -42,8 +42,7 @@ AutoResponseProcessor.prototype.process = function(message, client) {
     //if we get a message that identifies as a bot, we shouldn't process it
     if(!context || context.getFullMessage().startsWith(client.botID)) {
         this.log.debug({
-            user: context.getUser().getNick(), 
-            fullMsg: context.getFullMessage(),
+            user: context.getUser().getNick(),
             reason: "User identifies as a bot, or a context wasn't created."
         }, "AutoResponse execution blocked.");
         return false;
@@ -55,8 +54,7 @@ AutoResponseProcessor.prototype.process = function(message, client) {
         this.executeAll(context);
     } else {
         this.log.debug({
-            user: context.getUser().getNick(), 
-            fullMsg: context.getFullMessage(),
+            user: context.getUser().getNick(),
             reason: "User is banned."
         }, "AutoResponse execution blocked.");
     }
@@ -70,7 +68,6 @@ AutoResponseProcessor.prototype.executeAll = function(context) {
     var things = context.getFullMessage().split(" ");
     var responses = 0;
     var runs = {};
-    var log = this.log;
     for (var i = 0; i < things.length && responses < 3; i++) {
         // This loop runs through all handlers and attempts to execute them.
         this.handlers.every(function (handler) {
@@ -82,7 +79,6 @@ AutoResponseProcessor.prototype.executeAll = function(context) {
             //if the handler's regex matches, execute handler.
             if (things[i].search(handler.regex) != -1 && (!handler.limit || runs[handler] < handler.limit)) {
                 handler.execute(things[i], context);
-                log.info({user: context.getUser().getNick(), command: handler.name, fullMsg: context.getFullMessage()}, "AutoResponse handler executed.");
                 runs[handler]++;
                 responses++;
             }
