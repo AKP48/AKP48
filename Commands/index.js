@@ -15,12 +15,29 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-require('fs').readdirSync(__dirname + '/').each(function(file) {
-    if (file.match(/.+\.js/g) !== null && file !== 'index.js') {
-        var name = file.replace('.js', '');
-        var loadModule = require('./' + file);
-        var tempModule = new loadModule();
+/**
+ * Load all commands.
+ * @param  {Logger}   logger The logger to pass to loaded commands.
+ * @return {Object[]}        An array of commands.
+ */
+var loadCommands = function(logger) {
+    var commands = [];
+    var _log = logger.child({module: "Command Loader"});
+    require('fs').readdirSync(__dirname + '/').each(function(file) {
+        if (file.match(/.+\.js/g) !== null && file !== 'index.js') {
+            _log.trace("Loading " + file);
+            var name = file.replace('.js', '');
 
-        exports[name] = tempModule;
-    }
-});
+            //set up logger
+            var log = logger.child({module: "Commands/"+name});
+
+            var loadModule = require('./' + file);
+            var tempModule = new loadModule(log);
+
+            commands[name] = tempModule;
+        }
+    });
+    return commands;
+};
+
+module.exports = loadCommands;

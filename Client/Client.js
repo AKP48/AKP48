@@ -15,21 +15,6 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-var path = require('path');
-var bunyan = require('bunyan');
-var log = bunyan.createLogger({
-    name: 'AKP48 Client',
-    streams: [{
-        type: 'rotating-file',
-        path: path.resolve("./log/AKP48.log"),
-        period: '1d',
-        count: 7
-    },
-    {
-        stream: process.stdout
-    }]
-});
-
 var irc = require('irc');
 var CommandProcessor = require("../CommandProcessor");
 var AutoResponseProcessor = require("../AutoResponseProcessor");
@@ -38,7 +23,10 @@ var Channel = require('./Channel');
 /**
  * An IRC client.
  */
-function Client() {
+function Client(logger) {
+    // The logger this client uses.
+    this.log = logger.child({module: "Client"});
+
     // The nickname this client uses.
     this.nick = "IRCBot9000";
 
@@ -70,10 +58,10 @@ function Client() {
     this.isTemporary = false;
 
     // The client's CommandProcessor.
-    this.commandProcessor = new CommandProcessor();
+    this.commandProcessor = new CommandProcessor(this.log);
 
     // The client's AutoResponseProcessor.
-    this.autoResponseProcessor = new AutoResponseProcessor();
+    this.autoResponseProcessor = new AutoResponseProcessor(this.log);
 
     // Magic 'color' that represents a bot message
     this.botID = "\u000399";
@@ -293,14 +281,15 @@ Client.prototype.reloadProcessors = function() {
     delete this.autoResponseProcessor;
     var CommandProcessor = require("../CommandProcessor");
     var AutoResponseProcessor = require("../AutoResponseProcessor");
-    this.commandProcessor = new CommandProcessor();
-    this.autoResponseProcessor = new AutoResponseProcessor();
+    this.commandProcessor = new CommandProcessor(this.log);
+    this.autoResponseProcessor = new AutoResponseProcessor(this.log);
 };
 
 /**
  * Initialize the Client by creating an IRC client.
  */
 Client.prototype.initialize = function(clientManager, holdIRCClient) {
+    this.log.debug("Initializing client", this.getNick(), "on", this.getServer()+":"+this.getPort()+".");
     //set the client manager.
     this.clientManager = clientManager;
 
@@ -327,7 +316,7 @@ Client.prototype.initialize = function(clientManager, holdIRCClient) {
     this.ircClient.removeAllListeners('message');
 
     var self = this;
-    
+
     this.ircClient.on('message', function(nick, to, text, message) {
         //on each IRC message, run the command processor. If the command processor doesn't execute a command,
         //run the auto response processor.
@@ -335,7 +324,7 @@ Client.prototype.initialize = function(clientManager, holdIRCClient) {
             self.getAutoResponseProcessor().process(message, self);
         }
     });
-    
+
     var botID = this.botID;
     this.ircClient._splitLongLines = function(words, maxLen, dest) {
         var ret = irc.Client.prototype._splitLongLines.call(this, words, maxLen-botID.length-1, dest);
@@ -347,7 +336,7 @@ Client.prototype.initialize = function(clientManager, holdIRCClient) {
         return ret;
     };
 
-    log.info("Client", this.getNick(), "on", this.getServer()+":"+this.getPort(), "initialized.");
+    this.log.debug("Client", this.getNick(), "on", this.getServer()+":"+this.getPort(), "initialized.");
 };
 
 /**
@@ -358,6 +347,7 @@ Client.prototype.initialize = function(clientManager, holdIRCClient) {
 Client.prototype.say = function(context, message) {
     var channel = (context.getChannel().getName() === "global" ? context.getUser().getNick() : context.getChannel().getName());
     this.getIRCClient().say(channel, context.getUser().getNick() + ": " + message);
+    this.log.trace({message: message, user: context.getUser().getNick(), channel: channel}, "Sent message.");
 };
 
 /**
@@ -395,7 +385,7 @@ function (channel) {
  * @param  {String} msg The leave message.
  */
 Client.prototype.shutdown = function(msg) {
-    log.info("Shutdown requested for client", this.getNick(), "on", this.getServer()+":"+this.getPort()+".");
+    this.log.debug("Shutdown requested for client", this.getNick(), "on", this.getServer()+":"+this.getPort()+".");
     this.getIRCClient().disconnect(msg);
 };
 
@@ -403,6 +393,7 @@ Client.prototype.shutdown = function(msg) {
  * Destroys this client.
  */
 Client.prototype.destroy = function() {
+    this.log.debug("Destroying client", this.getNick(), "on", this.getServer()+":"+this.getPort()+".");
     this.nick = null;
     this.server = null;
     this.port = null;
@@ -443,9 +434,11 @@ module.exports = Client;
  * @param  {Object}     options     The options that will configure the client.
  * @return {Client}                 The Client.
  */
-module.exports.build = function build(options) {
+module.exports.build = function build(options, logger) {
     //Make ourselves a new Client...
-    var client = new Client();
+    var client = new Client(logger);
+
+    var log = logger.child({module: "Client.build"});
 
     //set the options, if we get them.
     if(options.nick) {
@@ -475,10 +468,10 @@ module.exports.build = function build(options) {
     }
     if(options.channels) {
         for (var i = 0; i < options.channels.length; i++) {
-            client.addChannel(Channel.build(options.channels[i]));
+            client.addChannel(Channel.build(options.channels[i], log));
         };
     }
-    log.info("Built client", client.getNick(), "on", client.getServer()+":"+client.getPort()+".");
+    log.debug("Built client", client.getNick(), "on", client.getServer()+":"+client.getPort()+".");
     //return it.
     return client;
 }

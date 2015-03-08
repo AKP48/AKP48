@@ -15,23 +15,10 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-var path = require('path');
-var bunyan = require('bunyan');
-var log = bunyan.createLogger({
-    name: 'AKP48 AutoResponseProcessor',
-    streams: [{
-        type: 'rotating-file',
-        path: path.resolve("./log/AKP48.log"),
-        period: '1d',
-        count: 7
-    },
-    {
-        stream: process.stdout
-    }]
-});
-
-function AutoResponseProcessor() {
-    this.handlers = require('./AutoResponses');
+function AutoResponseProcessor(logger) {
+    //logger
+    this.log = logger.child({module: "AutoResponseProcessor"});
+    this.handlers = require('./AutoResponses')(logger);
 }
 
 /**
@@ -53,12 +40,23 @@ AutoResponseProcessor.prototype.process = function(message, client) {
 
     //if we don't get a context, something weird must have happened, and we shouldn't continue.
     //if we get a message that identifies as a bot, we shouldn't process it
-    if(!context || context.getFullMessage().startsWith(client.botID)) {return false;}
+    if(!context || context.getFullMessage().startsWith(client.botID)) {
+        this.log.debug({
+            user: context.getUser().getNick(),
+            reason: "User identifies as a bot, or a context wasn't created."
+        }, "AutoResponse execution blocked.");
+        return false;
+    }
 
     //if user isn't banned
     if(!context.getChannel().isBanned(context.getUser())) {
         //process the message
         this.executeAll(context);
+    } else {
+        this.log.debug({
+            user: context.getUser().getNick(),
+            reason: "User is banned."
+        }, "AutoResponse execution blocked.");
     }
 };
 
@@ -81,7 +79,6 @@ AutoResponseProcessor.prototype.executeAll = function(context) {
             //if the handler's regex matches, execute handler.
             if (things[i].search(handler.regex) != -1 && (!handler.limit || runs[handler] < handler.limit)) {
                 handler.execute(things[i], context);
-                log.info("AutoResponse handler executed: ", {user: context.getUser(), command: handler.name, fullMsg: context.getFullMessage()});
                 runs[handler]++;
                 responses++;
             }

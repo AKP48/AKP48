@@ -15,27 +15,13 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-var path = require('path');
-var bunyan = require('bunyan');
-var log = bunyan.createLogger({
-    name: 'AKP48 Riot API Module',
-    streams: [{
-        type: 'rotating-file',
-        path: path.resolve("./log/AKP48.log"),
-        period: '1d',
-        count: 7
-    },
-    {
-        stream: process.stdout
-    }]
-});
-
 var request = require('request-json');
 var c = require('irc-colors');
 var n = require('numeral');
 var m = require('moment');
 
-function Riot(api_key) {
+function Riot(api_key, logger) {
+    this.log = logger.child({module: "Riot API"});
     this.api_key = api_key;
     this.client = request.createClient('https://na.api.pvp.net/');
 
@@ -58,7 +44,7 @@ function Riot(api_key) {
 Riot.prototype.getChampList = function() {
     this.champions = [];
     var self = this;
-    log.info("Retrieving champion list from Riot.");
+    this.log.info("Retrieving champion list from Riot.");
     this.client.get('/api/lol/static-data/na/v1.2/champion?api_key='+this.api_key, function (err, res, body) {
         if (err || !body || !body.data) return;
         body.data.each(function (data) {
@@ -69,11 +55,11 @@ Riot.prototype.getChampList = function() {
 
 Riot.prototype.getFreeChamps = function(callback) {
     if(m().subtract(10, 'minutes').isAfter(this.freeChamps.lastAccess)) {
-        log.info("Retrieving free champions from Riot.");
+        this.log.info("Retrieving free champions from Riot.");
         this.freeChamps = { champions: [], lastAccess: m() };
         var self = this;
         this.client.get('/api/lol/na/v1.2/champion?freeToPlay=true&api_key='+this.api_key, function (err, res, body) {
-            if(err) { callback("Could not get free champions!"); return log.error(err); }
+            if(err) { callback("Could not get free champions!"); return this.log.error(err); }
             body.champions.each(function (champ) {
                 self.freeChamps.champions.push(self.champions[champ.id].name);
             });
@@ -90,9 +76,9 @@ Riot.prototype.getServerStatus = function(region, callback) {
     if(region.toLowerCase() === "pbe") {
         extra = '.pbe';
     }
-    log.info("Retrieving server status from Riot for region "+region);
+    this.log.info("Retrieving server status from Riot for region "+region);
     this.client.get('http://status'+extra+'.leagueoflegends.com/shards/'+region.toLowerCase(), function (err, res, body) {
-        if(err) {callback("Could not get server status for that region!"); return log.error(err);}
+        if(err) {callback("Could not get server status for that region!"); return this.log.error(err);}
         var response = [];
         body.services.each(function (service) {
             var oS = service.name + ": " + service.status;

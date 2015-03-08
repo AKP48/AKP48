@@ -18,7 +18,7 @@
 var config = require('../config.json');
 var Imgur = require('../API/imgur');
 
-function QR() {
+function QR(logger) {
     //the name of the command.
     this.name = "QR Code";
 
@@ -44,7 +44,7 @@ function QR() {
     this.isPmOnly = false;
 
     //imgur API
-    this.imgurAPI = new Imgur(config.imgur.clientID);
+    this.imgurAPI = new Imgur(config.imgur.clientID, logger);
 }
 
 QR.prototype.execute = function(context) {
@@ -62,7 +62,7 @@ QR.prototype.execute = function(context) {
             context.getClient().getCommandProcessor().aliasedCommands['googl'].shortenURL(context, imageURL);
         }
     });
-    
+
     return true;
 };
 

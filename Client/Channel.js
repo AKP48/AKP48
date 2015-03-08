@@ -15,27 +15,12 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-var path = require('path');
-var bunyan = require('bunyan');
-var log = bunyan.createLogger({
-    name: 'AKP48 Channel',
-    streams: [{
-        type: 'rotating-file',
-        path: path.resolve("./log/AKP48.log"),
-        period: '1d',
-        count: 7
-    },
-    {
-        stream: process.stdout
-    }]
-});
-
 var User = require('./User');
 
 /**
  * A channel.
  */
-function Channel() {
+function Channel(logger) {
     // The name of this channel.
     this.name = "";
 
@@ -55,6 +40,9 @@ function Channel() {
         "maxViolationLevel": 8,
         "penaltyMultiplier": 1.25
     }
+
+    //logger
+    this.log = logger.child({module: "Channel"});
 
     //set an interval to reset users violation levels.
     var self = this;
@@ -209,7 +197,7 @@ Channel.prototype.banUser = function(user) {
     //get user for sure.
     var banUser = this.getUser(user.getHostmask());
     banUser.addPermission("user.command.banned");
-    log.info("User", banUser.getNick(), "banned from Channel", this.getName()+".");
+    this.log.info("User", banUser.getNick(), "banned from Channel", this.getName()+".");
 };
 
 /**
@@ -220,7 +208,7 @@ Channel.prototype.unbanUser = function(user) {
     //get user for sure.
     var unbanUser = this.getUser(user.getHostmask());
     unbanUser.removePermission("user.command.banned");
-    log.info("User", banUser.getNick(), "unbanned from Channel", this.getName()+".");
+    this.log.info("User", banUser.getNick(), "unbanned from Channel", this.getName()+".");
 };
 
 /**
@@ -289,7 +277,7 @@ Channel.prototype.floodProtection = function(context) {
         context.getUser().floodProtection.isBanned = true;
 
         //log that we tempbanned someone.
-        log.info("User", banUser.getNick(), "automatically tempbanned from Channel", this.getName()+".");
+        this.log.info("User", banUser.getNick(), "automatically tempbanned from Channel", this.getName()+".");
 
         //return false to let the CommandProcessor know not to execute the command.
         return false;
@@ -320,9 +308,9 @@ module.exports = Channel;
  * @param  {Options} options The options to use
  * @return {User}            The User.
  */
-module.exports.build = function build(options) {
+module.exports.build = function build(options, logger) {
     //Make ourselves a new Channel...
-    var channel = new Channel();
+    var channel = new Channel(logger);
     //set the options, if we get them.
     if(options.name) {
         channel.setName(options.name);

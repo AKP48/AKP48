@@ -15,31 +15,17 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-var path = require('path');
-var bunyan = require('bunyan');
-var log = bunyan.createLogger({
-    name: 'AKP48 Steam API Module',
-    streams: [{
-        type: 'rotating-file',
-        path: path.resolve("./log/AKP48.log"),
-        period: '1d',
-        count: 7
-    },
-    {
-        stream: process.stdout
-    }]
-});
-
 var request = require('request-json');
 var c = require('irc-colors');
 var n = require('numeral');
 var Google = require("./google");
 var config = require('../config.json');
 
-function Steam() {
+function Steam(logger) {
+    this.log = logger.child({module: "Steam API"});
     this.client = request.createClient('https://store.steampowered.com/');
     this.enhancedSteamAPI = request.createClient('http://api.enhancedsteam.com/');
-    this.google = new Google(config.google.apiKey);
+    this.google = new Google(config.google.apiKey, logger);
 }
 
 Steam.prototype.getGame = function(appId, callback, nohist) {
@@ -51,12 +37,12 @@ Steam.prototype.getGame = function(appId, callback, nohist) {
     self.google = this.google;
     self.nohist = nohist;
 
-    log.info("Getting Steam info for game "+appId+".");
+    this.log.info("Getting Steam info for game "+appId+".");
 
     this.client.get("/api/appdetails?filters=basic,price_overview,genres&appids="+appId, function(err, res, body) {
-        if(err) {log.error(err); return;}
+        if(err) {this.log.error(err); return;}
 
-        if(!body[self.appId].success){log.error("Something went wrong retrieving data for Steam game "+self.appId+"."); return;}
+        if(!body[self.appId].success){this.log.error("Something went wrong retrieving data for Steam game "+self.appId+"."); return;}
 
         var name = body[self.appId].data.name;
         var isFree = body[self.appId].data.is_free;
@@ -162,12 +148,12 @@ Steam.prototype.getPkg = function(appId, callback, nohist) {
     self.google = this.google;
     self.nohist = nohist;
 
-    log.info("Getting Steam info for package "+appId+".");
+    this.log.info("Getting Steam info for package "+appId+".");
 
     this.client.get("/api/packagedetails?packageids="+appId, function(err, res, body) {
-        if(err) {log.error(err); return;}
+        if(err) {this.log.error(err); return;}
 
-        if(!body[self.appId].success){log.error("Something went wrong retrieving data for Steam package "+self.appId+"."); return;}
+        if(!body[self.appId].success){this.log.error("Something went wrong retrieving data for Steam package "+self.appId+"."); return;}
 
         var name = body[self.appId].data.name;
         var currency = body[self.appId].data.price.currency;

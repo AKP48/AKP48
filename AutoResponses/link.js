@@ -21,7 +21,7 @@ var Steam = require('../API/steam');
 var Imgur = require('../API/imgur');
 var c = require('irc-colors');
 
-function LinkHandler() {
+function LinkHandler(logger) {
     //the name of the handler.
     this.name = "Link Handler";
 
@@ -50,17 +50,21 @@ function LinkHandler() {
     this.imgurRegex = require("../Regex/regex-imgur");
 
     //Google API module.
-    this.google = new Google(config.google.apiKey);
+    this.google = new Google(config.google.apiKey, logger);
 
     //Steam API module.
-    this.steam = new Steam();
+    this.steam = new Steam(logger);
 
     //Imgur API module.
-    this.imgur = new Imgur(config.imgur.clientID);
+    this.imgur = new Imgur(config.imgur.clientID, logger);
+
+    //logger
+    this.log = logger;
 }
 
 // TODO: cache responses
 LinkHandler.prototype.execute = function(word, context) {
+    this.log.debug({link: word}, "Handling link.");
     if(this.youTubeRegex.test(word)) {
         return this.YouTubeVideo(word, context);
     }
@@ -101,32 +105,40 @@ LinkHandler.prototype.execute = function(word, context) {
                     oS += $("title").text().replace(/\r?\n/gm, "").trim().replace(/\s{2,}/g, ' ').append("\"");
                     context.getClient().getIRCClient().say(context.getChannel().getName(), oS);
                 } else {
+                    this.log.error({res: response}, "Title unavailable for " + word);
                     // TODO: make function for this...
                     context.getClient().alert.each(function (channel) {
                         context.getClient().getIRCClient().say(channel, "Title unavailable for " + word);
                     });
                 }
             } else {
+                this.log.error({err: error, res: response}, "[".append(response.statusCode).append("] Error: %s"), error);
                 // TODO: make function for this...
                 context.getClient().alert.each(function (channel) {
                     context.getClient().getIRCClient().say(channel, "[".append(response.statusCode).append("] Error: ").append(error));
                 });
             }
         });
+    } else {
+        this.log.debug("Ignoring link due to noinfo parameter.");
     }
 };
 
 LinkHandler.prototype.YouTubeVideo = function(link, context) {
+    this.log.debug("Handling as YouTube video.");
     var id = this.youTubeRegex.exec(link);
     var noshow = /noinfo/i.exec(link);
     if(id != null && noshow == null) {
         this.google.youtube_video_info(id[1], function(res){
             context.getClient().getIRCClient().say(context.getChannel().getName(), res);
         });
+    } else {
+        this.log.debug({reason: "Either no YouTube video ID was found, or the noinfo parameter was included."}, "Ignoring link.");
     }
 };
 
 LinkHandler.prototype.SteamPackage = function(link, context) {
+    this.log.debug("Handling as Steam package.");
     var id = this.steamPkgRegex.exec(link);
     var noshow = /noinfo/i.exec(link);
     var nohist = /nohist/i.exec(link);
@@ -134,10 +146,13 @@ LinkHandler.prototype.SteamPackage = function(link, context) {
         this.steam.getPkg(id[1], function(res) {
             context.getClient().getIRCClient().say(context.getChannel().getName(), res);
         }, ((nohist != null) ? true : false));
+    } else {
+        this.log.debug({reason: "Either no Steam package ID was found, or noinfo parameter was included."}, "Ignoring link.");
     }
 };
 
 LinkHandler.prototype.SteamApp = function(link, context) {
+    this.log.debug("Handling as Steam app.");
     var id = this.steamAppRegex.exec(link);
     var noshow = /noinfo/i.exec(link);
     var nohist = /nohist/i.exec(link);
@@ -145,20 +160,25 @@ LinkHandler.prototype.SteamApp = function(link, context) {
         this.steam.getGame(id[1], function(res) {
             context.getClient().getIRCClient().say(context.getChannel().getName(), res);
         }, ((nohist != null) ? true : false));
+    } else {
+        this.log.debug({reason: "Either no Steam app ID was found, or noinfo parameter was included."}, "Ignoring link.");
     }
 };
 
 LinkHandler.prototype.Twitter = function(link, context) {
     //Don't do anything for now. Simply ignore Twitter links.
+    this.log.debug({reason: "Twitter"}, "Ignoring link.");
 }
 
 LinkHandler.prototype.ImgurLink = function(link, context) {
+    this.log.debug("Handling as imgur link.");
     var id = this.imgurRegex.exec(link);
     var noshow = /noinfo/i.exec(link);
     var self = this;
     if(id != null && noshow == null) {
         //id[1] == direct image.
         if(id[1]) {
+            this.log.debug("Handling as direct image.");
             this.imgur.getImageInfo(id[1], function(image) {
                 if(image) {
                     context.getClient().getIRCClient().say(context.getChannel().getName(), self.constructImgurString(image));
@@ -171,6 +191,7 @@ LinkHandler.prototype.ImgurLink = function(link, context) {
                 //if info is more than one part, we know it is either a gallery link or an album.
                 if(info.length > 1) {
                     //gallery image
+                    this.log.debug("Handling as gallery image.");
                     if(info[0] == "gallery") {
                         this.imgur.getGalleryInfo(info[1], function(image) {
                             if(image) {
@@ -180,6 +201,7 @@ LinkHandler.prototype.ImgurLink = function(link, context) {
                     }
 
                     if(info[0] == "a") {
+                        this.log.debug("Handling as album.");
                         this.imgur.getAlbumInfo(info[1], function(image) {
                             if(image) {
                                 context.getClient().getIRCClient().say(context.getChannel().getName(), self.constructImgurString(image));
@@ -188,6 +210,7 @@ LinkHandler.prototype.ImgurLink = function(link, context) {
                     }
                 } else {
                     //if info is only one part, we know it has to be a direct image.
+                    this.log.debug("Handling as direct image.");
                     this.imgur.getImageInfo(info[0], function(image) {
                         if(image) {
                             context.getClient().getIRCClient().say(context.getChannel().getName(), self.constructImgurString(image));
@@ -196,10 +219,13 @@ LinkHandler.prototype.ImgurLink = function(link, context) {
                 }
             }
         }
+    } else {
+        this.log.debug({reason: "Either no imgur ID was found, or noinfo parameter was included."}, "Ignoring link.");
     }
 };
 
 LinkHandler.prototype.constructImgurString = function(image) {
+    this.log.trace({img: image}, "Constructing imgur output string.");
     //set up prefix
     var type = "[Imgur ";
     if(image.is_gallery) {type += "Gallery ";}

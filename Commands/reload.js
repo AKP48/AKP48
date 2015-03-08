@@ -15,7 +15,7 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-function Reload() {
+function Reload(log) {
     //the name of the command.
     this.name = "Reload";
 
@@ -36,9 +36,13 @@ function Reload() {
 
     //whether or not to only allow this command if it's in a private message.
     this.isPmOnly = true;
+
+    //logger
+    this.log = log;
 }
 
 Reload.prototype.execute = function(context) {
+    this.log.debug("Soft reload requested by " + context.getUser().getNick());
     context.getClient().getIRCClient().notice(context.getUser().getNick(), "Performing soft reload!");
     context.getClient().getClientManager().softReload();
     return true;

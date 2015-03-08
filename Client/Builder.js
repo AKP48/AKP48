@@ -15,29 +15,15 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-var path = require('path');
-var bunyan = require('bunyan');
-var log = bunyan.createLogger({
-    name: 'AKP48 Builder',
-    streams: [{
-        type: 'rotating-file',
-        path: path.resolve("./log/AKP48.log"),
-        period: '1d',
-        count: 7
-    },
-    {
-        stream: process.stdout
-    }]
-});
-
 var User = require("./User");
 var Context = require("./Context");
 
 /**
  * Used to build various objects.
  */
-function Builder() {
-
+function Builder(logger) {
+    //logger
+    this.log = logger.child({module: "Builder"});
 }
 
 /**
@@ -49,7 +35,12 @@ function Builder() {
 Builder.prototype.buildContext = function(message, client) {
     //Before we do anything else, check to see if we sent this message.
     //We can safely toss this out if we are the sender.
-    if(message.nick === client.getNick()){return false;}
+    if(message.nick === client.getNick()){
+        this.log.debug({
+            reason: "Captured message was sent from self."
+        }, "Context failed to build.");
+        return false;
+    }
 
     //Make ourselves a new Context...
     var context = new Context();
@@ -72,7 +63,12 @@ Builder.prototype.buildContext = function(message, client) {
     channel = client.getChannel(channel);
 
     //if the channel doesn't exist, return here.
-    if(!channel) {return false;}
+    if(!channel) {
+        this.log.debug({
+            reason: "Captured message was sent from self."
+        }, "Channel does not exist.");
+        return false;
+    }
 
     //set the channel in the context.
     context.setChannel(channel);

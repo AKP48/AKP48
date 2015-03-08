@@ -15,33 +15,22 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-var path = require('path');
-var bunyan = require('bunyan');
-var log = bunyan.createLogger({
-    name: 'AKP48 Git Webhook Listener',
-    streams: [{
-        type: 'rotating-file',
-        path: path.resolve("./log/AKP48.log"),
-        period: '1d',
-        count: 7
-    },
-    {
-        stream: process.stdout
-    }]
-});
-
 // We need the shell
 require('shelljs/global');
 
 var config = require("./config.json");
 var GitHooks = require("githubhook");
-var Git = new (require("./API/git"))();
+var Git = require("./API/git");
 var Google = require("./API/google");
 
 var c = require("irc-colors");
 
-function GitListener(clientmanager) {
+function GitListener(clientmanager, logger) {
+    //client manager
     this.manager = clientmanager;
+
+    //logger
+    this.log = logger.child({module: "GitListener"});
 
     //listener
     this.githubListener = null;
@@ -70,7 +59,10 @@ function GitListener(clientmanager) {
     }
 
     //google API module for using Google APIs.
-    this.googleAPI = new Google(config.google.apiKey);
+    this.googleAPI = new Google(config.google.apiKey, logger);
+
+    //git API module.
+    this.gitAPI = new Git(logger);
 }
 
 /**
@@ -78,11 +70,11 @@ function GitListener(clientmanager) {
  */
 GitListener.prototype.startListening = function() {
     if (this.githubListener) {
-        log.error("Attempted to listen while already listening.");
+        this.log.error("Attempted to listen while already listening.");
         return;
     }
 
-    log.info({repo: this.repository, port: this.port, branch: this.branch}, "Initializing GitHub Webhook listener");
+    this.log.info({repo: this.repository, port: this.port, branch: this.branch}, "Initializing GitHub Webhook listener");
 
     this.githubListener = GitHooks({
         path: this.path,
@@ -97,7 +89,7 @@ GitListener.prototype.startListening = function() {
         if (data.deleted) {
             return;
         }
-        log.info({head_commit_message: data.head_commit.message, ref: ref}, "GitHub Webhook received.");
+        self.log.info({head_commit_message: data.head_commit.message, ref: ref}, "GitHub Webhook received.");
         var branch = ref.substring(ref.indexOf('/', 5) + 1);
         if (self.branch === "*" || self.branch === branch) {
             self.handle(branch, data);
@@ -111,6 +103,7 @@ GitListener.prototype.startListening = function() {
  * @param  {Object} data   The Webhook.
  */
 GitListener.prototype.handle = function (branch, data) {
+    this.log.info({branch: branch}, "Handling Webhook.");
     var manager = this.manager;
     // Alert channels of update
     var commits_string = " commit".pluralize(data.commits.length).prepend(data.commits.length);
@@ -127,19 +120,21 @@ GitListener.prototype.handle = function (branch, data) {
             message += "\n".append(commit_message);
         };
 
+        this.log.info({message: message}, "Alerting clients of Git changes.");
+
         manager.clients.each(function (client) {
             client.alert.each(function (channel) {
                 client.getIRCClient().say(channel, message);
             });
         });
 
-        if (!Git.isRepo()) {
+        if (!this.gitAPI.isRepo()) {
             return;
         }
 
-        var changing_branch = branch !== Git.getBranch();
+        var changing_branch = branch !== this.gitAPI.getBranch();
         var update = this.autoUpdate && (data.commits.length !== 0 || changing_branch);
-        
+
         if (!update) {
             return;
         }
@@ -162,15 +157,16 @@ GitListener.prototype.handle = function (branch, data) {
                 return shutdown;
             });
         }
-        
-        log.info("Updating to branch: ".append(branch));
-        
+
+        this.log.info("Updating to branch: ".append(branch));
+
         // Fetch, Checkout
-        if (!Git.checkout(branch)) {
+        if (!this.gitAPI.checkout(branch)) {
             return;
         }
 
         if (npm) {
+            this.log.info("Executing npm install.");
             exec('npm install');
         }
 
