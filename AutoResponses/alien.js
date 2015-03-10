@@ -26,7 +26,7 @@ function AlienHandler(logger) {
     this.allowPm = true;
 
     //the regex used to match this handler
-    this.regex = /ayy/i;
+    this.regex = /ayy|ʎʎɐ/i;
 
     // the amount of times we should respond with this handler, 0 is no limit
     this.limit = 1;
