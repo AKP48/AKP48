@@ -142,10 +142,11 @@ LinkHandler.prototype.SteamPackage = function(link, context) {
     var id = this.steamPkgRegex.exec(link);
     var noshow = /noinfo/i.exec(link);
     var nohist = /nohist/i.exec(link);
+    var allstores = /allstores/i.exec(link);
     if(id != null && noshow == null) {
         this.steam.getPkg(id[1], function(res) {
             context.getClient().getIRCClient().say(context.getChannel().getName(), res);
-        }, ((nohist != null) ? true : false));
+        }, nohist, allstores);
     } else {
         this.log.debug({reason: "Either no Steam package ID was found, or noinfo parameter was included."}, "Ignoring link.");
     }
@@ -156,10 +157,11 @@ LinkHandler.prototype.SteamApp = function(link, context) {
     var id = this.steamAppRegex.exec(link);
     var noshow = /noinfo/i.exec(link);
     var nohist = /nohist/i.exec(link);
+    var allstores = /allstores/i.exec(link);
     if(id != null && noshow == null) {
         this.steam.getGame(id[1], function(res) {
             context.getClient().getIRCClient().say(context.getChannel().getName(), res);
-        }, ((nohist != null) ? true : false));
+        }, nohist, allstores);
     } else {
         this.log.debug({reason: "Either no Steam app ID was found, or noinfo parameter was included."}, "Ignoring link.");
     }

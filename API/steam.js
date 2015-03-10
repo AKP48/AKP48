@@ -28,7 +28,7 @@ function Steam(logger) {
     this.google = new Google(config.google.apiKey, logger);
 }
 
-Steam.prototype.getGame = function(appId, callback, nohist) {
+Steam.prototype.getGame = function(appId, callback, nohist, allStores) {
 
     var self = {};
     self.appId = appId;
@@ -36,6 +36,12 @@ Steam.prototype.getGame = function(appId, callback, nohist) {
     self.enhancedSteamAPI = this.enhancedSteamAPI;
     self.google = this.google;
     self.nohist = nohist;
+
+    self.storeString = "&stores=steam";
+
+    if(allStores) {
+        self.storeString += ",amazonus,impulse,gamersgate,greenmangaming,gamefly,origin,uplay,indiegalastore,gametap,gamesplanet,getgames,desura,gog,dotemu,fireflower,gameolith,humblewidgets,adventureshop,nuuvem,shinyloot,dlgamer,humblestore,indiegamestand,squenix,bundlestars";
+    }
 
     this.log.info("Getting Steam info for game "+appId+".");
 
@@ -113,25 +119,16 @@ Steam.prototype.getGame = function(appId, callback, nohist) {
         self.oS = outputString;
 
         if(!self.nohist) {
-            self.enhancedSteamAPI.get("/pricev2/?search=app/" + self.appId + "&stores=steam,amazonus,impulse,gamersgate,greenmangaming,gamefly,origin,uplay,indiegalastore,gametap,gamesplanet,getgames,desura,gog,dotemu,fireflower,gameolith,humblewidgets,adventureshop,nuuvem,shinyloot,dlgamer,humblestore,indiegamestand,squenix,bundlestars&cc=us&coupon=true",
+            self.enhancedSteamAPI.get("/pricev2/?search=app/" + self.appId + self.storeString + "&cc=us&coupon=true",
                 function(err, res, body){
                     //if we get an error looking up historical low, output what we have and quit.
                     if(err || body === null || !body.lowest) {self.callback(self.oS); return;}
 
-                    self.oS += " - Historical low: ";
+                    self.oS += " - Historical low, " + body.lowest.recorded_formatted + ": ";
                     self.oS += c.green(body.lowest.price + " USD ");
                     self.oS += c.underline.green("-" + body.lowest.cut + "%") + " on " + body.lowest.store;
-
-                    //This is still callback hell.
-                    if(body.lowest.url) {
-                        self.google.shorten_url(body.lowest.url, function(shortURL) {
-                            self.oS += " (" + shortURL + "), " + body.lowest.recorded_formatted + ".";
-                            self.callback(self.oS);
-                        });
-                    } else {
-                        self.oS += ", " + body.lowest.recorded_formatted + ".";
-                        self.callback(self.oS);
-                    }
+                    self.oS += ", " + body.lowest.recorded_formatted + ".";
+                    self.callback(self.oS);
                 });
         } else {
             callback(outputString);
@@ -191,19 +188,10 @@ Steam.prototype.getPkg = function(appId, callback, nohist) {
                     //if we get an error looking up historical low, output what we have and quit.
                     if(err) {self.callback(self.oS); return;}
 
-                    self.oS += " - Historical low: ";
+                    self.oS += " - Historical low, " + body.lowest.recorded_formatted + ": ";
                     self.oS += c.green(body.lowest.price + " " + body[".meta"].currency +" ");
-
-                    //This is still callback hell.
-                    if(body.lowest.url) {
-                        self.google.shorten_url(body.lowest.url, function(shortURL) {
-                            self.oS += c.underline.green("-" + body.lowest.cut + "%") + " on " + body.lowest.store + " (" + shortURL + "), " + body.lowest.recorded_formatted + ".";
-                            self.callback(self.oS);
-                        });
-                    } else {
-                        self.oS += c.underline.green("-" + body.lowest.cut + "%") + " on " + body.lowest.store + ", " + body.lowest.recorded_formatted + ".";
-                        self.callback(self.oS);
-                    }
+                    self.oS += c.underline.green("-" + body.lowest.cut + "%") + " on " + body.lowest.store + ".";
+                    self.callback(self.oS);
                 });
         } else {
             callback(outputString);
