@@ -121,8 +121,8 @@ Steam.prototype.getGame = function(appId, callback, nohist, allStores) {
         if(!self.nohist) {
             self.enhancedSteamAPI.get("/pricev2/?search=app/" + self.appId + self.storeString + "&cc=us&coupon=true",
                 function(err, res, body){
-                    //if we get an error looking up historical low, output what we have and quit.
-                    if(err || body === null || !body.lowest) {self.callback(self.oS); return;}
+                    //if we get an error looking up historical low, or the low is no better than what we have, output what we have and quit.
+                    if(err || body === null || !body.lowest || !body.lowest.cut) {self.callback(self.oS); return;}
 
                     self.oS += " - Historical low, " + body.lowest.recorded_formatted + ": ";
                     self.oS += c.green(body.lowest.price + " USD ");
@@ -190,8 +190,8 @@ Steam.prototype.getPkg = function(appId, callback, nohist) {
         if(!self.nohist) {
             self.enhancedSteamAPI.get("/pricev2/?search=sub/" + self.appId + self.storeString + "&cc=us&coupon=true",
                 function(err, res, body){
-                    //if we get an error looking up historical low, output what we have and quit.
-                    if(err) {self.callback(self.oS); return;}
+                    //if we get an error looking up historical low, or the low is no better than what we have, output what we have and quit.
+                    if(err || body === null || !body.lowest || !body.lowest.cut) {self.callback(self.oS); return;}
 
                     self.oS += " - Historical low, " + body.lowest.recorded_formatted + ": ";
                     self.oS += c.green(body.lowest.price + " " + body[".meta"].currency +" ");
