@@ -65,6 +65,44 @@ function GitListener(clientmanager, logger) {
     this.gitAPI = new Git(logger);
 }
 
+function compare(original, other) {
+    if (other === "*" || original === other) { // Checking here saves pain and effort
+        return true;
+    } else if (other.startsWith("!") || other.startsWith("-")) { // We should update to all except the specified
+        // Should we do a compare?
+        //return !compare(original, other.substring(1));
+        return original !== other.substring(1);
+    }
+
+    var star = other.indexOf("*"), star2 = other.lastIndexOf("*"), string;
+    if (star !== -1) {
+        if (star2 > star) {
+            return original.contains(other.substring(star + 1, star2 - 1));
+        }
+        if (star === 0) {
+            return original.endsWith(other.substring(star + 1));
+        } else {
+            return original.startsWith(other.substring(star - 1));
+        }
+    }
+    
+    return false;
+}
+
+GitListener.prototype.shouldUpdate = function(branch) {
+    if (Array.isArray(this.branch)) { // We update only if it is listed
+        for (var x = 0; x < this.branch.length; x++) {
+            var _branch = this.branch[x];
+            if (compare(branch, _branch)) {
+                return true;
+            }
+        }
+        return false;
+    }
+
+    return compare(branch, this.branch);
+};
+
 /**
  * Start listening for GH Webhooks.
  */
@@ -91,7 +129,7 @@ GitListener.prototype.startListening = function() {
         }
         self.log.info({head_commit_message: data.head_commit.message, ref: ref}, "GitHub Webhook received.");
         var branch = ref.substring(ref.indexOf('/', 5) + 1);
-        if (self.branch === "*" || self.branch === branch) {
+        if (self.shouldUpdate(branch)) {
             self.handle(branch, data);
         }
     });
