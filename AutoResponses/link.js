@@ -94,7 +94,13 @@ LinkHandler.prototype.execute = function(word, context) {
         var self = {};
         self.word = word;
         self.log = this.log;
-        request({ uri: word }, function(error, response, body) {
+        var options = {
+            url: word,
+            headers: {
+                'User-Agent': 'AKP48 IRC Bot (http://github.com/AKPWebDesign/AKP48)'
+            }
+        };
+        request(options, function(error, response, body) {
             var type = response.headers['content-type'];
             if (!type.contains("text/html") && !type.contains("text/xml")) {
                 return;
