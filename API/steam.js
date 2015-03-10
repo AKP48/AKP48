@@ -126,8 +126,7 @@ Steam.prototype.getGame = function(appId, callback, nohist, allStores) {
 
                     self.oS += " - Historical low, " + body.lowest.recorded_formatted + ": ";
                     self.oS += c.green(body.lowest.price + " USD ");
-                    self.oS += c.underline.green("-" + body.lowest.cut + "%") + " on " + body.lowest.store;
-                    self.oS += ", " + body.lowest.recorded_formatted + ".";
+                    self.oS += c.underline.green("-" + body.lowest.cut + "%") + " on " + body.lowest.store + ".";
                     self.callback(self.oS);
                 });
         } else {
@@ -144,6 +143,12 @@ Steam.prototype.getPkg = function(appId, callback, nohist) {
     self.enhancedSteamAPI = this.enhancedSteamAPI;
     self.google = this.google;
     self.nohist = nohist;
+
+    self.storeString = "&stores=steam";
+
+    if(allStores) {
+        self.storeString += ",amazonus,impulse,gamersgate,greenmangaming,gamefly,origin,uplay,indiegalastore,gametap,gamesplanet,getgames,desura,gog,dotemu,fireflower,gameolith,humblewidgets,adventureshop,nuuvem,shinyloot,dlgamer,humblestore,indiegamestand,squenix,bundlestars";
+    }
 
     this.log.info("Getting Steam info for package "+appId+".");
 
@@ -183,7 +188,7 @@ Steam.prototype.getPkg = function(appId, callback, nohist) {
         self.oS = outputString;
 
         if(!self.nohist) {
-            self.enhancedSteamAPI.get("/pricev2/?search=sub/" + self.appId + "&stores=steam,amazonus,impulse,gamersgate,greenmangaming,gamefly,origin,uplay,indiegalastore,gametap,gamesplanet,getgames,desura,gog,dotemu,fireflower,gameolith,humblewidgets,adventureshop,nuuvem,shinyloot,dlgamer,humblestore,indiegamestand,squenix,bundlestars&cc=us&coupon=true",
+            self.enhancedSteamAPI.get("/pricev2/?search=sub/" + self.appId + self.storeString + "&cc=us&coupon=true",
                 function(err, res, body){
                     //if we get an error looking up historical low, output what we have and quit.
                     if(err) {self.callback(self.oS); return;}
