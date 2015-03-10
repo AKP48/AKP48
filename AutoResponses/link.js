@@ -93,6 +93,7 @@ LinkHandler.prototype.execute = function(word, context) {
 
         var self = {};
         self.word = word;
+        self.log = this.log;
         request({ uri: word }, function(error, response, body) {
             var type = response.headers['content-type'];
             if (!type.contains("text/html") && !type.contains("text/xml")) {
@@ -105,14 +106,14 @@ LinkHandler.prototype.execute = function(word, context) {
                     oS += $("title").text().replace(/\r?\n/gm, "").trim().replace(/\s{2,}/g, ' ').append("\"");
                     context.getClient().getIRCClient().say(context.getChannel().getName(), oS);
                 } else {
-                    this.log.error({res: response}, "Title unavailable for " + word);
+                    self.log.error({res: response}, "Title unavailable for " + word);
                     // TODO: make function for this...
                     context.getClient().alert.each(function (channel) {
                         context.getClient().getIRCClient().say(channel, "Title unavailable for " + word);
                     });
                 }
             } else {
-                this.log.error({err: error, res: response}, "[".append(response.statusCode).append("] Error: %s"), error);
+                self.log.error({err: error, res: response}, "[".append(response.statusCode).append("] Error: %s"), error);
                 // TODO: make function for this...
                 context.getClient().alert.each(function (channel) {
                     context.getClient().getIRCClient().say(channel, "[".append(response.statusCode).append("] Error: ").append(error));
