@@ -107,17 +107,9 @@ LinkHandler.prototype.execute = function(word, context) {
                     context.getClient().getIRCClient().say(context.getChannel().getName(), oS);
                 } else {
                     self.log.error({res: response}, "Title unavailable for " + word);
-                    // TODO: make function for this...
-                    context.getClient().alert.each(function (channel) {
-                        context.getClient().getIRCClient().say(channel, "Title unavailable for " + word);
-                    });
                 }
             } else {
                 self.log.error({err: error, res: response}, "[".append(response.statusCode).append("] Error: %s"), error);
-                // TODO: make function for this...
-                context.getClient().alert.each(function (channel) {
-                    context.getClient().getIRCClient().say(channel, "[".append(response.statusCode).append("] Error: ").append(error));
-                });
             }
         });
     } else {
