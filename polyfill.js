@@ -103,12 +103,24 @@ function Polyfill(logger) {
   if (!String.prototype.startsWith) {
     log.trace("String.prototype.startsWith not found. Adding...");
     Object.defineProperty(String.prototype, 'startsWith', {
-      enumerable: false,
-      configurable: false,
-      writable: false,
       value: function(searchString, position) {
         position = position || 0;
         return this.substring(position, position + searchString.length) === searchString;
+      }
+    });
+  }
+
+  if (!String.prototype.endsWith) {
+    log.trace("String.prototype.endsWith not found. Adding...");
+    Object.defineProperty(String.prototype, 'endsWith', {
+      value: function(searchString, position) {
+        var subjectString = this.toString();
+        if (position === undefined || position > subjectString.length) {
+          position = subjectString.length;
+        }
+        position -= searchString.length;
+        var lastIndex = subjectString.indexOf(searchString, position);
+        return lastIndex !== -1 && lastIndex === position;
       }
     });
   }
