@@ -86,43 +86,67 @@ LinkHandler.prototype.execute = function(word, context) {
     }
 
     if(!/noinfo/i.test(word)) {
-        var jsdom = require("jsdom");
-
-        var features = {
-            FetchExternalResources: false,
-            ProcessExternalResources: false
-        }
-
-        if(word.match(/http:\/\/myanimelist\.net\//i)) {
-            features.FetchExternalResources = ['script'];
-            features.ProcessExternalResources = ['script'];
-        }
-
-        var options = {
-            url: word,
-            headers: {
-                'User-Agent': 'AKP48 IRC Bot (http://github.com/AKPWebDesign/AKP48)'
-            },
-            features: features,
-            document: {
-                referrer: "http://google.com/"
-            },
-            done: function(error, window) {
-                if(window.document.getElementsByTagName('title')[0]) {
-                    var oS = c.pink("[Link] ").append(self.word).append(" -> \"");
-                    oS += window.document.getElementsByTagName('title')[0].text.replace(/\r?\n/gm, "").trim().replace(/\s{2,}/g, ' ').append("\"");
-                    context.getClient().getIRCClient().say(context.getChannel().getName(), oS);
-                } else {
-                    self.log.error({reason: "No title on page."}, "Title unavailable for " + word);
-                }
-            }
-        }
-
         var self = {};
         self.word = word;
         self.log = this.log;
 
-        jsdom.env(options);
+        if(word.match(/http:\/\/myanimelist\.net\//i)) {
+            var jsdom = require("jsdom");
+
+            var features = {
+                FetchExternalResources: ['script'],
+                ProcessExternalResources: ['script']
+            }
+
+            var options = {
+                url: word,
+                headers: {
+                    'User-Agent': 'AKP48 IRC Bot (http://github.com/AKPWebDesign/AKP48)'
+                },
+                features: features,
+                document: {
+                    referrer: "http://google.com/"
+                },
+                done: function(error, window) {
+                    if(window.document.getElementsByTagName('title')[0]) {
+                        var oS = c.pink("[Link] ").append(self.word).append(" -> \"");
+                        oS += window.document.getElementsByTagName('title')[0].text.replace(/\r?\n/gm, "").trim().replace(/\s{2,}/g, ' ').append("\"");
+                        context.getClient().getIRCClient().say(context.getChannel().getName(), oS);
+                    } else {
+                        self.log.error({request: "jsdom request", reason: "No title on page."}, "Title unavailable for " + word);
+                    }
+                }
+            }
+
+            jsdom.env(options);
+        } else {
+            var request = require('request');
+            var cheerio = require('cheerio');
+            var options = {
+                url: word,
+                headers: {
+                    'User-Agent': 'AKP48 IRC Bot (http://github.com/AKPWebDesign/AKP48)'
+                }
+            };
+            request(options, function(error, response, body) {
+                var type = response.headers['content-type'];
+                if (!type.contains("text/html") && !type.contains("text/xml")) {
+                    return;
+                }
+                if (!error && response.statusCode == 200) {
+                    var $ = cheerio.load(body);
+                    if($("title").text()) {
+                        var oS = c.pink("[Link] ").append(self.word).append(" -> \"");
+                        oS += $("title").text().replace(/\r?\n/gm, "").trim().replace(/\s{2,}/g, ' ').append("\"");
+                        context.getClient().getIRCClient().say(context.getChannel().getName(), oS);
+                    } else {
+                        self.log.error({res: response}, "Title unavailable for " + word);
+                    }
+                } else {
+                    self.log.error({err: error, res: response}, "[".append(response.statusCode).append("] Error: %s"), error);
+                }
+            });
+        }
     } else {
         this.log.debug("Ignoring link due to noinfo parameter.");
     }
