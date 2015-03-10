@@ -23,7 +23,7 @@ function Choose() {
     this.helpText = "Chooses from a list of items for you.";
 
     //usage message. only include the parameters. the command name will be automatically added.
-    this.usageText = "[attack|feel] <item1> [item2, item3, item4...]";
+    this.usageText = "[attack|feel|for <other>] <item1> [item2, item3, item4...]";
 
     //ways to call this command.
     this.aliases = ['choose', 'pick'];
@@ -84,7 +84,13 @@ Choose.prototype.execute = function(context) {
         return this.feel(context);
     }
 
-    context.getClient().say(context, context.arguments.randomElement());
+    var _for = "", min = 0;
+    if (context.arguments[0].toLowerCase() === "for") {
+        _for = context.arguments[1].append(": ");
+        min = 2;
+    }
+
+    context.getClient().say(context,  _for + context.arguments.randomElement(min));
 
     return true;
 };
