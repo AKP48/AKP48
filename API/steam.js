@@ -82,7 +82,7 @@ Steam.prototype.getGame = function(appId, callback, nohist, allStores) {
             };
         }
 
-        if(body[self.appId].data['fullgame'] && body[self.appId.data['fullgame'].appid]) {
+        if(body[self.appId].data['fullgame'] && body[self.appId].data['fullgame'].appid) {
             bDLC = true;
         }
 
