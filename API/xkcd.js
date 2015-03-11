@@ -50,7 +50,19 @@ XKCD.prototype.constructComicString = function(comic) {
 
     oS = oS.append(comic.year+"-"+comic.month+"-"+comic.day);
 
-    if(comic.alt) {oS = oS.append(" | Alt text: \""+comic.alt+"\"");}
+    if(comic.alt) {
+        var _alt = comic.alt;
+        _alt = _alt.replace(/\u00e2\u0080\u0099/g, '\'');
+        //this line shortens the string to the first 250 characters, but breaks on whole words.
+        alt = _alt.replace(/^(.{250}[^\s]*).*/, "$1");
+
+        //if the two aren't equal, that means we truncated something. Add an ellipsis.
+        if(alt !== _alt){
+            alt += "...";
+        }
+
+        oS = oS.append(" | Alt text: \""+alt+"\"");
+    }
 
     return oS;
 };
