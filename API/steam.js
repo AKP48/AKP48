@@ -61,6 +61,7 @@ Steam.prototype.getGame = function(appId, callback, nohist, allStores) {
         var bEarlyAccess = false;
         var bPreOrder = false;
         var bDLC = false;
+        var bHardware = false;
 
         var bComingSoon = false;
         var releaseDate = "Unknown";
@@ -81,7 +82,7 @@ Steam.prototype.getGame = function(appId, callback, nohist, allStores) {
             };
         }
 
-        if(body[self.appId].data['fullgame']) {
+        if(body[self.appId].data['fullgame'] && body[self.appId.data['fullgame'].appid]) {
             bDLC = true;
         }
 
@@ -94,9 +95,14 @@ Steam.prototype.getGame = function(appId, callback, nohist, allStores) {
             }
         }
 
+        if(body[self.appId].data.type && (body[self.appId].data.type == 'hardware')){
+            bHardware = true;
+        }
+
         var headerString = "[Steam";
         if(bEarlyAccess) {headerString += " Early Access";}
         if(bDLC) {headerString += " DLC, "+body[self.appId].data['fullgame'].name;}
+        if(bHardware) {headerString += " Hardware";}
         headerString += "] ";
 
         var outputString = c.pink(headerString);
