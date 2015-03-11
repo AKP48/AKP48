@@ -19,6 +19,7 @@ var config = require('../config.json');
 var Google = require('../API/google');
 var Steam = require('../API/steam');
 var Imgur = require('../API/imgur');
+var XKCDApi = require('../API/xkcd');
 var c = require('irc-colors');
 
 function LinkHandler(logger) {
@@ -49,6 +50,9 @@ function LinkHandler(logger) {
     //Imgur regex
     this.imgurRegex = require("../Regex/regex-imgur");
 
+    //XKCD regex
+    this.XKCDRegex = require("../Regex/regex-xkcd");
+
     //Google API module.
     this.google = new Google(config.google.apiKey, logger);
 
@@ -57,6 +61,9 @@ function LinkHandler(logger) {
 
     //Imgur API module.
     this.imgur = new Imgur(config.imgur.clientID, logger);
+
+    //XKCD API module.
+    this.XKCD = new XKCDApi(logger);
 
     //logger
     this.log = logger;
@@ -83,6 +90,10 @@ LinkHandler.prototype.execute = function(word, context) {
 
     if(this.imgurRegex.test(word)) {
         return this.ImgurLink(word, context);
+    }
+
+    if(this.XKCDRegex.all.test(word)) {
+        return this.XKCDLink(word, context);
     }
 
     if(!/noinfo/i.test(word)) {
@@ -287,6 +298,31 @@ LinkHandler.prototype.constructImgurString = function(image) {
     }
 
     return oS;
+};
+
+LinkHandler.prototype.XKCDLink = function(link, context) {
+    this.log.debug("Handling as XKCD link.");
+    var id = this.XKCDRegex.comic.exec(link);
+    var noshow = /noinfo/i.exec(link);
+    if(id != null) {
+        if(noshow == null) {
+            this.XKCD.getComic(id[1], function(res){
+                if(res){
+                    context.getClient().getIRCClient().say(context.getChannel().getName(), res);
+                }
+            });
+        } else {
+            this.log.debug({reason: "The noinfo parameter was included."}, "Ignoring link.");
+        }
+    } else {
+        if(this.XKCDRegex.homepage.exec(link) != null) {
+            this.XKCD.getLatestComic(function(res){
+                if(res) {
+                    context.getClient().getIRCClient().say(context.getChannel().getName(), res);
+                }
+            });
+        }
+    }
 };
 
 module.exports = LinkHandler;
