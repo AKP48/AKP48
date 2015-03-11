@@ -58,7 +58,7 @@ XKCD.prototype.constructComicString = function(comic) {
 
         //if the two aren't equal, that means we truncated something. Add an ellipsis.
         if(alt !== _alt){
-            alt += "...";
+            alt += "…";
         }
 
         oS = oS.append(" | Alt text: \""+alt+"\"");
