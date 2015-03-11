@@ -17,7 +17,8 @@
 
 var re_xkcd = {
     all: /(?:xkcd.com\/)/i,
-    comic: /(?:xkcd.com\/)([0-9]+)/i
+    comic: /(?:xkcd.com\/)([0-9]+)/i,
+    homepage: /(?:xkcd.com\/?)$/i
 }
 
 module.exports = re_xkcd;

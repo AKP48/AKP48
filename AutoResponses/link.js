@@ -307,15 +307,21 @@ LinkHandler.prototype.XKCDLink = function(link, context) {
     if(id != null) {
         if(noshow == null) {
             this.XKCD.getComic(id[1], function(res){
-                context.getClient().getIRCClient().say(context.getChannel().getName(), res);
+                if(res){
+                    context.getClient().getIRCClient().say(context.getChannel().getName(), res);
+                }
             });
         } else {
             this.log.debug({reason: "The noinfo parameter was included."}, "Ignoring link.");
         }
     } else {
-        this.XKCD.getLatestComic(function(res){
-            context.getClient().getIRCClient().say(context.getChannel().getName(), res);
-        });
+        if(this.XKCDRegex.homepage.exec(link) != null) {
+            this.XKCD.getLatestComic(function(res){
+                if(res) {
+                    context.getClient().getIRCClient().say(context.getChannel().getName(), res);
+                }
+            });
+        }
     }
 };
 
