@@ -140,11 +140,11 @@ LinkHandler.prototype.execute = function(word, context) {
                 }
             };
             request(options, function(error, response, body) {
-                var type = response.headers['content-type'];
-                if (!type.contains("text/html") && !type.contains("text/xml")) {
-                    return;
-                }
                 if (!error && response.statusCode == 200) {
+                    var type = response.headers['content-type'];
+                    if (!type.contains("text/html") && !type.contains("text/xml")) {
+                        return;
+                    }
                     var $ = cheerio.load(body);
                     if($("title").text()) {
                         var oS = c.pink("[Link] ").append(self.word).append(" -> \"");
