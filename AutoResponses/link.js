@@ -140,23 +140,25 @@ LinkHandler.prototype.execute = function(word, context) {
                 }
             };
             request(options, function(error, response, body) {
-                if (!error && response) {
-                    if(response.statusCode == 200){
-                        var type = response.headers['content-type'];
-                        if (!type.contains("text/html") && !type.contains("text/xml")) {
-                            return;
-                        }
-                        var $ = cheerio.load(body);
-                        if($("title").text()) {
-                            var oS = c.pink("[Link] ").append(self.word).append(" -> \"");
-                            oS += $("title").text().replace(/\r?\n/gm, "").trim().replace(/\s{2,}/g, ' ').append("\"");
-                            context.getClient().getIRCClient().say(context.getChannel().getName(), oS);
-                        } else {
-                            self.log.error({res: response}, "Title unavailable for " + word);
-                        }
+                if (!error && response && response.statusCode == 200) {
+                    var type = response.headers['content-type'];
+                    if (!type.contains("text/html") && !type.contains("text/xml")) {
+                        return;
+                    }
+                    var $ = cheerio.load(body);
+                    if($("title").text()) {
+                        var oS = c.pink("[Link] ").append(self.word).append(" -> \"");
+                        oS += $("title").text().replace(/\r?\n/gm, "").trim().replace(/\s{2,}/g, ' ').append("\"");
+                        context.getClient().getIRCClient().say(context.getChannel().getName(), oS);
+                    } else {
+                        self.log.error({res: response}, "Title unavailable for " + word);
                     }
                 } else {
-                    self.log.error({err: error, res: response}, "[".append(response.statusCode).append("] Error: %s"), error);
+                    if(response){
+                        self.log.error({err: error, res: response}, "[".append(response.statusCode).append("] Error: %s"), error);
+                    } else {
+                        self.log.error({err: error}, "Error: %s", error);
+                    }
                 }
             });
         }
