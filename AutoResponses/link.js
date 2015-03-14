@@ -84,7 +84,7 @@ LinkHandler.prototype.execute = function(word, context) {
         return this.SteamApp(word, context);
     }
 
-    if(this.twitterRegex.test(word)) {
+    if(false && this.twitterRegex.test(word)) {
         return this.Twitter(word, context);
     }
 
