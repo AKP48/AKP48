@@ -23,7 +23,7 @@ function Down() {
     this.helpText = "Checks if a website appears to be down.";
 
     //usage message. only include the parameters. the command name will be automatically added.
-    this.usageText = "&lt;website&gt; [port]";
+    this.usageText = "&lt;website&gt; [:port]";
 
     //ways to call this command.
     this.aliases = ['down', 'isup'];
