@@ -22,9 +22,9 @@ var request = require('request');
 var Chance = require('chance');
 var path = require('path');
 var fs = require('fs');
-var github = require('octonode');
+var Gist = require('../API/gist');
 
-function Js() {
+function Js(logger) {
     //the name of the command.
     this.name = "JavaScript";
 
@@ -32,7 +32,7 @@ function Js() {
     this.helpText = "Runs Javascript code. If first parameter is a URL, runs code contained at that URL.";
 
     //usage message. only include the parameters. the command name will be automatically added.
-    this.usageText = "<code>";
+    this.usageText = "&lt;code&gt;";
 
     //ways to call this command.
     this.aliases = ['js', '>'];
@@ -52,8 +52,8 @@ function Js() {
     //randomizer
     this.chance = new Chance();
 
-    //Github API
-    this.ghAPI = github.client();
+    //Gist API
+    this.gistAPI = new Gist(logger);
 }
 
 Js.prototype.execute = function(context) {
@@ -121,7 +121,7 @@ Js.prototype.runCode = function(code, context) {
         //if outputString is too long
         if(outputString.length > 350) {
             //upload Gist instead.
-            self.ghAPI.gist().create({
+            self.gistAPI.create({
                 description: "Output of JavaScript function for "+context.getUser().getNick(),
                 files: {
                     "_input.js": {
@@ -134,8 +134,9 @@ Js.prototype.runCode = function(code, context) {
                         "content": JSON.stringify(output.console)
                     }
                 }
-            }, function(err, data, headers) {
-                context.getClient().getCommandProcessor().aliasedCommands['googl'].shortenURL(context, data.html_url);
+            }, function(url) {
+                if(!url){return;}
+                context.getClient().getCommandProcessor().aliasedCommands['googl'].shortenURL(context, url);
             });
             return true;
         }

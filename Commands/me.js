@@ -20,10 +20,10 @@ function Me() {
     this.name = "Me";
 
     //help text to show for this command.
-    this.helpText = "Acts in your place.";
+    this.helpText = "Acts in your place. Include channel parameter for private messages only";
 
     //usage message. only include the parameters. the command name will be automatically added.
-    this.usageText = "[#channel] text\nInclude channel for private messages only";
+    this.usageText = "[#channel] text";
 
     //ways to call this command.
     this.aliases = ['me'];
@@ -40,7 +40,7 @@ function Me() {
 
 Me.prototype.execute = function(context) {
     var channel = context.getChannel().getName();
-    
+
     //if we don't have any arguments, return.
     if(!context.arguments.length) {return false;}
 

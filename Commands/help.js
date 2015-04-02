@@ -15,7 +15,11 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-function Help() {
+var Gist = require('../API/gist');
+var Google = require('../API/google');
+var config = require('../config.json');
+
+function Help(logger) {
     //the name of the command.
     this.name = "Help";
 
@@ -23,7 +27,7 @@ function Help() {
     this.helpText = "Shows documentation for the bot.";
 
     //usage message. only include the parameters. the command name will be automatically added.
-    this.usageText = "[page]";
+    this.usageText = "";
 
     //ways to call this command.
     this.aliases = ['help', 'halp'];
@@ -37,32 +41,15 @@ function Help() {
     //whether or not to only allow this command if it's in a private message.
     this.isPmOnly = false;
 
-    //commands per page
-    this.perPage = 8;
+    //Gist API
+    this.gistAPI = new Gist(logger);
+
+    //google API module for using Google APIs.
+    this.googleAPI = new Google(config.google.apiKey, logger);
 }
 
 Help.prototype.execute = function(context) {
-    if(!context.getUser().isRealIRCUser) {
-        context.getClient().say(context, "Getting help from the Minecraft server is not yet possible! To get help, please join the IRC channel.");
-        return true;
-    }
-
-    var page = 0;
-
-    if(context.getArguments().length) {
-        //check if argument 0 is a number
-        if(!isNaN(+context.getArguments()[0])) {
-            page += (+context.getArguments()[0] - 1);
-            if(page == 0) {page = 1;}
-            if(page > 99) {page = 99;}
-        } else {
-            //not a number. Check for a command here, I guess.
-        }
-    }
-
-    //array for output
-    var responses = [];
-
+    var markdown = "";
     //for each command
     context.getCommandProcessor().commands.each(function (command) {
             //to tell us whether or not to send this message.
@@ -81,35 +68,42 @@ Help.prototype.execute = function(context) {
             }
 
             if(send) {
-                responses.push(command.name + ": " + command.helpText + " | Usage: " + context.getChannel().getCommandDelimiter() + command.aliases[0] + " " + command.usageText.replace(/\r?\n/, " | "));
+                markdown += "##" + command.name + "  \n";
+                markdown += "*" + command.helpText + "*  \n";
+                markdown += "**Usage:** " + context.getChannel().getCommandDelimiter() + command.aliases[0] + " " + command.usageText.replace(/\r?\n/, " | ") + "  \n";
+                if(command.aliases.length > 1) {
+                    markdown += "**Aliases:** ";
+                    for (var i = 0; i < command.aliases.length; i++) {
+                        if(i != 0) {
+                            markdown += command.aliases[i] + ", ";
+                        }
+                    };
+                    markdown = markdown.slice(0, -2);
+                    markdown += "  \n";
+                }
             }
     });
 
-    var numberOfPages = Math.ceil(responses.length / this.perPage);
-
-    //number of responses to waste
-    var waste = page * this.perPage;
-
-    while(waste > 0) {
-        responses.shift();
-        waste--;
-    }
-
-    context.getClient().getIRCClient().notice(context.getUser().getNick(), "Help: Page "+(page+ 1)+" of "+numberOfPages+" (use "+context.getChannel().getCommandDelimiter()+"help [page] to switch pages)");
-
     var self = this;
-    //counter for number per page
-    var j = 0;
 
-    var interval = setInterval(function() {
-        if(responses.length && j < self.perPage) {
-            var i = responses.shift();
-            context.client.getIRCClient().notice(context.getUser().getNick(), i);
-            j++;
-        } else {
-            clearInterval(interval);
+    //create gist of response
+    this.gistAPI.create({
+        description: "Help for " + context.getClient().getNick(),
+        files: {
+            "help.md": {
+                "content": markdown
+            }
         }
-    }, 175);
+    }, function(url) {
+        if(!url){return;}
+        self.googleAPI.shorten_url(url, function(url) {
+            if(!context.getUser().isRealIRCUser) {
+                context.getClient().say(context, url);
+            } else {
+                context.client.getIRCClient().notice(context.getUser().getNick(), url);
+            }
+        });
+    });
 
     return true;
 };

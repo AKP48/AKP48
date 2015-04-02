@@ -27,7 +27,7 @@ function Alert() {
     this.usageText = "[+|-] | [[-]channel]...";
 
     //ways to call this command.
-    this.aliases = ['alert', 'nofity'];
+    this.aliases = ['alert', 'notify'];
 
     // depend on git, will only enable if git is enabled
     this.dependencies = ['git'];

@@ -19,7 +19,7 @@ var request = require('request-json');
 
 function MCNameHistory() {
     //the name of the command.
-    this.name = "MCNameHistory";
+    this.name = "Minecraft Name History";
 
     //help text to show for this command.
     this.helpText = "Gets the name history of a player on Minecraft.";
