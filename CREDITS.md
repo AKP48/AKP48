@@ -14,6 +14,8 @@
 
 **Wolvereness**: Thanks for providing Regular Expressions for various things so that it can actually do wonderful things!
 
+**jkcclemens**: Thanks for giving me the awesome idea to use GH Gists + Markdown to render documentation!
+
 `#-i`: Thanks for helping test the bot.
 
 - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
