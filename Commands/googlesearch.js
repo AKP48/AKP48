@@ -26,7 +26,7 @@ function GoogleSearch(logger) {
     this.helpText = "Returns the first result of a Google search.";
 
     //usage message. only include the parameters. the command name will be automatically added.
-    this.usageText = "<query>";
+    this.usageText = "&lt;query&gt;";
 
     //ways to call this command.
     this.aliases = ['g', 'googlesearch', 'google', 'search', 'askjeeves', 'askgamingg'];

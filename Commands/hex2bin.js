@@ -23,7 +23,7 @@ function Hex2Bin() {
     this.helpText = "Converts hexadecimal to binary.";
 
     //usage message. only include the parameters. the command name will be automatically added.
-    this.usageText = "<hexadecimal>";
+    this.usageText = "&lt;hexadecimal&gt;";
 
     //ways to call this command.
     this.aliases = ['hex2bin', 'h2b'];

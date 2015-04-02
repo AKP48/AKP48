@@ -25,7 +25,7 @@ function Roll() {
     this.helpText = "Roll dice. See https://wiki.roll20.net/Dice_Reference for dice roll format.";
 
     //usage message. only include the parameters. the command name will be automatically added.
-    this.usageText = "<dice...>";
+    this.usageText = "&lt;dice...&gt;";
 
     //ways to call this command.
     this.aliases = ['roll'];

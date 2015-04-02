@@ -26,7 +26,7 @@ function Geocode(logger) {
     this.helpText = "Returns a geocoded location from Google.";
 
     //usage message. only include the parameters. the command name will be automatically added.
-    this.usageText = "<location> [2-letter region code]";
+    this.usageText = "&lt;location&gt; [2-letter region code]";
 
     //ways to call this command.
     this.aliases = ['geocode'];

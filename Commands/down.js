@@ -20,10 +20,10 @@ function Down() {
     this.name = "Down For Everyone?";
 
     //help text to show for this command.
-    this.helpText = "Checks if a website appears to be down. Example: 'down google.com'";
+    this.helpText = "Checks if a website appears to be down.";
 
     //usage message. only include the parameters. the command name will be automatically added.
-    this.usageText = "<website> [port]";
+    this.usageText = "&lt;website&gt; [port]";
 
     //ways to call this command.
     this.aliases = ['down', 'isup'];

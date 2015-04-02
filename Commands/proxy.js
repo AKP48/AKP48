@@ -23,7 +23,7 @@ function Proxy() {
     this.helpText = "Send a message to a channel as the bot.";
 
     //usage message. only include the parameters. the command name will be automatically added.
-    this.usageText = "<channel> <text>";
+    this.usageText = "&lt;channel&gt; &lt;text&gt;";
 
     //ways to call this command.
     this.aliases = ['proxy'];

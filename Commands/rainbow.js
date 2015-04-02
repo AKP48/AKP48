@@ -25,7 +25,7 @@ function Rainbow() {
     this.helpText = "Makes text 20% cooler.";
 
     //usage message. only include the parameters. the command name will be automatically added.
-    this.usageText = "<text>";
+    this.usageText = "&lt;text&gt;";
 
     //ways to call this command.
     this.aliases = ['rainbow', 'r'];

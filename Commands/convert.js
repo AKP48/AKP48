@@ -25,7 +25,7 @@ function Convert() {
     this.helpText = "Convert temperatures. Unit must be 'c' or 'f'.";
 
     //usage message. only include the parameters. the command name will be automatically added.
-    this.usageText = "<temperature> <unit>";
+    this.usageText = "&lt;temperature&gt; &lt;unit>";
 
     //ways to call this command.
     this.aliases = ['convert'];

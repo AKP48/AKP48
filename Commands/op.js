@@ -23,7 +23,7 @@ function Op() {
     this.helpText = "Gives Op status to a person or people.";
 
     //usage message. only include the parameters. the command name will be automatically added.
-    this.usageText = "<person> [person2, person3, ...]";
+    this.usageText = "&lt;person&gt; [person2, person3, ...]";
 
     //ways to call this command.
     this.aliases = ['op'];
@@ -53,7 +53,7 @@ Op.prototype.execute = function(context) {
     if (users.length == 0) {
         users.push("none");
     }
-    
+
     context.getClient().getIRCClient().notice(context.getUser().getNick(), "Opped "+users.join(", "));
     context.getClient().getClientManager().save();
     return true;

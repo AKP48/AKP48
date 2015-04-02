@@ -23,7 +23,7 @@ function AddServer() {
     this.helpText = "Connect to a new server.";
 
     //usage message. only include the parameters. the command name will be automatically added.
-    this.usageText = "<name> <serverAddress> <nick> <opNick> <channel> <mcBotName> <commandDelimiter>";
+    this.usageText = "&lt;name&gt; &lt;serverAddress&gt; &lt;nick&gt; &lt;opNick&gt; &lt;channel&gt; &lt;mcBotName&gt; &lt;commandDelimiter&gt;";
 
     //ways to call this command.
     this.aliases = ['addserver'];

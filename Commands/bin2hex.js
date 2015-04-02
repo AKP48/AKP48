@@ -23,7 +23,7 @@ function Bin2Hex() {
     this.helpText = "Converts binary to hexadecimal.";
 
     //usage message. only include the parameters. the command name will be automatically added.
-    this.usageText = "<binary>";
+    this.usageText = "&lt;binary&gt;";
 
     //ways to call this command.
     this.aliases = ['bin2hex', 'b2h'];

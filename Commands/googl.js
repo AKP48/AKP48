@@ -26,7 +26,7 @@ function Googl(logger) {
     this.helpText = "Shortens a link using the Goo.gl API.";
 
     //usage message. only include the parameters. the command name will be automatically added.
-    this.usageText = "<link>";
+    this.usageText = "&lt;link&gt;";
 
     //ways to call this command.
     this.aliases = ['googl'];

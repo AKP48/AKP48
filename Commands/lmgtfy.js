@@ -26,7 +26,7 @@ function LMGTFY(logger) {
     this.helpText = "Returns a LMGTFY link.";
 
     //usage message. only include the parameters. the command name will be automatically added.
-    this.usageText = "<query>";
+    this.usageText = "&lt;query&gt;";
 
     //ways to call this command.
     this.aliases = ['lmgtfy'];

@@ -23,7 +23,7 @@ function Choose() {
     this.helpText = "Chooses from a list of items for you.";
 
     //usage message. only include the parameters. the command name will be automatically added.
-    this.usageText = "[attack|feel|for <other>] <item1> [item2, item3, item4...]";
+    this.usageText = "[attack|feel|for &lt;other&gt;] &lt;item1&gt; [item2, item3, item4...]";
 
     //ways to call this command.
     this.aliases = ['choose', 'pick'];

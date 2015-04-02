@@ -23,7 +23,7 @@ function Nick() {
     this.helpText = "Changes the bot's nickname on the network.";
 
     //usage message. only include the parameters. the command name will be automatically added.
-    this.usageText = "<nickname>";
+    this.usageText = "&lt;nickname&gt;";
 
     //ways to call this command.
     this.aliases = ['nick'];

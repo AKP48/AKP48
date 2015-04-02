@@ -23,7 +23,7 @@ function ChangeDelimiter() {
     this.helpText = "Changes the command delimiter for this server.";
 
     //usage message. only include the parameters. the command name will be automatically added.
-    this.usageText = "<delimiter>";
+    this.usageText = "&lt;delimiter&gt;";
 
     //ways to call this command.
     this.aliases = ['changedelimiter', 'cd'];
