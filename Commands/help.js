@@ -27,7 +27,7 @@ function Help(logger) {
     this.helpText = "Shows documentation for the bot.";
 
     //usage message. only include the parameters. the command name will be automatically added.
-    this.usageText = "";
+    this.usageText = "[command]";
 
     //ways to call this command.
     this.aliases = ['help', 'halp'];
@@ -49,6 +49,14 @@ function Help(logger) {
 }
 
 Help.prototype.execute = function(context) {
+    var commandText = "";
+    var sendTo = "";
+    if(context.arguments.length) {
+        commandText = context.arguments[0];
+        if(commandText.startsWith(context.getChannel().getCommandDelimiter())) {
+            commandText = commandText.substring(context.getChannel().getCommandDelimiter().length, commandText.length);
+        }
+    }
     var markdown = "";
     //for each command
     context.getCommandProcessor().commands.each(function (command) {
@@ -74,12 +82,19 @@ Help.prototype.execute = function(context) {
                 if(command.aliases.length > 1) {
                     markdown += "**Aliases:** ";
                     for (var i = 0; i < command.aliases.length; i++) {
+                        if(command.aliases[i] == commandText) {
+                            sendTo = command.name;
+                        }
                         if(i != 0) {
                             markdown += command.aliases[i] + ", ";
                         }
                     };
                     markdown = markdown.slice(0, -2);
                     markdown += "  \n";
+                } else {
+                    if(command.aliases[0] == commandText) {
+                        sendTo = command.name;
+                    }
                 }
             }
     });
@@ -96,6 +111,9 @@ Help.prototype.execute = function(context) {
         }
     }, function(url) {
         if(!url){return;}
+        if(sendTo) {
+            url += "#" + encodeURI(sendTo.toLowerCase().replace(/\s/g, "-"));
+        }
         self.googleAPI.shorten_url(url, function(url) {
             if(!context.getUser().isRealIRCUser) {
                 context.getClient().say(context, url);
