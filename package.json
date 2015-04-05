@@ -15,7 +15,6 @@
     "googleapis": "^1.1.5",
     "irc": "^0.3.9",
     "irc-colors": "^1.1.0",
-    "jsdom": "^4.0.2",
     "moment": "^2.8.4",
     "numeral": "^1.5.3",
     "request": "^2.51.0",
