@@ -115,14 +115,14 @@ LinkHandler.prototype.execute = function(word, context) {
         //     cached = true;
         // }
 
-        return this.handleLink(word, cached);
+        return this.handleLink(word, cached, context);
 
     } else {
         this.log.debug("Ignoring link due to noinfo parameter.");
     }
 };
 
-LinkHandler.prototype.handleLink = function(link, cached) {
+LinkHandler.prototype.handleLink = function(link, cached, context) {
     this.log.debug({url: link, cached: cached}, "Handling link.");
     var original = link;
     var search = "";
