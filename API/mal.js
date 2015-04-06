@@ -61,7 +61,7 @@ MyAnimeList.prototype.getInfoFromURL = function(url, place, callback) {
             var env = require('jsdom').env;
 
             env(body, function (errors, window) {
-                var $ = require('./jquery')(window);
+                var $ = require('../lib/jquery')(window);
 
                 //remove all small elements inside any sup. I don't like them.
                 $("sup > small").jEach(function(i, elem) {
