@@ -15,9 +15,6 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-var Google = require('../API/google');
-var config = require('../config.json');
-
 function LMGTFY(logger) {
     //the name of the command.
     this.name = "LMGTFY";
@@ -39,15 +36,12 @@ function LMGTFY(logger) {
 
     //whether or not to only allow this command if it's in a private message.
     this.isPmOnly = false;
-
-    //google API module for using Google APIs.
-    this.googleAPI = new Google(config.google.apiKey, logger);
 }
 
 LMGTFY.prototype.execute = function(context) {
     var query = context.arguments.join(' ');
     query = encodeURIComponent(query);
-    this.googleAPI.shorten_url("http://lmgtfy.com/?q="+query, function(url) {
+    getClientManager().getAPI("Google").shorten_url("http://lmgtfy.com/?q="+query, function(url) {
         context.getClient().say(context, url);
     });
     return true;

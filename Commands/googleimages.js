@@ -15,9 +15,6 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-var Google = require('../API/google');
-var config = require('../config.json');
-
 function GoogleImages(logger) {
     //the name of the command.
     this.name = "Google Images Search";
@@ -39,14 +36,11 @@ function GoogleImages(logger) {
 
     //whether or not to only allow this command if it's in a private message.
     this.isPmOnly = false;
-
-    //google API module for using Google APIs.
-    this.googleAPI = new Google(config.google.apiKey, logger);
 }
 
 GoogleImages.prototype.execute = function(context) {
     if(!context.arguments.length) {return false;}
-    this.googleAPI.search(context.arguments.join(" "), "images", function(msg) {
+    getClientManager().getAPI("Google").search(context.arguments.join(" "), "images", function(msg) {
         context.getClient().say(context, msg);
     });
     return true;

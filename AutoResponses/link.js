@@ -16,7 +16,6 @@
  */
 
 var config = require('../config.json');
-var Google = require('../API/google');
 var Steam = require('../API/steam');
 var Imgur = require('../API/imgur');
 var XKCDApi = require('../API/xkcd');
@@ -56,9 +55,6 @@ function LinkHandler(logger) {
 
     //MAL regex
     this.MALRegex = require("../Regex/regex-mal");
-
-    //Google API module.
-    this.google = new Google(config.google.apiKey, logger);
 
     //Steam API module.
     this.steam = new Steam(logger);
@@ -179,7 +175,7 @@ LinkHandler.prototype.YouTubeVideo = function(link, context) {
     var id = this.youTubeRegex.exec(link);
     var noshow = /noinfo/i.exec(link);
     if(id != null && noshow == null) {
-        this.google.youtube_video_info(id[1], function(res){
+        getClientManager().getAPI("Google").youtube_video_info(id[1], function(res){
             context.getClient().getIRCClient().say(context.getChannel().getName(), res);
         });
     } else {

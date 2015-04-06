@@ -15,9 +15,6 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-var Google = require('../API/google');
-var config = require('../config.json');
-
 function Geocode(logger) {
     //the name of the command.
     this.name = "Geocode";
@@ -39,9 +36,6 @@ function Geocode(logger) {
 
     //whether or not to only allow this command if it's in a private message.
     this.isPmOnly = false;
-
-    //google API module for using Google APIs.
-    this.googleAPI = new Google(config.google.apiKey, logger);
 }
 
 Geocode.prototype.execute = function(context) {
@@ -63,7 +57,7 @@ Geocode.prototype.execute = function(context) {
         }
     }
 
-    this.googleAPI.geocode(location, region, function(msg){
+    getClientManager().getAPI("Google").geocode(location, region, function(msg){
         context.getClient().say(context, msg);
     });
     return true;

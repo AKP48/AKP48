@@ -16,8 +16,6 @@
  */
 
 var Gist = require('../API/gist');
-var Google = require('../API/google');
-var config = require('../config.json');
 
 function Help(logger) {
     //the name of the command.
@@ -43,9 +41,6 @@ function Help(logger) {
 
     //Gist API
     this.gistAPI = new Gist(logger);
-
-    //google API module for using Google APIs.
-    this.googleAPI = new Google(config.google.apiKey, logger);
 }
 
 Help.prototype.execute = function(context) {
@@ -114,7 +109,7 @@ Help.prototype.execute = function(context) {
         if(sendTo) {
             url += "#" + encodeURI(sendTo.toLowerCase().replace(/\s/g, "-"));
         }
-        self.googleAPI.shorten_url(url, function(url) {
+        getClientManager().getAPI("Google").shorten_url(url, function(url) {
             if(!context.getUser().isRealIRCUser) {
                 context.getClient().say(context, url);
             } else {
