@@ -49,7 +49,7 @@ QR.prototype.execute = function(context) {
     var imageURL = "http://chart.googleapis.com/chart?cht=qr&chs=500x500&chl=" + encodeURIComponent(context.arguments.join(" "));
 
     //upload the image to imgur
-    getClientManager().getAPI("Imgur")..uploadImageFromURL(imageURL, function (url) {
+    getClientManager().getAPI("Imgur").uploadImageFromURL(imageURL, function (url) {
         if(url) {
             context.getClient().getCommandProcessor().aliasedCommands['googl'].shortenURL(context, url);
         } else {

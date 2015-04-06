@@ -50,9 +50,6 @@ function Js(logger) {
 
     //randomizer
     this.chance = new Chance();
-
-    //Gist API
-    this.gistAPI = new Gist(logger);
 }
 
 Js.prototype.execute = function(context) {

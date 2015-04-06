@@ -54,7 +54,7 @@ Version.prototype.execute = function(context) {
 
 Version.prototype.buildVersion = function() {
     var version = this.version_base;
-    var git = getClientManager().getAPI("Git").;
+    var git = getClientManager().getAPI("Git");
     if (git.isRepo()) {
         var gitSHA = git.getCommit().substring(0, 7);
         var tagOrBranch = git.getBranch() || git.getTag();
