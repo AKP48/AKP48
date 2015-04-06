@@ -176,7 +176,7 @@ MyAnimeList.prototype.outputString = function(options, callback, error) {
         oS += c.bold("Score: ") + color(options.raw_score);
 
         if(options.score_users) {
-            oS += " (" + n(options.score_users).format('0,0') + ")";
+            oS += " (" + n(options.score_users).format('0,0') + " users)";
         }
 
         oS += " · ";
