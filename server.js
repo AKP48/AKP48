@@ -53,6 +53,10 @@ require('./polyfill.js')(log);
 log.info("Creating Client Manager.");
 var clientmanager = new ClientManager(config, log);
 
+GLOBAL.getClientManager = function() {
+    return clientmanager;
+}
+
 //todo: better exception handling plz
 if(config.productionMode) {
     process.on('uncaughtException', function(err) {

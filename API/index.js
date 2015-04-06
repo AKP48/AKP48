@@ -41,9 +41,7 @@ var loadAPIs = function(logger) {
         Git: {
 
         },
-        Google: {
-
-        },
+        Google: new GoogleAPI(config.google.apiKey, logger),
         Imgur: {
 
         },

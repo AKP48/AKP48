@@ -32,7 +32,7 @@ function ClientManager(config, logger) {
     this.clients = [];
 
     // API objects.
-    this.APIs = require("./API/");
+    this.APIs = require("./API/")(logger);
 
     // load all of the clients on creation of this object.
     this.loadClients(config);
