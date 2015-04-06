@@ -137,16 +137,16 @@ MyAnimeList.prototype.outputString = function(options, callback, error) {
         oS += c.bold("Type: ") + options.type + " · ";
     }
 
+    if(options.episodes && options.episodes > 1) {
+        oS += c.bold("Episodes: ") + n(options.episodes).format('0,0') + " · ";
+    }
+
     if(options.duration) {
         oS += c.bold("Duration: ") + options.duration + " · ";
     }
 
     if(options.aired) {
         oS += c.bold("Aired: ") + options.aired + " · ";
-    }
-
-    if(options.episodes && options.episodes > 1) {
-        oS += c.bold("Episodes: ") + n(options.episodes).format('0,0') + " · ";
     }
 
     if(options.rating) {
@@ -156,7 +156,7 @@ MyAnimeList.prototype.outputString = function(options, callback, error) {
 
     if(options.genres) {
         if(options.genres.length == 1) {
-            oS += c.bold("Genre: ") + options.genres[0];
+            oS += c.bold("Genre: ") + options.genres[0] + " · ";
         } else {
             oS += c.bold("Genres: ") + options.genres.join(", ") + " · ";
         }
