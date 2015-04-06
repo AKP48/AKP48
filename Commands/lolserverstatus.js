@@ -15,9 +15,6 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-var config = require('../config.json');
-var Riot = require('../API/riot');
-
 function LoLServerStatus(logger) {
     //the name of the command.
     this.name = "LoL Server Status";
@@ -39,15 +36,12 @@ function LoLServerStatus(logger) {
 
     //whether or not to only allow this command if it's in a private message.
     this.isPmOnly = false;
-
-    //Riot API.
-    this.riotAPI = new Riot(config.riot.apiKey, logger);
 }
 
 LoLServerStatus.prototype.execute = function(context) {
     var region = "na";
     if(context.arguments[0]) {region = context.arguments[0];}
-    this.riotAPI.getServerStatus(region, function(msg) {
+    getClientManager().getAPI("Riot").getServerStatus(region, function(msg) {
         context.getClient().say(context, msg);
     });
     return true;

@@ -35,28 +35,14 @@ var loadAPIs = function(logger) {
     var _log = logger.child({module: "API Loader"});
     var APIs = {
         Dinner: new DinnerAPI(logger),
-        Gist: {
-
-        },
-        Git: {
-
-        },
+        Gist: new GistAPI(logger),
+        Git: new GitAPI(logger),
         Google: new GoogleAPI(config.google.apiKey, logger),
-        Imgur: {
-
-        },
-        MAL: {
-
-        },
-        Riot: {
-
-        },
-        Steam: {
-
-        },
-        XKCD: {
-
-        }
+        Imgur: new ImgurAPI(config.imgur.clientID, logger),
+        MAL: new MALAPI(logger),
+        Riot: new RiotAPI(config.riot.apiKey, logger),
+        Steam: new SteamAPI(logger),
+        XKCD: new XKCDAPI(logger),
     };
     return APIs;
 };

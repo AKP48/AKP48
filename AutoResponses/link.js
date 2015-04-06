@@ -15,11 +15,6 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-var config = require('../config.json');
-var Steam = require('../API/steam');
-var Imgur = require('../API/imgur');
-var XKCDApi = require('../API/xkcd');
-var MALApi = require('../API/mal');
 var c = require('irc-colors');
 
 function LinkHandler(logger) {
@@ -55,18 +50,6 @@ function LinkHandler(logger) {
 
     //MAL regex
     this.MALRegex = require("../Regex/regex-mal");
-
-    //Steam API module.
-    this.steam = new Steam(logger);
-
-    //Imgur API module.
-    this.imgur = new Imgur(config.imgur.clientID, logger);
-
-    //XKCD API module.
-    this.XKCD = new XKCDApi(logger);
-
-    //MAL API module.
-    this.MAL = new MALApi(logger);
 
     //logger
     this.log = logger;
@@ -190,7 +173,7 @@ LinkHandler.prototype.SteamPackage = function(link, context) {
     var nohist = /nohist/i.exec(link);
     var allstores = /allstores/i.exec(link);
     if(id != null && noshow == null) {
-        this.steam.getPkg(id[1], function(res) {
+        getClientManager().getAPI("Steam").getPkg(id[1], function(res) {
             context.getClient().getIRCClient().say(context.getChannel().getName(), res);
         }, nohist, allstores);
     } else {
@@ -205,7 +188,7 @@ LinkHandler.prototype.SteamApp = function(link, context) {
     var nohist = /nohist/i.exec(link);
     var allstores = /allstores/i.exec(link);
     if(id != null && noshow == null) {
-        this.steam.getGame(id[1], function(res) {
+        getClientManager().getAPI("Steam").getGame(id[1], function(res) {
             context.getClient().getIRCClient().say(context.getChannel().getName(), res);
         }, nohist, allstores);
     } else {
@@ -227,7 +210,7 @@ LinkHandler.prototype.ImgurLink = function(link, context) {
         //id[1] == direct image.
         if(id[1]) {
             this.log.debug("Handling as direct image.");
-            this.imgur.getImageInfo(id[1], function(image) {
+            getClientManager().getAPI("Imgut").getImageInfo(id[1], function(image) {
                 if(image) {
                     context.getClient().getIRCClient().say(context.getChannel().getName(), self.constructImgurString(image));
                 }
@@ -241,7 +224,7 @@ LinkHandler.prototype.ImgurLink = function(link, context) {
                     //gallery image
                     this.log.debug("Handling as gallery image.");
                     if(info[0] == "gallery") {
-                        this.imgur.getGalleryInfo(info[1], function(image) {
+                        getClientManager().getAPI("Imgur").getGalleryInfo(info[1], function(image) {
                             if(image) {
                                 context.getClient().getIRCClient().say(context.getChannel().getName(), self.constructImgurString(image));
                             }
@@ -250,7 +233,7 @@ LinkHandler.prototype.ImgurLink = function(link, context) {
 
                     if(info[0] == "a") {
                         this.log.debug("Handling as album.");
-                        this.imgur.getAlbumInfo(info[1], function(image) {
+                        getClientManager().getAPI("Imgur").getAlbumInfo(info[1], function(image) {
                             if(image) {
                                 context.getClient().getIRCClient().say(context.getChannel().getName(), self.constructImgurString(image));
                             }
@@ -259,7 +242,7 @@ LinkHandler.prototype.ImgurLink = function(link, context) {
                 } else {
                     //if info is only one part, we know it has to be a direct image.
                     this.log.debug("Handling as direct image.");
-                    this.imgur.getImageInfo(info[0], function(image) {
+                    getClientManager().getAPI("Imgur").getImageInfo(info[0], function(image) {
                         if(image) {
                             context.getClient().getIRCClient().say(context.getChannel().getName(), self.constructImgurString(image));
                         }
@@ -313,7 +296,7 @@ LinkHandler.prototype.XKCDLink = function(link, context) {
     var noshow = /noinfo/i.exec(link);
     if(id != null) {
         if(noshow == null) {
-            this.XKCD.getComic(id[1], function(res){
+            getClientManager().getAPI("XKCD").getComic(id[1], function(res){
                 if(res){
                     context.getClient().getIRCClient().say(context.getChannel().getName(), res);
                 }
@@ -323,7 +306,7 @@ LinkHandler.prototype.XKCDLink = function(link, context) {
         }
     } else {
         if(this.XKCDRegex.homepage.exec(link) != null) {
-            this.XKCD.getLatestComic(function(res){
+            getClientManager().getAPI("XKCD").getLatestComic(function(res){
                 if(res) {
                     context.getClient().getIRCClient().say(context.getChannel().getName(), res);
                 }
@@ -333,7 +316,7 @@ LinkHandler.prototype.XKCDLink = function(link, context) {
 };
 
 LinkHandler.prototype.MALLink = function(link, context) {
-    this.MAL.getInfo(link, function(res){
+    getClientManager().getAPI("MAL").getInfo(link, function(res){
         context.getClient().getIRCClient().say(context.getChannel().getName(), res);
     });
 }

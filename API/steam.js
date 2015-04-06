@@ -18,14 +18,10 @@
 var request = require('request-json');
 var c = require('irc-colors');
 var n = require('numeral');
-var Google = require("./google");
-var config = require('../config.json');
-
 function Steam(logger) {
     this.log = logger.child({module: "Steam API"});
     this.client = request.createClient('https://store.steampowered.com/');
     this.enhancedSteamAPI = request.createClient('http://api.enhancedsteam.com/');
-    this.google = new Google(config.google.apiKey, logger);
 }
 
 Steam.prototype.getGame = function(appId, callback, nohist, allStores) {
@@ -34,7 +30,6 @@ Steam.prototype.getGame = function(appId, callback, nohist, allStores) {
     self.appId = appId;
     self.callback = callback;
     self.enhancedSteamAPI = this.enhancedSteamAPI;
-    self.google = this.google;
     self.nohist = nohist;
 
     self.storeString = "&stores=steam";
@@ -147,7 +142,6 @@ Steam.prototype.getPkg = function(appId, callback, nohist) {
     self.appId = appId;
     self.callback = callback;
     self.enhancedSteamAPI = this.enhancedSteamAPI;
-    self.google = this.google;
     self.nohist = nohist;
 
     self.storeString = "&stores=steam";

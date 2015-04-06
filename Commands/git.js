@@ -40,8 +40,6 @@ function Git(logger) {
 
     //whether or not to only allow this command if it's in a private message.
     this.isPmOnly = false;
-
-    this._git = new (require("../API/git"))(logger);
 }
 
 Git.prototype.execute = function(context) {
@@ -58,7 +56,7 @@ Git.prototype.execute = function(context) {
             }
             var branch = args.splice(0,1)[0];
             var nick = context.getUser().getNick();
-            if (this._git.checkout(branch)) {
+            if (getClientManager().getAPI("Git").checkout(branch)) {
                 message = "Checked out ".append(branch);
             } else {
                 message = "Encountered an error while checking out ".append(branch);
@@ -68,7 +66,7 @@ Git.prototype.execute = function(context) {
             if (args.length) {
                 return false;
             }
-            if (this._git.fetch()) {
+            if (getClientManager().getAPI("Git").fetch()) {
                 message = "Fetched head";
             } else {
                 message = "Error while fetching head";
