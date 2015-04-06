@@ -15,6 +15,8 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
+var git = (require('../API/git'))();
+
 function Version(logger) {
     //the name of the command.
     this.name = "Version";
@@ -54,7 +56,6 @@ Version.prototype.execute = function(context) {
 
 Version.prototype.buildVersion = function() {
     var version = this.version_base;
-    var git = getClientManager().getAPI("Git");
     if (git.isRepo()) {
         var gitSHA = git.getCommit().substring(0, 7);
         var tagOrBranch = git.getBranch() || git.getTag();
