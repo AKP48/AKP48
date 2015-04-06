@@ -10,13 +10,15 @@
 
 ##Special Thanks
 
-**EvilSeph**: Thanks for giving me great ideas on what to make this bot do, and thanks for helping format the bot's output to make it look great!
+`#-i`: Thanks for helping test the bot.
 
-**Wolvereness**: Thanks for providing Regular Expressions for various things so that it can actually do wonderful things!
+**EvilSeph**: Thanks for giving me great ideas on what to make this bot do, and thanks for helping format the bot's output to make it look great!
 
 **jkcclemens**: Thanks for giving me the awesome idea to use GH Gists + Markdown to render documentation!
 
-`#-i`: Thanks for helping test the bot.
+**Wolvereness**: Thanks for providing Regular Expressions for various things so that it can actually do wonderful things!
+
+**Zarthus**: Thanks for helping me format the bot's output and giving me some cool ideas for what to make it do!
 
 - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 
