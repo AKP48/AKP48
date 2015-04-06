@@ -203,10 +203,10 @@ function Polyfill(logger) {
     };
   }
 
-  if(!isEmpty) {
-    function isEmpty(obj) {
-      for(var prop in obj) {
-          if(obj.hasOwnProperty(prop))
+  if(!Object.prototype.isEmpty) {
+    Object.prototype.isEmpty = function() {
+      for(var prop in this) {
+          if(this.hasOwnProperty(prop))
               return false;
       }
 

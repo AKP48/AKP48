@@ -104,7 +104,7 @@ MyAnimeList.prototype.getInfoFromURL = function(url, place, callback) {
 MyAnimeList.prototype.outputString = function(options, callback, error) {
     var oS = c.pink("[MyAnimeList] ");
 
-    if(!options || isEmpty(options)) {
+    if(!options || options.isEmpty()) {
         oS += "Sorry, but I couldn't find this one. :(";
         callback(oS);
         return;
