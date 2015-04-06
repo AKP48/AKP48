@@ -167,10 +167,12 @@ MyAnimeList.prototype.outputString = function(options, callback, error) {
 
         if (options.raw_score >= 8) {
             color = c.green;
-        } else if (options.raw_score >= 5) {
+        } else if (options.raw_score >= 6) {
             color = c.yellow;
-        } else if (options.raw_score >= 3) {
-            color = c.orange;
+        } else if (options.raw_score >= 4) {
+            color = c.olive;
+        } else if (options.raw_score >= 2) {
+            color = c.maroon;
         } else { color = c.red; }
 
 
