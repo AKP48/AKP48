@@ -61,7 +61,7 @@ XKCD.prototype.constructComicString = function(comic) {
             alt += "…";
         }
 
-        oS = oS.append(" | Alt text: \""+alt+"\"");
+        oS = oS.append(" · Alt text: \""+alt+"\"");
     }
 
     return oS;

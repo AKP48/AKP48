@@ -129,8 +129,8 @@ Google.prototype.geocode = function(location, region, callback) {
     this.client.get(url, function(err, res, body){
         if(body.results[0]) {
             var outputString = body.results[0].formatted_address;
-            outputString += " | Lat: " + n(body.results[0].geometry.location.lat).format("0.000");
-            outputString += " | Long: " + n(body.results[0].geometry.location.lng).format("0.000");
+            outputString += " · Lat: " + n(body.results[0].geometry.location.lat).format("0.000");
+            outputString += " · Long: " + n(body.results[0].geometry.location.lng).format("0.000");
         } else {
             outputString = c.red("No results found!");
         }
@@ -155,7 +155,7 @@ Google.prototype.search = function(query, type, callback) {
             if(body.responseData.results[0]) {
                 var outputString = "Title: \"" + body.responseData.results[0].titleNoFormatting;
                 self.shorten_url(body.responseData.results[0].url, function(smallUrl) {
-                    outputString += "\" | URL: " + smallUrl;
+                    outputString += "\" · URL: " + smallUrl;
                     callback(outputString);
                 });
             }

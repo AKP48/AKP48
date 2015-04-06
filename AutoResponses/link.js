@@ -299,8 +299,8 @@ LinkHandler.prototype.constructImgurString = function(image) {
             oS += c.red("Score: " + image.score) + " · ";
         }
     }
-    if(image.comment_count) {oS += image.comment_count + " Comments | ";}
-    if(image.images_count) {oS += image.images_count + " Images | ";}
+    if(image.comment_count) {oS += image.comment_count + " Comments · ";}
+    if(image.images_count) {oS += image.images_count + " Images · ";}
     if(image.datetime || image.account_url) {
         oS += "Uploaded ";
         if(image.datetime) {oS += image.datetime;}
