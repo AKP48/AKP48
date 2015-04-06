@@ -20,6 +20,7 @@ var Google = require('../API/google');
 var Steam = require('../API/steam');
 var Imgur = require('../API/imgur');
 var XKCDApi = require('../API/xkcd');
+var MALApi = require('../API/mal');
 var c = require('irc-colors');
 
 function LinkHandler(logger) {
@@ -53,6 +54,9 @@ function LinkHandler(logger) {
     //XKCD regex
     this.XKCDRegex = require("../Regex/regex-xkcd");
 
+    //MAL regex
+    this.MALRegex = require("../Regex/regex-mal");
+
     //Google API module.
     this.google = new Google(config.google.apiKey, logger);
 
@@ -65,13 +69,16 @@ function LinkHandler(logger) {
     //XKCD API module.
     this.XKCD = new XKCDApi(logger);
 
+    //MAL API module.
+    this.MAL = new MALApi(logger);
+
     //logger
     this.log = logger;
 }
 
 // TODO: cache responses
 LinkHandler.prototype.execute = function(word, context) {
-    this.log.debug({link: word}, "Handling link.");
+    this.log.debug({url: word}, "Routing link.");
     if(this.youTubeRegex.test(word)) {
         return this.YouTubeVideo(word, context);
     }
@@ -96,75 +103,75 @@ LinkHandler.prototype.execute = function(word, context) {
         return this.XKCDLink(word, context);
     }
 
+    if(this.MALRegex.test(word)) {
+        return this.MALLink(word, context);
+    }
+
     if(!/noinfo/i.test(word)) {
-        var self = {};
-        self.word = word;
-        self.log = this.log;
+        var cached = false;
 
-        if(word.match(/http:\/\/myanimelist\.net\//i)) {
-            var jsdom = require("jsdom");
+        //todo: cachedRegex.
+        // if(this.cachedRegex.test(word)) {
+        //     cached = true;
+        // }
 
-            var features = {
-                FetchExternalResources: ['script'],
-                ProcessExternalResources: ['script']
-            }
+        return this.handleLink(word, cached);
 
-            var options = {
-                url: word,
-                headers: {
-                    'User-Agent': 'AKP48 IRC Bot (http://github.com/AKPWebDesign/AKP48)'
-                },
-                features: features,
-                document: {
-                    referrer: "http://google.com/"
-                },
-                done: function(error, window) {
-                    if(window.document.getElementsByTagName('title')[0]) {
-                        var oS = c.pink("[Link] ").append(self.word).append(" -> \"");
-                        oS += window.document.getElementsByTagName('title')[0].text.replace(/\r?\n/gm, "").trim().replace(/\s{2,}/g, ' ').append("\"");
-                        context.getClient().getIRCClient().say(context.getChannel().getName(), oS);
-                    } else {
-                        self.log.error({request: "jsdom request", reason: "No title on page."}, "Title unavailable for " + word);
-                    }
-                }
-            }
-
-            jsdom.env(options);
-        } else {
-            var request = require('request');
-            var cheerio = require('cheerio');
-            var options = {
-                url: word,
-                headers: {
-                    'User-Agent': 'AKP48 IRC Bot (http://github.com/AKPWebDesign/AKP48)'
-                }
-            };
-            request(options, function(error, response, body) {
-                if (!error && response && response.statusCode == 200) {
-                    var type = response.headers['content-type'];
-                    if (!type.contains("text/html") && !type.contains("text/xml")) {
-                        return;
-                    }
-                    var $ = cheerio.load(body);
-                    if($("title").text()) {
-                        var oS = c.pink("[Link] ").append(self.word).append(" -> \"");
-                        oS += $("title").text().replace(/\r?\n/gm, "").trim().replace(/\s{2,}/g, ' ').append("\"");
-                        context.getClient().getIRCClient().say(context.getChannel().getName(), oS);
-                    } else {
-                        self.log.error({res: response}, "Title unavailable for " + word);
-                    }
-                } else {
-                    if(response){
-                        self.log.error({err: error, res: response}, "[".append(response.statusCode).append("] Error: %s"), error);
-                    } else {
-                        self.log.error({err: error}, "Error: %s", error);
-                    }
-                }
-            });
-        }
     } else {
         this.log.debug("Ignoring link due to noinfo parameter.");
     }
+};
+
+LinkHandler.prototype.handleLink = function(link, cached) {
+    this.log.debug({url: link, cached: cached}, "Handling link.");
+    var original = link;
+    var search = "";
+
+    if(cached) {
+        search = link.replace(/http:\/\//gi, "");
+        link = "http://webcache.googleusercontent.com/search?q=cache:<search>".replace(/<search>/g, search);
+    }
+
+    var self = {};
+    self.link = link;
+    self.log = this.log;
+
+    var request = require('request');
+    var cheerio = require('cheerio');
+    var options = {
+        url: link,
+        headers: {
+            'User-Agent': 'AKP48 IRC Bot (http://github.com/AKPWebDesign/AKP48)'
+        }
+    };
+
+    request(options, function(error, response, body) {
+        if (!error && response && response.statusCode == 200) {
+            var type = response.headers['content-type'];
+            if (!type.contains("text/html") && !type.contains("text/xml")) {
+                return;
+            }
+            var $ = cheerio.load(body);
+            if($("title").text()) {
+                var oS = c.pink("[Link] ");
+                if(cached) {
+                    oS += original.append(" -> \"");
+                } else {
+                    oS += self.link.append(" -> \"");
+                }
+                oS += $("title").text().replace(/\r?\n/gm, "").trim().replace(/\s{2,}/g, ' ').append("\"");
+                context.getClient().getIRCClient().say(context.getChannel().getName(), oS);
+            } else {
+                self.log.error({res: response}, "Title unavailable for " + word);
+            }
+        } else {
+            if(response){
+                self.log.error({err: error, res: response}, "[".append(response.statusCode).append("] Error: %s"), error);
+            } else {
+                self.log.error({err: error}, "Error: %s", error);
+            }
+        }
+    });
 };
 
 LinkHandler.prototype.YouTubeVideo = function(link, context) {
@@ -328,5 +335,11 @@ LinkHandler.prototype.XKCDLink = function(link, context) {
         }
     }
 };
+
+LinkHandler.prototype.MALLink = function(link, context) {
+    this.MAL.getInfo(link, function(res){
+        context.getClient().getIRCClient().say(context.getChannel().getName(), res);
+    });
+}
 
 module.exports = LinkHandler;

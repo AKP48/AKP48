@@ -1,0 +1,175 @@
+/**
+ * Copyright (C) 2015  Austin Peterson
+ *
+ * This program is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation, either version 3 of the License, or
+ * (at your option) any later version.
+ *
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License
+ * along with this program.  If not, see <http://www.gnu.org/licenses/>.
+ */
+ var request = require('request');
+ var cheerio = require('cheerio');
+ var options = {
+     headers: {
+         'User-Agent': 'AKP48 IRC Bot (http://github.com/AKPWebDesign/AKP48)'
+     }
+ };
+var c = require('irc-colors');
+var Google = require("./google");
+var config = require('../config.json');
+
+function MyAnimeList(logger) {
+    // Logger.
+    this.log = logger.child({module: "MyAnimeList API"});
+}
+
+MyAnimeList.prototype.getInfo = function(link, callback) {
+    this.log.debug({url: link}, "Getting MyAnimeList information.");
+
+    var search = link.replace(/http:\/\//gi, "");
+
+    options.url = "http://webcache.googleusercontent.com/search?q=cache:" + search;
+
+    this.log.debug({url: options.url}, "Retrieving information from Google cache.");
+
+    var self = this;
+    request(options, function(error, response, body) {
+        if (!error && response && response.statusCode == 200) {
+            var opts = {};
+            var $ = cheerio.load(body, {normalizeWhitespace: true, xmlMode: true});
+
+            //remove all small elements inside any sup. I don't like them.
+            $("sup > small").each(function(i, elem) {
+                $(this).remove();
+            });
+
+            var statsBox = $("div#content > table > tbody > tr > td.borderClass > div");
+            console.log(statsBox);
+            statsBox.each(function(i, elem) {
+                var key = $('span.dark_text', $(this)).text().trim().replace(/\:/g, "").replace(/\s/g, '_').toLowerCase();
+                if(key) {
+                    $('span.dark_text', $(this)).remove();
+                    if(key == "synonyms" || key == "producers" || key == "genres") {
+                        var arr = $(this).text().trim().replace(/\s{2,}/g, ' ').split(', ');
+                        opts[key] = arr;
+                    } else {
+                        opts[key] = $(this).text().trim().replace(/\s{2,}/g, ' ');
+                    }
+                }
+            });
+
+            if(opts.score) {
+                opts["raw_score"] = parseFloat(opts.score.match(/\d\.\d\d/g)[0]);
+            }
+
+            console.log(opts);
+
+            self.outputString(opts, callback);
+        } else {
+            if(response){
+                self.log.error({err: error}, "[".append(response.statusCode).append("] Error: %s"), error);
+                self.outputString({}, callback, "blocked");
+            } else {
+                self.log.error({err: error}, "Error: %s", error);
+                self.outputString({}, callback, "???");
+            }
+        }
+    });
+};
+
+MyAnimeList.prototype.outputString = function(options, callback, error) {
+    var oS = c.pink("[MyAnimeList] ");
+
+    if(!options || options == {}) {
+        oS += "Sorry, but I couldn't find this one. :(";
+        callback(oS);
+        return;
+    }
+
+    if(error) {
+        if(error == "blocked") {
+            oS += "Google has blocked me from viewing this page. Sorry about that. :(";
+        } else {
+            oS += "Something went wrong. Sorry about that. :(";
+        }
+
+        callback(oS);
+        return;
+    }
+
+    if(options.english && options.japanese) {
+        oS += options.english + " (" + options.japanese + "): ";
+    }
+
+    if(options.japanese && !options.english) {
+        oS += options.japanese + ": ";
+    }
+
+    if(options.english && !options.japanese) {
+        oS += options.english + ": ";
+    }
+
+    if(options.type) {
+        oS += c.bold("Type: ") + options.type + " | ";
+    }
+
+    if(options.duration) {
+        oS += c.bold("Duration: ") + options.duration + " | ";
+    }
+
+    if(options.aired) {
+        oS += c.bold("Aired: ") + options.aired + " | ";
+    }
+
+    if(options.episodes) {
+        oS += c.bold("Episodes: ") + options.episodes + " | ";
+    }
+
+    if(options.status) {
+        oS += c.bold("Status: ") + options.status + " | ";
+    }
+
+    if(options.rating) {
+        oS += c.bold("Rating: ") + options.rating + " | ";
+    }
+
+    if(options.genres) {
+        if(options.genres.length == 1) {
+            oS += c.bold("Genre: ") + options.genres[0];
+        } else {
+            oS += c.bold("Genres: ") + options.genres.join(", ") + " | ";
+        }
+    }
+
+    if(options.score) {
+        var color = function(score){return score};
+
+        if(options.raw_score) {
+            color = c.red;
+            if(options.raw_score > 5) {
+                color = c.yellow;
+            }
+            if(options.raw_score > 8) {
+                color = c.green;
+            }
+        }
+        oS += c.bold("Score: ") + color(options.score) + " | ";
+    }
+
+    if(options.ranked) {
+        oS += c.bold("Ranking: ") + options.ranked + " | ";
+    }
+
+    oS = oS.slice(0, -3);
+
+    callback(oS);
+};
+
+module.exports = MyAnimeList;
