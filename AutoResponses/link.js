@@ -284,19 +284,19 @@ LinkHandler.prototype.constructImgurString = function(image) {
     if(image.is_album) {type += "Album] ";} else {type += "Image] ";}
 
     var oS = c.pink(type);
-    if(image.title) { oS += "Title: \"" + image.title + "\"" + " | ";}
+    if(image.title) { oS += "Title: \"" + image.title + "\"" + " · ";}
     if(image.width && image.height) {oS += "Dimensions: " + image.width + "px x " + image.height + "px | ";}
-    if(image.type) {oS += "Type: " + image.type + " | ";}
-    if(image.size) {oS += "File Size: " + image.size + " | ";}
-    if(image.nsfw) {oS += c.red("NSFW") + " | ";}
-    if(image.views) {oS += "Views: " + image.views + " | ";}
-    if(image.ups) {oS += c.green("Upvotes: " + image.ups) + " | ";}
-    if(image.downs) {oS += c.red("Downvotes: " + image.downs) + " | ";}
+    if(image.type) {oS += "Type: " + image.type + " · ";}
+    if(image.size) {oS += "File Size: " + image.size + " · ";}
+    if(image.nsfw) {oS += c.red("NSFW") + " · ";}
+    if(image.views) {oS += "Views: " + image.views + " · ";}
+    if(image.ups) {oS += c.green("Upvotes: " + image.ups) + " · ";}
+    if(image.downs) {oS += c.red("Downvotes: " + image.downs) + " · ";}
     if(image.score && image.raw_score) {
         if(image.raw_score > 0) {
-            oS += c.green("Score: " + image.score) + " | ";
+            oS += c.green("Score: " + image.score) + " · ";
         } else {
-            oS += c.red("Score: " + image.score) + " | ";
+            oS += c.red("Score: " + image.score) + " · ";
         }
     }
     if(image.comment_count) {oS += image.comment_count + " Comments | ";}

@@ -107,7 +107,7 @@ Roll.prototype.execute = function(context) {
 
     //format output
     for (var i = 0; i < rolls.length; i++) {
-        outputString += this.n(rolls[i]).format("0,0") + " | ";
+        outputString += this.n(rolls[i]).format("0,0") + " · ";
     };
 
     outputString = outputString.substring(0, outputString.length-3);

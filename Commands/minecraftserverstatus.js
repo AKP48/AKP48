@@ -57,35 +57,35 @@ MinecraftServerStatus.prototype.execute = function(context) {
 
         switch(website) {
             case "green":
-                outputString += c.green("Website: Online")+" | ";
+                outputString += c.green("Website: Online")+" · ";
                 break;
             case "yellow":
-                outputString += c.yellow("Website: Having Trouble")+" | ";
+                outputString += c.yellow("Website: Having Trouble")+" · ";
                 break;
             case "red":
-                outputString += c.red("Website: Offline")+" | ";
+                outputString += c.red("Website: Offline")+" · ";
         }
 
         switch(auth) {
             case "green":
-                outputString += c.green("Auth Server: Online")+" | ";
+                outputString += c.green("Auth Server: Online")+" · ";
                 break;
             case "yellow":
-                outputString += c.yellow("Auth Server: Having Trouble")+" | ";
+                outputString += c.yellow("Auth Server: Having Trouble")+" · ";
                 break;
             case "red":
-                outputString += c.red("Auth Server: Offline")+" | ";
+                outputString += c.red("Auth Server: Offline")+" · ";
         }
 
         switch(session) {
             case "green":
-                outputString += c.green("Session Server: Online")+" | ";
+                outputString += c.green("Session Server: Online")+" · ";
                 break;
             case "yellow":
-                outputString += c.yellow("Session Server: Having Trouble")+" | ";
+                outputString += c.yellow("Session Server: Having Trouble")+" · ";
                 break;
             case "red":
-                outputString += c.red("Session Server: Offline")+" | ";
+                outputString += c.red("Session Server: Offline")+" · ";
         }
 
         switch(skins) {

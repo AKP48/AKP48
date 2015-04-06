@@ -115,31 +115,31 @@ MyAnimeList.prototype.outputString = function(options, callback, error) {
     }
 
     if(options.type) {
-        oS += c.bold("Type: ") + options.type + " | ";
+        oS += c.bold("Type: ") + options.type + " · ";
     }
 
     if(options.duration) {
-        oS += c.bold("Duration: ") + options.duration + " | ";
+        oS += c.bold("Duration: ") + options.duration + " · ";
     }
 
     if(options.aired) {
-        oS += c.bold("Aired: ") + options.aired + " | ";
+        oS += c.bold("Aired: ") + options.aired + " · ";
     }
 
     if(options.episodes) {
-        oS += c.bold("Episodes: ") + options.episodes + " | ";
+        oS += c.bold("Episodes: ") + options.episodes + " · ";
     }
 
     if(options.rating) {
         var rating = options.rating.split(" ");
-        oS += c.bold("Rating: ") + rating[0] + " | ";
+        oS += c.bold("Rating: ") + rating[0] + " · ";
     }
 
     if(options.genres) {
         if(options.genres.length == 1) {
             oS += c.bold("Genre: ") + options.genres[0];
         } else {
-            oS += c.bold("Genres: ") + options.genres.join(", ") + " | ";
+            oS += c.bold("Genres: ") + options.genres.join(", ") + " · ";
         }
     }
 
@@ -160,7 +160,7 @@ MyAnimeList.prototype.outputString = function(options, callback, error) {
             oS += "(" + Math.log10(options.users) + ")";
         }
 
-        oS += " | ";
+        oS += " · ";
     }
 
     oS = oS.slice(0, -3);

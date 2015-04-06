@@ -64,10 +64,10 @@ Riot.prototype.getFreeChamps = function(callback) {
                 self.freeChamps.champions.push(self.champions[champ.id].name);
             });
 
-            callback(self.freeChamps.champions.join(" | "));
+            callback(self.freeChamps.champions.join(" · "));
         });
     } else {
-        callback(this.freeChamps.champions.join(" | "));
+        callback(this.freeChamps.champions.join(" · "));
     }
 };
 
@@ -90,7 +90,7 @@ Riot.prototype.getServerStatus = function(region, callback) {
             response.push(oS);
         });
 
-        callback(body.name + ": " + response.join(" | "));
+        callback(body.name + ": " + response.join(" · "));
     });
 };
 

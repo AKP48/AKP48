@@ -95,13 +95,13 @@ Google.prototype.youtube_video_info = function(video_id, callback) {
 
                     outputString += ")";
                 }
-                outputString += " | ";
+                outputString += " · ";
                 outputString += "Views: " + n(video.statistics.viewCount).format("0,0");
-                outputString += " | ";
+                outputString += " · ";
                 outputString += c.green("Likes: " + n(video.statistics.likeCount).format("0,0"));
-                outputString += " | ";
+                outputString += " · ";
                 outputString += c.red("Dislikes: " + n(video.statistics.dislikeCount).format("0,0"));
-                outputString += " | ";
+                outputString += " · ";
                 outputString += "Published on " + publishedAt;
                 callback(outputString);
             });

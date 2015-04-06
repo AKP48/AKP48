@@ -59,7 +59,7 @@ MCNameHistory.prototype.execute = function(context) {
 
             var outputString = "Previous names found for "+context.name+": ";
             for (var i = bodyy.length - 1; i >= 0; i--) {
-                outputString += bodyy[i].name + " | ";
+                outputString += bodyy[i].name + " · ";
             };
 
             outputString = outputString.substring(0, outputString.length - 3);

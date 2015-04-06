@@ -72,7 +72,7 @@ Dice.prototype.execute = function(context) {
     var outputString = "";
 
     for (var i = 0; i < rolls.length; i++) {
-        outputString += rolls[i] + " | ";
+        outputString += rolls[i] + " · ";
     };
 
     outputString = outputString.substring(0, outputString.length - 3);
