@@ -38,15 +38,15 @@ MyAnimeList.prototype.getInfo = function(link, callback) {
 
     //first, attempt to get info from wayback machine.
     this.log.debug({search: search}, "Figuring out where to get information from.");
-    var client = requestJSON.createClient("http://archive.org/wayback/");
+    var client = requestJSON.createClient("http://archive.org/");
 
     var self = this;
-    client.get("/available?url=" + search, function(err, res, body){
-        if(err || !body.archived_snapshots.closest || !body.archived_snapshots.closest[0].available) {
+    client.get("/wayback/available?url=" + search, function(err, res, body){
+        if(err || !body.archived_snapshots.closest || !body.archived_snapshots.closest.available) {
             self.getInfoFromURL("http://webcache.googleusercontent.com/search?q=cache:" + search, "Google cache", callback); return;
         }
 
-        self.getInfoFromURL(body.archived_snapshots.closest[0].url, "Wayback Machine", callback);
+        self.getInfoFromURL(body.archived_snapshots.closest.url, "Wayback Machine", callback);
 
         return;
     });
