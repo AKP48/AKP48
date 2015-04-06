@@ -56,6 +56,7 @@ MyAnimeList.prototype.getInfoFromURL = function(url, place, callback) {
     options.url = url;
     this.log.debug({url: url}, "Retrieving information from " + place + ".");
 
+    var self = this;
     request(options, function(error, response, body) {
         if (!error && response && response.statusCode == 200) {
             var opts = {};
