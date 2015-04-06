@@ -15,6 +15,7 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
  var request = require('request');
+ var requestJSON = require('request-json');
  var cheerio = require('cheerio');
  var options = {
      headers: {
@@ -35,11 +36,26 @@ MyAnimeList.prototype.getInfo = function(link, callback) {
 
     var search = link.replace(/http:\/\//gi, "");
 
-    options.url = "http://webcache.googleusercontent.com/search?q=cache:" + search;
-
-    this.log.debug({url: options.url}, "Retrieving information from Google cache.");
+    //first, attempt to get info from wayback machine.
+    this.log.debug({search: search}, "Figuring out where to get information from.");
+    var client = requestJSON.createClient("http://archive.org/wayback/");
 
     var self = this;
+    client.get("/available?url=" + search, function(err, res, body){
+        if(err || !body.archived_snapshots.closest || !body.archived_snapshots.closest[0].available) {
+            self.getInfoFromURL("http://webcache.googleusercontent.com/search?q=cache:" + search, "Google cache", callback); return;
+        }
+
+        self.getInfoFromURL(body.archived_snapshots.closest[0].url, "Wayback Machine", callback);
+
+        return;
+    });
+};
+
+MyAnimeList.prototype.getInfoFromURL = function(url, place, callback) {
+    options.url = url;
+    this.log.debug({url: url}, "Retrieving information from " + place + ".");
+
     request(options, function(error, response, body) {
         if (!error && response && response.statusCode == 200) {
             var opts = {};
@@ -83,6 +99,7 @@ MyAnimeList.prototype.getInfo = function(link, callback) {
 };
 
 MyAnimeList.prototype.outputString = function(options, callback, error) {
+    var smallNumbers = {0: "₀", 1: "₁", 2: "₂", 3: "₃", 4: "₄", 5: "₅", 6: "₆", 7: "₇", 8: "₈", 9: "₉", ".": "ͅ"};
     var oS = c.pink("[MyAnimeList] ");
 
     if(!options || options == {}) {
@@ -157,6 +174,12 @@ MyAnimeList.prototype.outputString = function(options, callback, error) {
         oS += c.bold("Score: ") + color(options.raw_score);
 
         if(options.score_users) {
+            var log10 = Math.log10(options.users).toString();
+            for (var i = 0; i < log10.length; i++) {
+                if(smallNumbers[log10[i]]){
+                    log10[i] = smallNumbers[log10[i]];
+                }
+            };
             oS += "(" + Math.log10(options.users) + ")";
         }
 
