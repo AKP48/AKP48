@@ -285,7 +285,7 @@ LinkHandler.prototype.constructImgurString = function(image) {
 
     var oS = c.pink(type);
     if(image.title) { oS += "Title: \"" + image.title + "\"" + " · ";}
-    if(image.width && image.height) {oS += "Dimensions: " + image.width + "px x " + image.height + "px | ";}
+    if(image.width && image.height) {oS += "Dimensions: " + image.width + "px x " + image.height + "px · ";}
     if(image.type) {oS += "Type: " + image.type + " · ";}
     if(image.size) {oS += "File Size: " + image.size + " · ";}
     if(image.nsfw) {oS += c.red("NSFW") + " · ";}
