@@ -196,6 +196,13 @@ function Polyfill(logger) {
     };
   }
 
+  if (!Math.log10) {
+    log.trace("Math.log10 not found. Adding...");
+    Math.log10 = Math.log10 || function(x) {
+      return Math.log(x) / Math.LN10;
+    };
+  }
+
   log.info("Finished initializing Polyfill.");
 }
 

@@ -51,7 +51,6 @@ MyAnimeList.prototype.getInfo = function(link, callback) {
             });
 
             var statsBox = $("div#content > table > tbody > tr > td.borderClass > div");
-            console.log(statsBox);
             statsBox.each(function(i, elem) {
                 var key = $('span.dark_text', $(this)).text().trim().replace(/\:/g, "").replace(/\s/g, '_').toLowerCase();
                 if(key) {
@@ -66,10 +65,9 @@ MyAnimeList.prototype.getInfo = function(link, callback) {
             });
 
             if(opts.score) {
-                opts["raw_score"] = parseFloat(opts.score.match(/\d\.\d\d/g)[0]);
+                opts["raw_score"] = parseFloat(opts.score.split(" ")[0]);
+                opts["score_users"] = opts.score.split(" ")[3];
             }
-
-            console.log(opts);
 
             self.outputString(opts, callback);
         } else {
@@ -132,12 +130,9 @@ MyAnimeList.prototype.outputString = function(options, callback, error) {
         oS += c.bold("Episodes: ") + options.episodes + " | ";
     }
 
-    if(options.status) {
-        oS += c.bold("Status: ") + options.status + " | ";
-    }
-
     if(options.rating) {
-        oS += c.bold("Rating: ") + options.rating + " | ";
+        var rating = options.rating.split(" ");
+        oS += c.bold("Rating: ") + rating[0] + " | ";
     }
 
     if(options.genres) {
@@ -148,23 +143,24 @@ MyAnimeList.prototype.outputString = function(options, callback, error) {
         }
     }
 
-    if(options.score) {
+    if(options.raw_score) {
         var color = function(score){return score};
 
-        if(options.raw_score) {
-            color = c.red;
-            if(options.raw_score > 5) {
-                color = c.yellow;
-            }
-            if(options.raw_score > 8) {
-                color = c.green;
-            }
+        color = c.red;
+        if(options.raw_score > 5) {
+            color = c.yellow;
         }
-        oS += c.bold("Score: ") + color(options.score) + " | ";
-    }
+        if(options.raw_score > 8) {
+            color = c.green;
+        }
 
-    if(options.ranked) {
-        oS += c.bold("Ranking: ") + options.ranked + " | ";
+        oS += c.bold("Score: ") + color(options.raw_score);
+
+        if(options.score_users) {
+            oS += "(" + Math.log10(options.users) + ")";
+        }
+
+        oS += " | ";
     }
 
     oS = oS.slice(0, -3);
