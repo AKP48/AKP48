@@ -14,17 +14,15 @@
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
- var request = require('request');
- var requestJSON = require('request-json');
- var cheerio = require('cheerio');
- var options = {
-     headers: {
-         'User-Agent': 'AKP48 IRC Bot (http://github.com/AKPWebDesign/AKP48)'
-     }
- };
+var request = require('request');
+var requestJSON = require('request-json');
+var n = require('numeral');
+var options = {
+    headers: {
+        'User-Agent': 'AKP48 IRC Bot (http://github.com/AKPWebDesign/AKP48)'
+    }
+};
 var c = require('irc-colors');
-var Google = require("./google");
-var config = require('../config.json');
 
 function MyAnimeList(logger) {
     // Logger.
@@ -58,35 +56,39 @@ MyAnimeList.prototype.getInfoFromURL = function(url, place, callback) {
 
     var self = this;
     request(options, function(error, response, body) {
-        if (!error && response && response.statusCode == 200) {
+        if (!error && response) {
             var opts = {};
-            var $ = cheerio.load(body, {normalizeWhitespace: true, xmlMode: true});
+            var env = require('jsdom').env;
 
-            //remove all small elements inside any sup. I don't like them.
-            $("sup > small").each(function(i, elem) {
-                $(this).remove();
-            });
+            env(body, function (errors, window) {
+                var $ = require('./jquery')(window);
 
-            var statsBox = $("div#content > table > tbody > tr > td.borderClass > div");
-            statsBox.each(function(i, elem) {
-                var key = $('span.dark_text', $(this)).text().trim().replace(/\:/g, "").replace(/\s/g, '_').toLowerCase();
-                if(key) {
-                    $('span.dark_text', $(this)).remove();
-                    if(key == "synonyms" || key == "producers" || key == "genres") {
-                        var arr = $(this).text().trim().replace(/\s{2,}/g, ' ').split(', ');
-                        opts[key] = arr;
-                    } else {
-                        opts[key] = $(this).text().trim().replace(/\s{2,}/g, ' ');
+                //remove all small elements inside any sup. I don't like them.
+                $("sup > small").jEach(function(i, elem) {
+                    $(this).remove();
+                });
+
+                var statsBox = $("div#content > table > tbody > tr > td.borderClass > div");
+                statsBox.jEach(function(i, elem) {
+                    var key = $('span.dark_text', $(this)).text().trim().replace(/\:/g, "").replace(/\s/g, '_').toLowerCase();
+                    if(key) {
+                        $('span.dark_text', $(this)).remove();
+                        if(key == "synonyms" || key == "producers" || key == "genres") {
+                            var arr = $(this).text().trim().replace(/\s{2,}/g, ' ').split(', ');
+                            opts[key] = arr;
+                        } else {
+                            opts[key] = $(this).text().trim().replace(/\s{2,}/g, ' ');
+                        }
                     }
+                });
+
+                if(opts.score) {
+                    opts["raw_score"] = parseFloat(opts.score.split(" ")[0]);
+                    opts["score_users"] = opts.score.split(" ")[3];
                 }
+
+                self.outputString(opts, callback);
             });
-
-            if(opts.score) {
-                opts["raw_score"] = parseFloat(opts.score.split(" ")[0]);
-                opts["score_users"] = opts.score.split(" ")[3];
-            }
-
-            self.outputString(opts, callback);
         } else {
             if(response){
                 self.log.error({err: error}, "[".append(response.statusCode).append("] Error: %s"), error);
@@ -100,7 +102,6 @@ MyAnimeList.prototype.getInfoFromURL = function(url, place, callback) {
 };
 
 MyAnimeList.prototype.outputString = function(options, callback, error) {
-    var smallNumbers = {0: "₀", 1: "₁", 2: "₂", 3: "₃", 4: "₄", 5: "₅", 6: "₆", 7: "₇", 8: "₈", 9: "₉", ".": "ͅ"};
     var oS = c.pink("[MyAnimeList] ");
 
     if(!options || options == {}) {
@@ -144,8 +145,8 @@ MyAnimeList.prototype.outputString = function(options, callback, error) {
         oS += c.bold("Aired: ") + options.aired + " · ";
     }
 
-    if(options.episodes) {
-        oS += c.bold("Episodes: ") + options.episodes + " · ";
+    if(options.episodes && options.episodes > 1) {
+        oS += c.bold("Episodes: ") + n(options.episodes).format('0,0') + " · ";
     }
 
     if(options.rating) {
@@ -175,13 +176,7 @@ MyAnimeList.prototype.outputString = function(options, callback, error) {
         oS += c.bold("Score: ") + color(options.raw_score);
 
         if(options.score_users) {
-            var log10 = Math.log10(options.users).toString();
-            for (var i = 0; i < log10.length; i++) {
-                if(smallNumbers[log10[i]]){
-                    log10[i] = smallNumbers[log10[i]];
-                }
-            };
-            oS += "(" + Math.log10(options.users) + ")";
+            oS += " (" + n(options.score_users).format('0,0') + ")";
         }
 
         oS += " · ";

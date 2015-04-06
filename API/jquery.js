@@ -2044,16 +2044,18 @@ tokenize = Sizzle.tokenize = function( selector, parseOnly ) {
 
         // Filters
         for ( type in Expr.filter ) {
-            if ( (match = matchExpr[ type ].exec( soFar )) && (!preFilters[ type ] ||
-                (match = preFilters[ type ]( match ))) ) {
-                matched = match.shift();
-                tokens.push({
-                    value: matched,
-                    type: type,
-                    matches: match
-                });
-                soFar = soFar.slice( matched.length );
-            }
+            try{
+                if ( (match = matchExpr[ type ].exec( soFar )) && (!preFilters[ type ] ||
+                    (match = preFilters[ type ]( match ))) ) {
+                    matched = match.shift();
+                    tokens.push({
+                        value: matched,
+                        type: type,
+                        matches: match
+                    });
+                    soFar = soFar.slice( matched.length );
+                }
+            } catch(e){};
         }
 
         if ( !matched ) {
@@ -4043,7 +4045,9 @@ var rcheckableType = (/^(?:checkbox|radio)$/i);
     // Support: IE<=11+
     // Make sure textarea (and checkbox) defaultValue is properly cloned
     div.innerHTML = "<textarea>x</textarea>";
-    support.noCloneChecked = !!div.cloneNode( true ).lastChild.defaultValue;
+    try{
+        support.noCloneChecked = !!div.cloneNode( true ).lastChild.defaultValue;
+    } catch(e) {support.noCloneChecked = false;}
 })();
 var strundefined = typeof undefined;
 
