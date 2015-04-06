@@ -22,13 +22,10 @@
      }
  };
 var c = require('irc-colors');
-var Google = require("./google");
-var config = require('../config.json');
 
 function Dinner(logger) {
     // Logger.
     this.log = logger.child({module: "Dinner API"});
-    this.google = new Google(config.google.apiKey, logger);
 }
 
 Dinner.prototype.getDinner = function(vegetarian, callback) {
@@ -58,7 +55,7 @@ Dinner.prototype.getDinner = function(vegetarian, callback) {
 Dinner.prototype.outputString = function(string, link, veg, callback) {
     var oS = string;
 
-    this.google.shorten_url(link, function(shortURL){
+    getClientManager().getAPI("Google").shorten_url(link, function(shortURL){
         oS += " (" + shortURL + ")";
         callback(oS);
     });

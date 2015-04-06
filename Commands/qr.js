@@ -15,9 +15,6 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-var config = require('../config.json');
-var Imgur = require('../API/imgur');
-
 function QR(logger) {
     //the name of the command.
     this.name = "QR Code";
@@ -42,9 +39,6 @@ function QR(logger) {
 
     //whether or not to only allow this command if it's in a private message.
     this.isPmOnly = false;
-
-    //imgur API
-    this.imgurAPI = new Imgur(config.imgur.clientID, logger);
 }
 
 QR.prototype.execute = function(context) {
@@ -55,7 +49,7 @@ QR.prototype.execute = function(context) {
     var imageURL = "http://chart.googleapis.com/chart?cht=qr&chs=500x500&chl=" + encodeURIComponent(context.arguments.join(" "));
 
     //upload the image to imgur
-    this.imgurAPI.uploadImageFromURL(imageURL, function (url) {
+    getClientManager().getAPI("Imgur")..uploadImageFromURL(imageURL, function (url) {
         if(url) {
             context.getClient().getCommandProcessor().aliasedCommands['googl'].shortenURL(context, url);
         } else {

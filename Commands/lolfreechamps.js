@@ -15,9 +15,6 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-var config = require('../config.json');
-var Riot = require('../API/riot');
-
 function LoLFreeChamps(logger) {
     //the name of the command.
     this.name = "LoL Free Champion Rotation";
@@ -39,13 +36,10 @@ function LoLFreeChamps(logger) {
 
     //whether or not to only allow this command if it's in a private message.
     this.isPmOnly = false;
-
-    //Riot API.
-    this.riotAPI = new Riot(config.riot.apiKey, logger);
 }
 
 LoLFreeChamps.prototype.execute = function(context) {
-    this.riotAPI.getFreeChamps(function(msg){
+    getClientManager().getAPI("Riot").getFreeChamps(function(msg){
         context.getClient().say(context, msg);
     });
     return true;

@@ -15,10 +15,6 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-var Gist = require('../API/gist');
-var Google = require('../API/google');
-var config = require('../config.json');
-
 function Help(logger) {
     //the name of the command.
     this.name = "Help";
@@ -40,12 +36,6 @@ function Help(logger) {
 
     //whether or not to only allow this command if it's in a private message.
     this.isPmOnly = false;
-
-    //Gist API
-    this.gistAPI = new Gist(logger);
-
-    //google API module for using Google APIs.
-    this.googleAPI = new Google(config.google.apiKey, logger);
 }
 
 Help.prototype.execute = function(context) {
@@ -102,7 +92,7 @@ Help.prototype.execute = function(context) {
     var self = this;
 
     //create gist of response
-    this.gistAPI.create({
+    getClientManager().getAPI("Gist").create({
         description: "Help for " + context.getClient().getNick(),
         files: {
             "help.md": {
@@ -114,7 +104,7 @@ Help.prototype.execute = function(context) {
         if(sendTo) {
             url += "#" + encodeURI(sendTo.toLowerCase().replace(/\s/g, "-"));
         }
-        self.googleAPI.shorten_url(url, function(url) {
+        getClientManager().getAPI("Google").shorten_url(url, function(url) {
             if(!context.getUser().isRealIRCUser) {
                 context.getClient().say(context, url);
             } else {

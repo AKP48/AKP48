@@ -31,6 +31,9 @@ function ClientManager(config, logger) {
     // array of all clients
     this.clients = [];
 
+    // API objects.
+    this.APIs = require("./API/")(logger);
+
     // load all of the clients on creation of this object.
     this.loadClients(config);
 
@@ -167,4 +170,12 @@ ClientManager.prototype.shutdown = function(msg) {
     }, 50);
 };
 
+/**
+ * Get an API instance.
+ * @param  {String} api_name The API to retrieve.
+ * @return {Object}          The API.
+ */
+ClientManager.prototype.getAPI = function(api_name) {
+    return (this.APIs[api_name] || null);
+};
 module.exports = ClientManager;

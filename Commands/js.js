@@ -22,7 +22,6 @@ var request = require('request');
 var Chance = require('chance');
 var path = require('path');
 var fs = require('fs');
-var Gist = require('../API/gist');
 
 function Js(logger) {
     //the name of the command.
@@ -121,7 +120,7 @@ Js.prototype.runCode = function(code, context) {
         //if outputString is too long
         if(outputString.length > 350) {
             //upload Gist instead.
-            self.gistAPI.create({
+            getClientManager().getAPI("Gist").create({
                 description: "Output of JavaScript function for "+context.getUser().getNick(),
                 files: {
                     "_input.js": {

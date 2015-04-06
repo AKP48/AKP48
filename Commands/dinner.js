@@ -15,8 +15,6 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-var DinnerAPI = require("../API/dinner");
-
 function Dinner(logger) {
     //the name of the command.
     this.name = "Dinner";
@@ -38,9 +36,6 @@ function Dinner(logger) {
 
     //whether or not to only allow this command if it's in a private message.
     this.isPmOnly = false;
-
-    //dinner api module.
-    this.dinnerAPI = new DinnerAPI(logger);
 }
 
 Dinner.prototype.execute = function(context) {
@@ -49,7 +44,7 @@ Dinner.prototype.execute = function(context) {
         veg = true;
     }
 
-    this.dinnerAPI.getDinner(veg, function(string) {
+    context.getClient().getClientManager().getAPI("Dinner").getDinner(veg, function(string) {
         context.getClient().say(context, string);
     })
 
