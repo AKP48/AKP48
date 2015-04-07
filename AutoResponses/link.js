@@ -210,7 +210,7 @@ LinkHandler.prototype.ImgurLink = function(link, context) {
         //id[1] == direct image.
         if(id[1]) {
             this.log.debug("Handling as direct image.");
-            getClientManager().getAPI("Imgut").getImageInfo(id[1], function(image) {
+            getClientManager().getAPI("Imgur").getImageInfo(id[1], function(image) {
                 if(image) {
                     context.getClient().getIRCClient().say(context.getChannel().getName(), self.constructImgurString(image));
                 }
