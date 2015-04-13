@@ -15,6 +15,7 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
+var BibleAPI = require("./bible");
 var DinnerAPI = require("./dinner");
 var GistAPI = require("./gist");
 var GitAPI = require("./git");
@@ -34,6 +35,7 @@ var config = require("../config.json");
 var loadAPIs = function(logger) {
     var _log = logger.child({module: "API Loader"});
     var APIs = {
+        Bible: new BibleAPI(logger),
         Dinner: new DinnerAPI(logger),
         Gist: new GistAPI(logger),
         Git: new GitAPI(logger),

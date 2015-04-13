@@ -85,7 +85,7 @@ function compare(original, other) {
             return original.startsWith(other.substring(star - 1));
         }
     }
-    
+
     return false;
 }
 
@@ -179,7 +179,7 @@ GitListener.prototype.handle = function (branch, data) {
 
         var shutdown = changing_branch;
         var npm = changing_branch;
-        var hot_files = ['server.js', 'GitListener.js', 'ClientManager.js'];
+        var hot_files = ['server.js', 'GitListener.js', 'ClientManager.js', 'API/index.js'];
 
         if (!shutdown) {
             data.commits.some(function (commit) {
