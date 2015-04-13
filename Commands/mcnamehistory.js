@@ -49,6 +49,7 @@ MCNameHistory.prototype.execute = function(context) {
 
     //TODO: make this follow redirects.
     //TODO: make this just generally work better. (show previous times and things of that nature.)
+    //TODO: cacheing.
     //Example names to use: PlasmaPod, ezfe.
 
     context.apiClient.get("/users/profiles/minecraft/"+context.name, function(err, res, body) {
