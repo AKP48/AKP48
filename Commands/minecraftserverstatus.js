@@ -18,7 +18,7 @@
 var c = require('irc-colors');
 var request = require('request-json');
 
-function MinecraftServerStatus() {
+function MinecraftServerStatus(logger) {
     //the name of the command.
     this.name = "Minecraft Server Status";
 
@@ -39,12 +39,19 @@ function MinecraftServerStatus() {
 
     //whether or not to only allow this command if it's in a private message.
     this.isPmOnly = false;
+
+    //cache
+    this.cache = new (require('../lib/cache'))(logger);
 }
 
 MinecraftServerStatus.prototype.execute = function(context) {
     var apiClient = request.newClient("https://status.mojang.com/");
-
-    var self = context;
+    var self = this;
+    var cachedResponse = this.cache.getCached(("MinecraftServerStatus").sha1());
+    if(cachedResponse) {
+        context.getClient().say(context, cachedResponse);
+        return true;
+    }
 
     apiClient.get("/check", function(err, res, body) {
         if(err) {self.client.getIRCClient().say(self.channel, "There was an error retrieving the Minecraft server status!"); return true;}
@@ -99,7 +106,10 @@ MinecraftServerStatus.prototype.execute = function(context) {
                 outputString += c.red("Skins: Offline");
         }
 
-        self.client.say(self, outputString);
+        var cacheExpire = (Date.now() / 1000 | 0) + 30; //make cache expire in 30 seconds
+        self.cache.addToCache(("MinecraftServerStatus").sha1(),outputString, cacheExpire);
+
+        context.getClient().say(context, outputString);
     });
     return true;
 };

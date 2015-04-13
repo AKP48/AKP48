@@ -15,6 +15,8 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
+var crypto = require('crypto');
+
 function Polyfill(logger) {
   var log = logger.child({module: "Polyfill"});
 
@@ -76,6 +78,13 @@ function Polyfill(logger) {
     String.prototype.append = function(text) {
       var str = this.toString();
       return str ? str+text : str;
+    }
+  }
+
+  if (!String.prototype.sha1) {
+    log.trace("String.prototype.sha1 not found. Adding...");
+    String.prototype.sha1 = function() {
+      return crypto.createHash('sha1').update(this.toString()).digest('hex');
     }
   }
 

@@ -36,6 +36,9 @@ function Help(logger) {
 
     //whether or not to only allow this command if it's in a private message.
     this.isPmOnly = false;
+
+    //cache
+    this.cache = new (require('../lib/cache'))(logger);
 }
 
 Help.prototype.execute = function(context) {
@@ -90,6 +93,15 @@ Help.prototype.execute = function(context) {
     });
 
     var self = this;
+    var cachedResponse = this.cache.getCached(("GistMarkdown"+markdown).sha1());
+    if(cachedResponse) {
+        if(!context.getUser().isRealIRCUser) {
+            context.getClient().say(context, cachedResponse);
+        } else {
+            context.client.getIRCClient().notice(context.getUser().getNick(), cachedResponse);
+        }
+        return true;
+    }
 
     //create gist of response
     getClientManager().getAPI("Gist").create({
@@ -105,6 +117,8 @@ Help.prototype.execute = function(context) {
             url += "#" + encodeURI(sendTo.toLowerCase().replace(/\s/g, "-"));
         }
         getClientManager().getAPI("Google").shorten_url(url, function(url) {
+            var cacheExpire = (Date.now() / 1000 | 0) + 1576800000; //make cache expire in 50 years
+            self.cache.addToCache(("GistMarkdown"+markdown).sha1(), url, cacheExpire);
             if(!context.getUser().isRealIRCUser) {
                 context.getClient().say(context, url);
             } else {
