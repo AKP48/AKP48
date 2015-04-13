@@ -42,7 +42,6 @@ AutoResponseProcessor.prototype.process = function(message, client) {
     //if we get a message that identifies as a bot, we shouldn't process it
     if(!context || context.getFullMessage().startsWith(client.botID)) {
         this.log.debug({
-            user: context.getUser().getNick(),
             reason: "User identifies as a bot, or a context wasn't created."
         }, "AutoResponse execution blocked.");
         return false;
