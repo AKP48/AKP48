@@ -59,7 +59,6 @@ GLOBAL.getClientManager = function() {
 
 //todo: better exception handling plz
 if(config.productionMode) {
-    require('longjohn');
     process.on('uncaughtException', function(err) {
         log.fatal({err: err}, "Exception caught: %s", err);
     });
