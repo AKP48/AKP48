@@ -16,8 +16,6 @@
  */
 
 var irc = require('irc');
-var CommandProcessor = require("../CommandProcessor");
-var AutoResponseProcessor = require("../AutoResponseProcessor");
 var Channel = require('./Channel');
 
 /**
@@ -56,12 +54,6 @@ function Client(logger) {
 
     // Whether or not this client is temporary. (Will not be saved on configuration saves)
     this.isTemporary = false;
-
-    // The client's CommandProcessor.
-    this.commandProcessor = new CommandProcessor(this.log);
-
-    // The client's AutoResponseProcessor.
-    this.autoResponseProcessor = new AutoResponseProcessor(this.log);
 
     // Magic 'color' that represents a bot message
     this.botID = "\u000399";
@@ -258,31 +250,19 @@ Client.prototype.setTemporary = function(isTemporary) {
 };
 
 /**
- * Get the CommandProcessor for this Client.
+ * Get the CommandProcessor from the ClientManager.
  * @return {CommandProcessor} The CommandProcessor.
  */
 Client.prototype.getCommandProcessor = function() {
-    return this.commandProcessor;
+    return this.getClientManager().getCommandProcessor();
 };
 
 /**
- * Get the AutoResponseProcessor for this Client.
+ * Get the AutoResponseProcessor from the ClientManager.
  * @return {AutoResponseProcessor} The AutoResponseProcessor.
  */
 Client.prototype.getAutoResponseProcessor = function() {
-    return this.autoResponseProcessor;
-};
-
-/**
- * Reload the client's CommandProcessor and AutoResponseProcessor.
- */
-Client.prototype.reloadProcessors = function() {
-    delete this.commandProcessor;
-    delete this.autoResponseProcessor;
-    var CommandProcessor = require("../CommandProcessor");
-    var AutoResponseProcessor = require("../AutoResponseProcessor");
-    this.commandProcessor = new CommandProcessor(this.log);
-    this.autoResponseProcessor = new AutoResponseProcessor(this.log);
+    return this.getClientManager().getAutoResponseProcessor();
 };
 
 /**
@@ -404,8 +384,6 @@ Client.prototype.destroy = function() {
     this.ircClient = null;
     this.clientManager = null;
     this.isTemporary = null;
-    this.commandProcessor = null;
-    this.autoResponseProcessor = null;
     this.botID = null;
     this.alert = null;
 

@@ -17,6 +17,8 @@
 
 var Client = require("./Client/Client");
 var Builder = require("./Client/Builder");
+var CommandProcessor = require("../CommandProcessor");
+var AutoResponseProcessor = require("../AutoResponseProcessor");
 var GitListener = require('./GitListener');
 
 /**
@@ -39,6 +41,12 @@ function ClientManager(config, logger) {
 
     // builder
     this.builder = new Builder(logger);
+
+    // The CommandProcessor.
+    this.commandProcessor = new CommandProcessor(this.log);
+
+    // The AutoResponseProcessor.
+    this.autoResponseProcessor = new AutoResponseProcessor(this.log);
 
     this.log.info("Creating Git Listener");
     this.gitListener = new GitListener(this, logger);
@@ -76,6 +84,10 @@ ClientManager.prototype.softReload = function() {
             delete require.cache[prop];
         }
     }
+
+    //reload the CommandProcessor and AutoResponseProcessor.
+    this.commandProcessor = new (require("../CommandProcessor"))(this.log);
+    this.autoResponseProcessor = new (require("../AutoResponseProcessor"))(this.log);
 
     //now we can reload all the clients.
     this.reloadClients();
@@ -178,4 +190,13 @@ ClientManager.prototype.shutdown = function(msg) {
 ClientManager.prototype.getAPI = function(api_name) {
     return (this.APIs[api_name] || null);
 };
+
+ClientManager.prototype.getCommandProcessor = function() {
+    return this.commandProcessor;
+};
+
+ClientManager.prototype.getAutoResponseProcessor = function() {
+    return this.autoResponseProcessor;
+};
+
 module.exports = ClientManager;
