@@ -17,8 +17,8 @@
 
 var Client = require("./Client/Client");
 var Builder = require("./Client/Builder");
-var CommandProcessor = require("../CommandProcessor");
-var AutoResponseProcessor = require("../AutoResponseProcessor");
+var CommandProcessor = require("./CommandProcessor");
+var AutoResponseProcessor = require("./AutoResponseProcessor");
 var GitListener = require('./GitListener');
 
 /**
@@ -86,8 +86,8 @@ ClientManager.prototype.softReload = function() {
     }
 
     //reload the CommandProcessor and AutoResponseProcessor.
-    this.commandProcessor = new (require("../CommandProcessor"))(this.log);
-    this.autoResponseProcessor = new (require("../AutoResponseProcessor"))(this.log);
+    this.commandProcessor = new (require("./CommandProcessor"))(this.log);
+    this.autoResponseProcessor = new (require("./AutoResponseProcessor"))(this.log);
 
     //now we can reload all the clients.
     this.reloadClients();
