@@ -46,7 +46,7 @@ function Bible(logger) {
 
 Bible.prototype.execute = function(context) {
     //if we got no arguments, pick a random verse.
-    if(!context.arguments.length) {getClientManager().getAPI("Bible").getBibleVerses("random", this.sendResponse);return true;}
+    if(!context.arguments.length) {getClientManager().getAPI("Bible").getBibleVerses("random", context, this.sendResponse);return true;}
 
     var cachedResponse = this.cache.getCached(("Bible"+context.arguments.join(" ")).sha1());
     if(cachedResponse) {
