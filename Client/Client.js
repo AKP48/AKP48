@@ -302,6 +302,7 @@ Client.prototype.initialize = function(clientManager, holdIRCClient) {
 
     //attempt to remove eventListeners, then add new one.
     this.ircClient.removeAllListeners('message');
+    this.ircClient.removeAllListeners('action');
 
     var self = this;
 
