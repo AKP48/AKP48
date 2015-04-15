@@ -179,7 +179,7 @@ GitListener.prototype.handle = function (branch, data) {
 
         var shutdown = changing_branch;
         var npm = changing_branch;
-        var hot_files = ['server.js', 'GitListener.js', 'ClientManager.js', 'API/index.js'];
+        var hot_files = ['server.js', 'GitListener.js', 'ClientManager.js'];
 
         if (!shutdown) {
             data.commits.some(function (commit) {
@@ -188,7 +188,6 @@ GitListener.prototype.handle = function (branch, data) {
                         shutdown = true;
                     } else if (file === 'package.json') {
                         npm = true;
-                        shutdown = true;
                     }
                     return shutdown;
                 });
