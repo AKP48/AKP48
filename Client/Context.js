@@ -100,7 +100,7 @@ Context.prototype.getCommands = function() {
 };
 
 Context.prototype.setCommand = function(command) {
-    this.command = command;
+    this.command = command.toLowerCase();
 };
 
 Context.prototype.getCommand = function() {
