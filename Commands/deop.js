@@ -23,7 +23,7 @@ function DeOp() {
     this.helpText = "Removes Op status from a person or people.";
 
     //usage message. only include the parameters. the command name will be automatically added.
-    this.usageText = "&lt;person&gt; [person2, person3, ...]";
+    this.usageText = "<person> [person2, person3, ...]";
 
     //ways to call this command.
     this.aliases = ['deop'];

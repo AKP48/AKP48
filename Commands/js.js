@@ -31,7 +31,7 @@ function Js(logger) {
     this.helpText = "Runs Javascript code. If first parameter is a URL, runs code contained at that URL.";
 
     //usage message. only include the parameters. the command name will be automatically added.
-    this.usageText = "&lt;code&gt;";
+    this.usageText = "<code>";
 
     //ways to call this command.
     this.aliases = ['js', '>'];

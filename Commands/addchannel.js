@@ -23,7 +23,7 @@ function AddChannel() {
     this.helpText = "Connects to a new channel.";
 
     //usage message. only include the parameters. the command name will be automatically added.
-    this.usageText = "&lt;channelName&gt;";
+    this.usageText = "<channelName>";
 
     //ways to call this command.
     this.aliases = ['addchannel', 'addchan'];

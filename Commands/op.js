@@ -23,7 +23,7 @@ function Op() {
     this.helpText = "Gives Op status to a person or people.";
 
     //usage message. only include the parameters. the command name will be automatically added.
-    this.usageText = "&lt;person&gt; [person2, person3, ...]";
+    this.usageText = "<person> [person2, person3, ...]";
 
     //ways to call this command.
     this.aliases = ['op'];
