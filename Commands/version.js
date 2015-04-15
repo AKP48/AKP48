@@ -69,7 +69,7 @@ Version.prototype.buildVersion = function() {
             version += "-".append(gitSHA);
         }
         if (tagOrBranch) {
-            version += "|".append(tagOrBranch);
+            version += "/".append(tagOrBranch);
         }
     }
     return version;
