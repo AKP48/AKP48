@@ -64,26 +64,13 @@ ActionHandler.prototype.process = function(message, client) {
  * @param  {Context} context The context to execute handlers for.
  */
 ActionHandler.prototype.executeAll = function(context) {
-    var things = context.getFullMessage().split(" ");
-    var responses = 0;
-    var runs = {};
-    for (var i = 0; i < things.length && responses < 3; i++) {
-        // This loop runs through all handlers and attempts to execute them.
-        this.handlers.every(function (handler) {
-            // Assign property if we haven't yet
-            if (!runs.hasOwnProperty(handler)) {
-                runs[handler] = 0;
-            }
-
-            //if the handler's regex matches, execute handler.
-            if (things[i].search(handler.regex) != -1 && (!handler.limit || runs[handler] < handler.limit)) {
-                handler.execute(things[i], context);
-                runs[handler]++;
-                responses++;
-            }
-            return responses < 3;
-        });
-    };
+    // This loop runs through all handlers and attempts to execute them.
+    this.handlers.every(function (handler) {
+        //if the handler's regex matches, execute handler.
+        if (context.getFullMessage().search(handler.regex)) {
+            handler.execute(things[i], context);
+        }
+    });
 }
 
 //export the module
