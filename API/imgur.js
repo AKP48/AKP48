@@ -90,6 +90,11 @@ Imgur.prototype.getGalleryInfo = function(image_id, callback) {
     });
 };
 
+Imgur.prototype.getSubredditInfo = function(image_id, subreddit, callback) {
+    this.log.info({id: image_id}, "Getting subreddit image information from imgur.");
+    return this.getGalleryInfo('r/'+subreddit+'/'+image_id, callback);
+};
+
 Imgur.prototype.getAlbumInfo = function(image_id, callback) {
     this.log.info({id: image_id}, "Getting album information from imgur.");
     this.client.get('album/' + image_id, function(err, res, body) {

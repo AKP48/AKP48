@@ -48,6 +48,9 @@ function ClientManager(config, logger) {
     // The AutoResponseProcessor.
     this.autoResponseProcessor = new AutoResponseProcessor(this.log);
 
+    // The cache.
+    this.cache = new (require("./lib/cache"))(logger);
+
     this.log.info("Creating Git Listener");
     this.gitListener = new GitListener(this, logger);
 }
@@ -200,6 +203,10 @@ ClientManager.prototype.getCommandProcessor = function() {
 
 ClientManager.prototype.getAutoResponseProcessor = function() {
     return this.autoResponseProcessor;
+};
+
+ClientManager.prototype.getCache = function() {
+    return this.cache;
 };
 
 module.exports = ClientManager;
