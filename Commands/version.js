@@ -49,7 +49,8 @@ function Version(logger) {
 }
 
 Version.prototype.execute = function(context) {
-    if (context.getArguments().length > 0 && context.getUser().hasPermission("netop.command.use")) {
+    //if the user is a netop, send them the version the files are on, which may not be the version the server is running.
+    if (context.getUser().hasPermission("netop.command.use")) {
         context.getClient().getIRCClient().notice(context.getUser().getNick(), "Server: "+this.buildVersion());
     }
 
@@ -68,7 +69,7 @@ Version.prototype.buildVersion = function() {
             version += "-".append(gitSHA);
         }
         if (tagOrBranch) {
-            version += "/".append(tagOrBranch);
+            version += "|".append(tagOrBranch);
         }
     }
     return version;
