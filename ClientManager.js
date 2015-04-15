@@ -97,7 +97,7 @@ ClientManager.prototype.softReload = function() {
     this.autoResponseProcessor = new (require("./AutoResponseProcessor"))(this.log);
 
     //reload the ActionHandler
-    this.actionHandler = require("./ActionHandler")(this.log);
+    this.actionHandler = new (require("./ActionHandler"))(this.log);
 
     //reload the API loader
     this.APIs = require("./API/")(this.log);
