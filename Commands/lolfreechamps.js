@@ -36,21 +36,18 @@ function LoLFreeChamps(logger) {
 
     //whether or not to only allow this command if it's in a private message.
     this.isPmOnly = false;
-
-    //cache
-    this.cache = new (require('../lib/cache'))(logger);
 }
 
 LoLFreeChamps.prototype.execute = function(context) {
     var self = this;
-    var cachedResponse = this.cache.getCached(("RitoPlsGiveMeFreeChamps").sha1());
+    var cachedResponse = getClientManager().getCache().getCached(("RitoPlsGiveMeFreeChamps").sha1());
     if(cachedResponse) {
         context.getClient().say(context, cachedResponse);
         return true;
     }
     getClientManager().getAPI("Riot").getFreeChamps(function(msg){
         var cacheExpire = (Date.now() / 1000 | 0) + 1800; //make cache expire in 30 minutes
-        self.cache.addToCache(("RitoPlsGiveMeFreeChamps").sha1(), msg, cacheExpire);
+        getClientManager().getCache().addToCache(("RitoPlsGiveMeFreeChamps").sha1(), msg, cacheExpire);
         context.getClient().say(context, msg);
     });
     return true;

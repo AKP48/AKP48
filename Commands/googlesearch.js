@@ -36,22 +36,19 @@ function GoogleSearch(logger) {
 
     //whether or not to only allow this command if it's in a private message.
     this.isPmOnly = false;
-
-    //cache
-    this.cache = new (require('../lib/cache'))(logger);
 }
 
 GoogleSearch.prototype.execute = function(context) {
     if(!context.arguments.length) {return false;}
     var self = this;
-    var cachedResponse = this.cache.getCached(("GoogleSearch"+context.arguments.join(" ")).sha1());
+    var cachedResponse = getClientManager().getCache().getCached(("GoogleSearch"+context.arguments.join(" ")).sha1());
     if(cachedResponse) {
         context.getClient().say(context, cachedResponse);
         return true;
     }
     getClientManager().getAPI("Google").search(context.arguments.join(" "), "web", function(msg) {
         var cacheExpire = (Date.now() / 1000 | 0) + 86400; //make cache expire in 1 day
-        self.cache.addToCache(("GoogleSearch"+context.arguments.join(" ")).sha1(), msg, cacheExpire);
+        getClientManager().getCache().addToCache(("GoogleSearch"+context.arguments.join(" ")).sha1(), msg, cacheExpire);
         context.getClient().say(context, msg);
     });
     return true;

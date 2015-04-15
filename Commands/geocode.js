@@ -36,9 +36,6 @@ function Geocode(logger) {
 
     //whether or not to only allow this command if it's in a private message.
     this.isPmOnly = false;
-
-    //cache
-    this.cache = new (require('../lib/cache'))(logger);
 }
 
 Geocode.prototype.execute = function(context) {
@@ -61,7 +58,7 @@ Geocode.prototype.execute = function(context) {
     }
 
     var self = this;
-    var cachedResponse = this.cache.getCached(("Geocoder"+location+region).sha1());
+    var cachedResponse = getClientManager().getCache().getCached(("Geocoder"+location+region).sha1());
     if(cachedResponse) {
         context.getClient().say(context, cachedResponse);
         return true;
@@ -69,7 +66,7 @@ Geocode.prototype.execute = function(context) {
 
     getClientManager().getAPI("Google").geocode(location, region, function(msg){
         var cacheExpire = (Date.now() / 1000 | 0) + 86400; //make cache expire in 1 day
-        self.cache.addToCache(("Geocoder"+location+region).sha1(), msg, cacheExpire);
+        getClientManager().getCache().addToCache(("Geocoder"+location+region).sha1(), msg, cacheExpire);
         context.getClient().say(context, msg);
     });
     return true;

@@ -39,15 +39,12 @@ function MinecraftServerStatus(logger) {
 
     //whether or not to only allow this command if it's in a private message.
     this.isPmOnly = false;
-
-    //cache
-    this.cache = new (require('../lib/cache'))(logger);
 }
 
 MinecraftServerStatus.prototype.execute = function(context) {
     var apiClient = request.newClient("https://status.mojang.com/");
     var self = this;
-    var cachedResponse = this.cache.getCached(("MinecraftServerStatus").sha1());
+    var cachedResponse = getClientManager().getCache().getCached(("MinecraftServerStatus").sha1());
     if(cachedResponse) {
         context.getClient().say(context, cachedResponse);
         return true;
@@ -107,7 +104,7 @@ MinecraftServerStatus.prototype.execute = function(context) {
         }
 
         var cacheExpire = (Date.now() / 1000 | 0) + 30; //make cache expire in 30 seconds
-        self.cache.addToCache(("MinecraftServerStatus").sha1(),outputString, cacheExpire);
+        getClientManager().getCache().addToCache(("MinecraftServerStatus").sha1(),outputString, cacheExpire);
 
         context.getClient().say(context, outputString);
     });
