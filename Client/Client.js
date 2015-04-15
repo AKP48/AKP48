@@ -218,7 +218,7 @@ Client.prototype.removeChannel = function(channel) {
  */
 Client.prototype.getChannel = function(channame) {
     for (var i = 0; i < this.channels.length; i++) {
-        if(this.channels[i].name === channame) {
+        if(this.channels[i].name.toLowerCase() === channame.toLowerCase()) {
             return this.channels[i];
         }
     };
