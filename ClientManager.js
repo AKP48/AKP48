@@ -90,7 +90,7 @@ ClientManager.prototype.softReload = function() {
     this.autoResponseProcessor = new (require("./AutoResponseProcessor"))(this.log);
 
     //reload the API loader
-    this.APIs = require("./API/")(logger);
+    this.APIs = require("./API/")(this.log);
 
     //now we can reload all the clients.
     this.reloadClients();
