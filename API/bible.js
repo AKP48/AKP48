@@ -24,11 +24,11 @@ function Bible(logger) {
     this.log = logger.child({module: "Bible API"});
 }
 
-Bible.prototype.getBibleVerses = function(verses, context, callback, thisVar) {
+Bible.prototype.getBibleVerses = function(verses, context, callback) {
     this.log.debug({verses: verses}, "Getting Bible verses.");
     this.client.get('/api/?type=json&passage=' + verses, function(err, res, body) {
-        if(!err) {callback(body, context, thisVar); return;}
-        callback(null, context, thisVar);
+        if(!err) {callback(body, context); return;}
+        callback(null, context);
     });
 };
 
