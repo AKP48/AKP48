@@ -68,7 +68,7 @@ ActionHandler.prototype.executeAll = function(context) {
     this.handlers.every(function (handler) {
         //if the handler's regex matches, execute handler.
         if (context.getFullMessage().search(handler.regex)) {
-            handler.execute(things[i], context);
+            handler.execute(context.getFullMessage(), context);
         }
     });
 }
