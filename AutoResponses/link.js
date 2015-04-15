@@ -266,6 +266,16 @@ LinkHandler.prototype.ImgurLink = function(link, context) {
                             }
                         });
                     }
+
+                    if(info[0] == "r") {
+                        this.log.debug("Handling as subreddit image.");
+                        getClientManager().getAPI("Imgur").getSubredditInfo(info[2], info[1], function(image) {
+                            if(image) {
+                                self.cache.addToCache(link.sha1(), self.constructImgurString(image), cacheExpire);
+                                context.getClient().getIRCClient().say(context.getChannel().getName(), self.constructImgurString(image));
+                            }
+                        });
+                    }
                 } else {
                     //if info is only one part, we know it has to be a direct image.
                     this.log.debug("Handling as direct image.");
