@@ -26,7 +26,7 @@ function AyyActionHandler(logger) {
     this.allowPm = true;
 
     //the regex used to match this handler
-    this.regex = /ayy|wat/i;
+    this.regex = /ayy/i;
 
     // the amount of times we should respond with this handler, 0 is no limit
     this.limit = 1;
