@@ -65,7 +65,7 @@ ActionHandler.prototype.process = function(message, client) {
  */
 ActionHandler.prototype.executeAll = function(context) {
     // This loop runs through all handlers and attempts to execute them.
-    this.handlers.every(function (handler) {
+    this.handlers.each(function (handler) {
         //if the handler's regex matches, execute handler.
         if (context.getFullMessage().search(handler.regex) != -1) {
             handler.execute(context.getFullMessage(), context);
