@@ -15,18 +15,18 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-function Restart() {
+function Shutdown() {
     //the name of the command.
-    this.name = "Restart";
+    this.name = "Shutdown";
 
     //help text to show for this command.
-    this.helpText = "Gracefully restarts the client connected to this server.";
+    this.helpText = "Shuts down the IRC bot completely.";
 
     //usage message. only include the parameters. the command name will be automatically added.
     this.usageText = "[message]";
 
     //ways to call this command.
-    this.aliases = ['restart', 'rs'];
+    this.aliases = ['shutdown', 'restart', 'rs'];
 
     //Name of the permission needed to use this command. All users have 'user.command.use' by default. Banned users have 'user.command.banned' by default.
     this.permissionName = 'netop.command.use';
@@ -38,7 +38,7 @@ function Restart() {
     this.isPmOnly = true;
 }
 
-Restart.prototype.execute = function(context) {
+Shutdown.prototype.execute = function(context) {
     var msg = "Goodbye.";
 
     if(context.arguments[0]) {
@@ -49,4 +49,4 @@ Restart.prototype.execute = function(context) {
     return true;
 };
 
-module.exports = Restart;
+module.exports = Shutdown;

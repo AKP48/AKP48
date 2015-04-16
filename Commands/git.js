@@ -24,7 +24,7 @@ function Git(logger) {
     this.helpText = "Allows controlling of the repository this bot is running off.";
 
     //usage message. only include the parameters. the command name will be automatically added.
-    this.usageText = "checkout &lt;branch&gt; | fetch";
+    this.usageText = "checkout <branch> | fetch";
 
     //ways to call this command.
     this.aliases = ['git'];

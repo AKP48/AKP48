@@ -23,7 +23,7 @@ function GetChar() {
     this.helpText = "Gets characters based on decimal character code.";
 
     //usage message. only include the parameters. the command name will be automatically added.
-    this.usageText = "&lt;character...&gt;";
+    this.usageText = "<character...>";
 
     //ways to call this command.
     this.aliases = ['getchar', 'getcharacter'];

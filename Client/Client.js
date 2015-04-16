@@ -218,7 +218,7 @@ Client.prototype.removeChannel = function(channel) {
  */
 Client.prototype.getChannel = function(channame) {
     for (var i = 0; i < this.channels.length; i++) {
-        if(this.channels[i].name === channame) {
+        if(this.channels[i].name.toLowerCase() === channame.toLowerCase()) {
             return this.channels[i];
         }
     };
@@ -266,6 +266,14 @@ Client.prototype.getAutoResponseProcessor = function() {
 };
 
 /**
+ * Get the ActionHandler from the ClientManager.
+ * @return {ActionHandler} The ActionHandler.
+ */
+Client.prototype.getActionHandler = function() {
+    return this.getClientManager().getActionHandler();
+};
+
+/**
  * Initialize the Client by creating an IRC client.
  */
 Client.prototype.initialize = function(clientManager, holdIRCClient) {
@@ -294,6 +302,7 @@ Client.prototype.initialize = function(clientManager, holdIRCClient) {
 
     //attempt to remove eventListeners, then add new one.
     this.ircClient.removeAllListeners('message');
+    this.ircClient.removeAllListeners('action');
 
     var self = this;
 
@@ -303,6 +312,11 @@ Client.prototype.initialize = function(clientManager, holdIRCClient) {
         if(!self.getCommandProcessor().process(message, self)) {
             self.getAutoResponseProcessor().process(message, self);
         }
+    });
+
+    this.ircClient.on('action', function(from, to, text, message) {
+        //on each IRC action, run the action handler.
+        self.getActionHandler().process(message, self);
     });
 
     var botID = this.botID;

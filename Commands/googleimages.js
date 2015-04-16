@@ -23,7 +23,7 @@ function GoogleImages(logger) {
     this.helpText = "Returns the first result of a Google Image search.";
 
     //usage message. only include the parameters. the command name will be automatically added.
-    this.usageText = "&lt;query&gt;";
+    this.usageText = "<query>";
 
     //ways to call this command.
     this.aliases = ['gi', 'images', 'googleimages', 'askgaminggforapicture'];
