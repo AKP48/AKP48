@@ -43,7 +43,7 @@ ActionHandler.prototype.process = function(message, client) {
     if(!context || context.getFullMessage().startsWith(client.botID)) {
         this.log.debug({
             reason: "User identifies as a bot, or a context wasn't created."
-        }, "AutoResponse execution blocked.");
+        }, "ActionHandler execution blocked.");
         return false;
     }
 
@@ -55,7 +55,7 @@ ActionHandler.prototype.process = function(message, client) {
         this.log.debug({
             user: context.getUser().getNick(),
             reason: "User is banned."
-        }, "AutoResponse execution blocked.");
+        }, "ActionHandler execution blocked.");
     }
 };
 
