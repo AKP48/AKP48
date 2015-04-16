@@ -66,10 +66,10 @@ Version.prototype.buildVersion = function() {
         var tagOrBranch = git.getBranch() || git.getTag();
 
         if (gitSHA) {
-            version += "-".append(gitSHA);
+            version += "+".append(gitSHA);
         }
         if (tagOrBranch) {
-            version += "/".append(tagOrBranch);
+            version += "-".append(tagOrBranch);
         }
     }
     return version;
