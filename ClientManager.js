@@ -19,6 +19,7 @@ var Client = require("./Client/Client");
 var Builder = require("./Client/Builder");
 var CommandProcessor = require("./CommandProcessor");
 var AutoResponseProcessor = require("./AutoResponseProcessor");
+var ActionHandler = require("./ActionHandler");
 var GitListener = require('./GitListener');
 
 /**
@@ -47,6 +48,9 @@ function ClientManager(config, logger) {
 
     // The AutoResponseProcessor.
     this.autoResponseProcessor = new AutoResponseProcessor(this.log);
+
+    // The ActionHandler.
+    this.actionHandler = new ActionHandler(this.log);
 
     // The cache.
     this.cache = new (require("./lib/cache"))(logger);
@@ -91,6 +95,9 @@ ClientManager.prototype.softReload = function() {
     //reload the CommandProcessor and AutoResponseProcessor.
     this.commandProcessor = new (require("./CommandProcessor"))(this.log);
     this.autoResponseProcessor = new (require("./AutoResponseProcessor"))(this.log);
+
+    //reload the ActionHandler
+    this.actionHandler = new (require("./ActionHandler"))(this.log);
 
     //reload the API loader
     this.APIs = require("./API/")(this.log);
@@ -203,6 +210,10 @@ ClientManager.prototype.getCommandProcessor = function() {
 
 ClientManager.prototype.getAutoResponseProcessor = function() {
     return this.autoResponseProcessor;
+};
+
+ClientManager.prototype.getActionHandler = function() {
+    return this.actionHandler;
 };
 
 ClientManager.prototype.getCache = function() {
