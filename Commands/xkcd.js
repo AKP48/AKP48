@@ -54,6 +54,7 @@ XKCD.prototype.execute = function(context) {
 
 XKCD.prototype.sendResponse = function(response, context, latest) {
     if(!latest) {
+        response += " - http://xkcd.com/"+context.arguments[0];
         var cacheExpire = (Date.now() / 1000 | 0) + 1576800000; //make cache expire in 50 years
         getClientManager().getCache().addToCache(("XKCD"+context.arguments.join(" ")).sha1(), response, cacheExpire);
     }
