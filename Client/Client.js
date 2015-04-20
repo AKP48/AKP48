@@ -16,7 +16,6 @@
  */
 
 var irc = require('irc');
-var Channel = require('./Channel');
 
 /**
  * An IRC client.
@@ -186,45 +185,43 @@ Client.prototype.getChannels = function() {
 
 /**
  * Add a channel.
- * @param {Channel} channel Channel to add.
+ * @param {String} channel Channel to add.
  */
-Client.prototype.addChannel = function(channel) {
+Client.prototype.addChannel = function(channel, callback) {
     //just return if this channel is already in the array.
-    if (typeof channel === 'string') {
-        channel = Channel.build({name: channel}, this.log);
-        channel.client = this;
+    if(this.channels.indexOf(channel) == -1) {
+        this.channels.push(channel);
+        if(this.getIRCClient()) {
+            this.getIRCClient().join(channel, callback);
+        }
     }
-    this.channels.push(channel);
 };
 
 /**
  * Remove a channel.
- * @param  {Channel} channel Channel to remove.
- * @return {Boolean}         Whether or not the channel was removed.
+ * @param  {String} channel Channel to remove.
  * @TODO Make IRC client disconnect upon changing here.
  */
-Client.prototype.removeChannel = function(channel) {
+Client.prototype.removeChannel = function(channel, message, callback) {
     //get index of channel, -1 if non-existent
     var index = this.channels.indexOf(channel);
     if(index > -1) {
         this.channels.splice(index, 1);
+        this.getIRCClient().part(channel, message, callback);
         return true;
     }
-
     return false;
 };
 
 /**
- * Get channel.
- * @param  {String}  The channel's name.
- * @return {Channel} The channel.
+ * Whether or not the client is in a channel.
+ * @param  {String}  channel The channel to check.
+ * @return {Boolean}         Whether or not we're there.
  */
-Client.prototype.getChannel = function(channame) {
-    for (var i = 0; i < this.channels.length; i++) {
-        if(this.channels[i].name.toLowerCase() === channame.toLowerCase()) {
-            return this.channels[i];
-        }
-    };
+Client.prototype.isInChannel = function(channel) {
+    if(this.channels.indexOf(channel) != -1) {
+        return true;
+    }
     return false;
 };
 
@@ -292,9 +289,8 @@ Client.prototype.initialize = function(clientManager, holdIRCClient) {
 
     //loop to get channel names
     this.getChannels().each(function (channel) {
-        var name = channel.getName();
-        if(name && name.isChannel()) {
-            channels.push(name);
+        if(channel.isChannel()) {
+            channels.push(channel);
         }
     });
 
@@ -453,17 +449,13 @@ module.exports.build = function build(options, logger) {
     if(options.password) {
         client.setPassword(options.password);
     }
-    if (options.alert) {
-        options.alert.each(function(arg){
-            if (typeof arg === 'string') {
-                client.alert.push(arg);
-            }
-        });
-    }
-    
+
     var channels = (require("../data/config/channels/"+options.uuid+".json"));
     for (var i = 0; i < channels.length; i++) {
-        client.addChannel(Channel.build(channels[i], log));
+        client.addChannel(channel);
+        if(channels[i].alert) {
+            client.alert.push(channel);
+        }
     };
 
     log.debug("Built client", client.getNick(), "on", client.getServer()+":"+client.getPort()+".");
