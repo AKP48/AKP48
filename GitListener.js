@@ -18,7 +18,7 @@
 // We need the shell
 require('shelljs/global');
 
-var config = require("./config.json");
+var config = require("./data/config/config");
 var GitHooks = require("githubhook");
 var Git = require("./API/git");
 var Google = require("./API/google");

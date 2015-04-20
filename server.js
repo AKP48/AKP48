@@ -17,7 +17,7 @@
 
 var path = require('path');
 var bunyan = require('bunyan');
-var config = require('./config.json');
+var config = require('./data/config/config');
 
 var streams = [{
     stream: process.stdout,
