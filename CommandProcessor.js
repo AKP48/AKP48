@@ -111,7 +111,7 @@ CommandProcessor.prototype.process = function(message, client) {
             }
 
             //check privilege
-            if(!context.getUser().hasPermission(context.getCommand().permissionName) && !context.user.hasPermission("root.command.use")) {
+            if(context.getCommand().permissionName && context.getUser().hasPermission(context.getCommand().permissionName) && !context.getUser().hasPermission("root.command.use")) {
                 this.log.debug({
                     user: context.getUser().getNick(),
                     command: context.getCommand().name,
