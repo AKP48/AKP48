@@ -452,9 +452,9 @@ module.exports.build = function build(options, logger) {
 
     var channels = (require("../data/config/channels/"+options.uuid+".json"));
     for (var i = 0; i < channels.length; i++) {
-        client.addChannel(channel);
+        client.addChannel(channels[i].name);
         if(channels[i].alert) {
-            client.alert.push(channel);
+            client.alert.push(channels[i].name);
         }
     };
 
