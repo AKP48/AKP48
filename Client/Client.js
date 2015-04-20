@@ -461,7 +461,7 @@ module.exports.build = function build(options, logger) {
         });
     }
     
-    var channels = (require("../data/config/channels/"+this.uuid+".json"));
+    var channels = (require("../data/config/channels/"+options.uuid+".json"));
     for (var i = 0; i < channels.length; i++) {
         client.addChannel(Channel.build(channels[i], log));
     };
