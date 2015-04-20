@@ -1,0 +1,11 @@
+[
+    {
+        "name": "#botplace",
+        "commandDelimiter": "."
+    },
+    {
+        "name": "#channel",
+        "commandDelimiter": "!",
+        "mcBots": ["craftIRCBot"]
+    }
+]

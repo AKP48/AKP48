@@ -460,11 +460,12 @@ module.exports.build = function build(options, logger) {
             }
         });
     }
-    if(options.channels) {
-        for (var i = 0; i < options.channels.length; i++) {
-            client.addChannel(Channel.build(options.channels[i], log));
-        };
-    }
+    
+    var channels = (require("../data/config/channels/"+this.uuid+".json"));
+    for (var i = 0; i < channels.length; i++) {
+        client.addChannel(Channel.build(channels[i], log));
+    };
+
     log.debug("Built client", client.getNick(), "on", client.getServer()+":"+client.getPort()+".");
     //return it.
     return client;

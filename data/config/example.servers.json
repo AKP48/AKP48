@@ -23,6 +23,6 @@
         "nick": "IRCBot9000", // Nick to use on the IRC server.
         "realname": "IRCBot9000", // Real name to use on the IRC server.
         "username": "IRCBot9000", // User name to use on the IRC server.
-        "password": "PasswordGoesHere", // Password the bot should use upon connecting.
+        "password": "PasswordGoesHere" // Password the bot should use upon connecting.
     }
 }
