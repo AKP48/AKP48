@@ -51,7 +51,7 @@ log.info("Initializing polyfill...");
 require('./polyfill.js')(log);
 
 log.info("Creating Client Manager.");
-var clientmanager = new ClientManager(config, log);
+var clientmanager = new ClientManager(log);
 
 GLOBAL.getClientManager = function() {
     return clientmanager;

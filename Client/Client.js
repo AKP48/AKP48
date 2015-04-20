@@ -25,6 +25,9 @@ function Client(logger) {
     // The logger this client uses.
     this.log = logger.child({module: "Client"});
 
+    // This client's UUID.
+    this.uuid = "";
+
     // The nickname this client uses.
     this.nick = "IRCBot9000";
 
@@ -353,33 +356,19 @@ Client.prototype.say = function(context, message) {
 };
 
 /**
- * Clone this Client for configuration-saving.
- * @return {Client} The client.
+ * Get an object for the configuration file.
+ * @return {Object} The configuration object.
  */
-Client.prototype.clone = function() {
-    //just return a blank object if this is supposed to be temporary.
-    if(this.isTemporary) {return {};}
-
-    //create new client, set options
-    var client = new Client();
-    client.setNick(this.getNick());
-    client.setServer(this.getServer());
-    client.setPassword(this.getPassword());
-
-    //looping through all channels to fix having a blank channel.
-    for (var i = 0; i < this.getChannels().length; i++) {
-        if(this.getChannels()[i].getName !== "") {
-            client.addChannel(this.getChannels()[i]);
-        }
-    };
-
-    this.alert.each(
-function (channel) {
-        client.alert.push(channel);
-    });
-
-    //return the new client
-    return client;
+Client.prototype.getConfigObject = function() {
+    return {
+        "uuid": this.uuid,
+        "nick": this.getNick(),
+        "server": this.getServer(),
+        "port": this.getPort(),
+        "username": this.getUserName(),
+        "realname": this.getRealName(),
+        "password": this.getPassword()
+    }
 };
 
 /**
@@ -396,6 +385,7 @@ Client.prototype.shutdown = function(msg) {
  */
 Client.prototype.destroy = function() {
     this.log.debug("Destroying client", this.getNick(), "on", this.getServer()+":"+this.getPort()+".");
+    this.uuid = null;
     this.nick = null;
     this.server = null;
     this.port = null;
@@ -409,6 +399,7 @@ Client.prototype.destroy = function() {
     this.botID = null;
     this.alert = null;
 
+    delete this.uuid;
     delete this.nick;
     delete this.server;
     delete this.port;
@@ -441,6 +432,9 @@ module.exports.build = function build(options, logger) {
     var log = logger.child({module: "Client.build"});
 
     //set the options, if we get them.
+    if(options.uuid) {
+        client.uuid = options.uuid;
+    }
     if(options.nick) {
         client.setNick(options.nick);
     }

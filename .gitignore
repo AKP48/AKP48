@@ -41,8 +41,13 @@ node_modules
 # sftp configuration file
 sftp-config.json
 
-# AKP48 config file
-config.json
+# AKP48 config files
+!data/config/
+data/config/*
+!data/config/example.*
+!data/config/perm
+data/config/perm/*
+!data/config/perm/example.*
 
 # Custom modules
 custom-*

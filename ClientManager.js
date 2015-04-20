@@ -27,7 +27,7 @@ var GitListener = require('./GitListener');
  * @param {JSON}   config The IRCBot configuration.
  * @param {Logger} logger The bunyan logger.
  */
-function ClientManager(config, logger) {
+function ClientManager(logger) {
     // The logger.
     this.log = logger.child({module: "ClientManager"});
 
@@ -38,7 +38,7 @@ function ClientManager(config, logger) {
     this.APIs = require("./API/")(logger);
 
     // load all of the clients on creation of this object.
-    this.loadClients(config);
+    this.loadClients(require('./data/config/servers.json'));
 
     // builder
     this.builder = new Builder(logger);
@@ -60,12 +60,12 @@ function ClientManager(config, logger) {
 }
 
 /**
- * Load all clients from config file.
- * @param {JSON} config The config file.
+ * Load all clients from server config file.
+ * @param {JSON} servers The server config file.
  */
-ClientManager.prototype.loadClients = function(config) {
+ClientManager.prototype.loadClients = function(servers) {
     this.log.info("Loading client information...");
-    config.servers.each(function (server) {
+    servers.each(function (server) {
         this.addClient(Client.build(server, this.log));
     }, this);
 };
@@ -125,6 +125,7 @@ ClientManager.prototype.reloadClients = function() {
 
         //build a new client using the values from this client.
         var tempClient = Client.build({
+            uuid: this.clients[i].uuid,
             nick: this.clients[i].getNick(),
             realname: this.clients[i].getRealName(),
             username: this.clients[i].getUserName(),
@@ -154,29 +155,14 @@ ClientManager.prototype.reloadClients = function() {
  * Save the configuration of this ClientManager.
  */
 ClientManager.prototype.save = function() {
-    this.log.info("Saving configuration...");
+    var serverArr = [];
 
-    //get the current config
-    var config = require("./config.json");
-    //remove the current server config
-    config.servers = [];
-
-    // TODO: fix this
     for (var i = 0; i < this.clients.length; i++) {
-        //copy the client, keeping only properties.
-        var client = this.clients[i].clone();
-
-        //delete everything we don't need to save.
-        delete client.commandProcessor;
-        delete client.ircClient;
-        delete client.clientManager;
-        delete client.isTemporary;
-
-        config.servers.push(client);
+        serverArr.push(this.clients[i].getConfigObject());
     };
 
-    require('fs').writeFile('./config.json', JSON.stringify(config, null, 4), function (err) {
-        if (err) return console.log(err);
+    require('fs').writeFile('./data/config/servers.json', JSON.stringify(serverArr, null, 4), function (err) {
+        if (err) return this.log.err(err, "Error saving configuration.");
         this.log.info('Configuration saved.');
     });
 };
