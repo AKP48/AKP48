@@ -65,18 +65,19 @@ Builder.prototype.buildContext = function(message, client) {
     var nick = message.nick;
     var prefix = message.prefix;
 
+    // TODO: Make this work again.
     //if the message is from a Minecraft bot, figure out who the user should be.
-    if(context.getChannel().getMcBots().indexOf(message.nick) !== -1){
-        //find nick
-        var start = message.args[1].indexOf('(');
-        var end = message.args[1].indexOf(')');
+    // if(context.getChannel().getMcBots().indexOf(message.nick) !== -1){
+    //     //find nick
+    //     var start = message.args[1].indexOf('(');
+    //     var end = message.args[1].indexOf(')');
 
-        //get the nickname
-        nick = message.args[1].substring(start + 1, end);
+    //     //get the nickname
+    //     nick = message.args[1].substring(start + 1, end);
 
-        //set hostmask
-        prefix = nick+"!"+message.user+"@"+message.host;
-    }
+    //     //set hostmask
+    //     prefix = nick+"!"+message.user+"@"+message.host;
+    // }
 
 
     //temporary var for the user.
