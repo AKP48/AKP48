@@ -59,17 +59,6 @@ Builder.prototype.buildContext = function(message, client) {
         context.setIsPm(true);
     }
 
-    //set channel to the channel we are trying to get.
-    channel = client.getChannel(channel);
-
-    //if the channel doesn't exist, return here.
-    if(!channel) {
-        this.log.debug({
-            reason: "Captured message was sent from self."
-        }, "Channel does not exist.");
-        return false;
-    }
-
     //set the channel in the context.
     context.setChannel(channel);
 
