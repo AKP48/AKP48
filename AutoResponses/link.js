@@ -205,9 +205,9 @@ LinkHandler.prototype.SteamApp = function(link, context) {
     var allstores = /allstores/i.exec(link);
     var self = this;
     if(id != null && noshow == null) {
-        var cacheExpire = (Date.now() / 1000 | 0) + 86400; //make cache expire in 1 day
-        getClientManager().getCache().addToCache(link.sha1(), res, cacheExpire);
         getClientManager().getAPI("Steam").getGame(id[1], function(res) {
+            var cacheExpire = (Date.now() / 1000 | 0) + 86400; //make cache expire in 1 day
+            getClientManager().getCache().addToCache(link.sha1(), res, cacheExpire);
             context.getClient().getIRCClient().say(context.getChannel().getName(), res);
         }, nohist, allstores);
     } else {
