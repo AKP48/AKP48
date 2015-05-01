@@ -61,7 +61,7 @@ LinkHandler.prototype.execute = function(word, context) {
     var cachedResponse = getClientManager().getCache().getCached(word.sha1());
     if(cachedResponse) {
         this.log.debug({url: word, response: cached}, "Sending response from cache.");
-        context.getClient().getIRCClient().say(context.getChannel().getName(), cachedResponse);
+        context.getClient().getIRCClient().say(context.getChannel(), cachedResponse);
         return true;
     }
 
@@ -149,7 +149,7 @@ LinkHandler.prototype.handleLink = function(link, cached, context) {
                 oS += $("title").text().replace(/\r?\n/gm, "").trim().replace(/\s{2,}/g, ' ').append("\"");
                 var cacheExpire = (Date.now() / 1000 | 0) + 600; //make cache expire in 10 minutes
                 getClientManager().getCache().addToCache(link.sha1(), oS, cacheExpire);
-                context.getClient().getIRCClient().say(context.getChannel().getName(), oS);
+                context.getClient().getIRCClient().say(context.getChannel(), oS);
             } else {
                 self.log.error({res: response}, "Title unavailable for " + self.link);
             }
@@ -172,7 +172,7 @@ LinkHandler.prototype.YouTubeVideo = function(link, context) {
         getClientManager().getAPI("Google").youtube_video_info(id[1], function(res){
             var cacheExpire = (Date.now() / 1000 | 0) + 86400; //make cache expire in 1 day
             getClientManager().getCache().addToCache(link.sha1(), res, cacheExpire);
-            context.getClient().getIRCClient().say(context.getChannel().getName(), res);
+            context.getClient().getIRCClient().say(context.getChannel(), res);
         });
     } else {
         this.log.debug({reason: "Either no YouTube video ID was found, or the noinfo parameter was included."}, "Ignoring link.");
@@ -190,7 +190,7 @@ LinkHandler.prototype.SteamPackage = function(link, context) {
         getClientManager().getAPI("Steam").getPkg(id[1], function(res) {
             var cacheExpire = (Date.now() / 1000 | 0) + 86400; //make cache expire in 1 day
             getClientManager().getCache().addToCache(link.sha1(), res, cacheExpire);
-            context.getClient().getIRCClient().say(context.getChannel().getName(), res);
+            context.getClient().getIRCClient().say(context.getChannel(), res);
         }, nohist, allstores);
     } else {
         this.log.debug({reason: "Either no Steam package ID was found, or noinfo parameter was included."}, "Ignoring link.");
@@ -233,7 +233,7 @@ LinkHandler.prototype.ImgurLink = function(link, context) {
             getClientManager().getAPI("Imgur").getImageInfo(id[1], function(image) {
                 if(image) {
                     getClientManager().getCache().addToCache(link.sha1(), self.constructImgurString(image), cacheExpire);
-                    context.getClient().getIRCClient().say(context.getChannel().getName(), self.constructImgurString(image));
+                    context.getClient().getIRCClient().say(context.getChannel(), self.constructImgurString(image));
                 }
             });
         } else {
@@ -248,7 +248,7 @@ LinkHandler.prototype.ImgurLink = function(link, context) {
                         getClientManager().getAPI("Imgur").getGalleryInfo(info[1], function(image) {
                             if(image) {
                                 getClientManager().getCache().addToCache(link.sha1(), self.constructImgurString(image), cacheExpire);
-                                context.getClient().getIRCClient().say(context.getChannel().getName(), self.constructImgurString(image));
+                                context.getClient().getIRCClient().say(context.getChannel(), self.constructImgurString(image));
                             }
                         });
                     }
@@ -258,7 +258,7 @@ LinkHandler.prototype.ImgurLink = function(link, context) {
                         getClientManager().getAPI("Imgur").getAlbumInfo(info[1], function(image) {
                             if(image) {
                                 getClientManager().getCache().addToCache(link.sha1(), self.constructImgurString(image), cacheExpire);
-                                context.getClient().getIRCClient().say(context.getChannel().getName(), self.constructImgurString(image));
+                                context.getClient().getIRCClient().say(context.getChannel(), self.constructImgurString(image));
                             }
                         });
                     }
@@ -268,7 +268,7 @@ LinkHandler.prototype.ImgurLink = function(link, context) {
                         getClientManager().getAPI("Imgur").getSubredditInfo(info[2], info[1], function(image) {
                             if(image) {
                                 getClientManager().getCache().addToCache(link.sha1(), self.constructImgurString(image), cacheExpire);
-                                context.getClient().getIRCClient().say(context.getChannel().getName(), self.constructImgurString(image));
+                                context.getClient().getIRCClient().say(context.getChannel(), self.constructImgurString(image));
                             }
                         });
                     }
@@ -278,7 +278,7 @@ LinkHandler.prototype.ImgurLink = function(link, context) {
                     getClientManager().getAPI("Imgur").getImageInfo(info[0], function(image) {
                         if(image) {
                             getClientManager().getCache().addToCache(link.sha1(), self.constructImgurString(image), cacheExpire);
-                            context.getClient().getIRCClient().say(context.getChannel().getName(), self.constructImgurString(image));
+                            context.getClient().getIRCClient().say(context.getChannel(), self.constructImgurString(image));
                         }
                     });
                 }
@@ -335,7 +335,7 @@ LinkHandler.prototype.XKCDLink = function(link, context) {
                 if(res){
                     var cacheExpire = (Date.now() / 1000 | 0) + 1576800000; //make cache expire in 50 years
                     getClientManager().getCache().addToCache(link.sha1(), res, cacheExpire);
-                    context.getClient().getIRCClient().say(context.getChannel().getName(), res);
+                    context.getClient().getIRCClient().say(context.getChannel(), res);
                 }
             });
         } else {
@@ -347,7 +347,7 @@ LinkHandler.prototype.XKCDLink = function(link, context) {
                 if(res) {
                     var cacheExpire = (Date.now() / 1000 | 0) + 21600; //make cache expire in 6 hours
                     getClientManager().getCache().addToCache(link.sha1(), res, cacheExpire);
-                    context.getClient().getIRCClient().say(context.getChannel().getName(), res);
+                    context.getClient().getIRCClient().say(context.getChannel(), res);
                 }
             });
         }
@@ -359,7 +359,7 @@ LinkHandler.prototype.MALLink = function(link, context) {
     getClientManager().getAPI("MAL").getInfo(link, function(res){
         var cacheExpire = (Date.now() / 1000 | 0) + 21600; //make cache expire in 6 hours
         getClientManager().getCache().addToCache(link.sha1(), res, cacheExpire);
-        context.getClient().getIRCClient().say(context.getChannel().getName(), res);
+        context.getClient().getIRCClient().say(context.getChannel(), res);
     });
 }
 

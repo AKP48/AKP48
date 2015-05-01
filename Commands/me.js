@@ -36,7 +36,7 @@ function Me() {
 }
 
 Me.prototype.execute = function(context) {
-    var channel = context.getChannel().getName();
+    var channel = context.getChannel();
 
     //if we don't have any arguments, return.
     if(!context.arguments.length) {return false;}

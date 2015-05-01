@@ -37,7 +37,7 @@ function AlienHandler(logger) {
 
 AlienHandler.prototype.execute = function(word, context) {
     this.log.trace("ayy lmao");
-	context.getClient().getIRCClient().say(context.getChannel().getName(), "ayy lmao");
+	context.getClient().getIRCClient().say(context.getChannel(), "ayy lmao");
 };
 
 module.exports = AlienHandler;

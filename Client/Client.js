@@ -346,7 +346,7 @@ Client.prototype.initialize = function(clientManager, holdIRCClient) {
  * @param  {String}  message The message.
  */
 Client.prototype.say = function(context, message) {
-    var channel = (context.getChannel().getName() === "global" ? context.getUser().getNick() : context.getChannel().getName());
+    var channel = (context.getChannel() === "global" ? context.getUser().getNick() : context.getChannel());
     this.getIRCClient().say(channel, context.getUser().getNick() + ": " + message);
     this.log.trace({message: message, user: context.getUser().getNick(), channel: channel}, "Sent message.");
 };

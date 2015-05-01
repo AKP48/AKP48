@@ -36,7 +36,7 @@ function AyyActionHandler(logger) {
 }
 
 AyyActionHandler.prototype.execute = function(word, context) {
-    context.getClient().getIRCClient().say(context.getChannel().getName(), "ayy lmao");
+    context.getClient().getIRCClient().say(context.getChannel(), "ayy lmao");
 };
 
 module.exports = AyyActionHandler;

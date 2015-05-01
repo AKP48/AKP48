@@ -101,7 +101,7 @@ Choose.prototype.attack = function(context) {
     var person = context.arguments.randomElement(1);
 
     //say the result.
-    context.getClient().getIRCClient().say(context.getChannel().getName(), context.getUser().getNick() + " attacks " + person + ": " + atk + ".");
+    context.getClient().getIRCClient().say(context.getChannel(), context.getUser().getNick() + " attacks " + person + ": " + atk + ".");
     return true;
 };
 
@@ -132,7 +132,7 @@ Choose.prototype.feel = function(context) {
     oS += "should feel " + feel + ".";
 
     //say the result.
-    context.getClient().getIRCClient().say(context.getChannel().getName(), oS);
+    context.getClient().getIRCClient().say(context.getChannel(), oS);
     return true;
 };
 

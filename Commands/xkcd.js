@@ -41,7 +41,7 @@ XKCD.prototype.execute = function(context) {
 
     var cachedResponse = getClientManager().getCache().getCached(("XKCD"+context.arguments.join(" ")).sha1());
     if(cachedResponse) {
-        context.getClient().getIRCClient().say(context.getChannel().getName(), cachedResponse);
+        context.getClient().getIRCClient().say(context.getChannel(), cachedResponse);
         return true;
     }
 
@@ -55,7 +55,7 @@ XKCD.prototype.sendResponse = function(response, context, latest) {
         var cacheExpire = (Date.now() / 1000 | 0) + 1576800000; //make cache expire in 50 years
         getClientManager().getCache().addToCache(("XKCD"+context.arguments.join(" ")).sha1(), response, cacheExpire);
     }
-    context.getClient().getIRCClient().say(context.getChannel().getName(), response);
+    context.getClient().getIRCClient().say(context.getChannel(), response);
 };
 
 module.exports = XKCD;

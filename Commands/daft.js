@@ -37,9 +37,9 @@ function Daft() {
 
 Daft.prototype.execute = function(context) {
     if(context.getArguments()[0] !== undefined) {
-        context.getClient().getIRCClient().say(context.getChannel().getName(), context.getArguments().join(" ") + ", are you daft?");
+        context.getClient().getIRCClient().say(context.getChannel(), context.getArguments().join(" ") + ", are you daft?");
     } else {
-        context.getClient().getIRCClient().say(context.getChannel().getName(), context.getUser().getNick() + ", are you daft?");
+        context.getClient().getIRCClient().say(context.getChannel(), context.getUser().getNick() + ", are you daft?");
     }
     return true;
 };
