@@ -102,30 +102,29 @@ module.exports.build = function build(message, context, options) {
     //Make ourselves a new User...
     var user = new User();
 
-    //TODO: Make this work.
-    // if(message && context) {
-    //     //if the user this came from is a Minecraft bot,
-    //     if(context.getChannel().getMcBots().indexOf(message.nick) !== -1){
-    //         //say so.
-    //         user.setIsRealIRCUser(false);
+    if(message && context) {
+        //if the user this came from is a Minecraft bot,
+        if(config.isMcBot(message.nick, context.getChannel(), context.getClient().uuid)){
+            //say so.
+            user.setIsRealIRCUser(false);
 
-    //         //find nick
-    //         start = message.args[1].indexOf('(');
-    //         end = message.args[1].indexOf(')');
+            //find nick
+            start = message.args[1].indexOf('(');
+            end = message.args[1].indexOf(')');
 
-    //         //set nick
-    //         user.setNick(message.args[1].substring(start + 1, end));
+            //set nick
+            user.setNick(message.args[1].substring(start + 1, end));
 
-    //         //set hostmask
-    //         user.setHostmask(user.getNick()+"!"+message.user+"@"+message.host);
-    //     } else {
-    //         //the user is legit, so just use their nick and hostmask.
-    //         user.setNick(message.nick);
-    //         user.setHostmask(message.prefix);
-    //     }
-    // } else if (message && !options) {
-    //     options = message;
-    // }
+            //set hostmask
+            user.setHostmask(user.getNick()+"!"+message.user+"@"+message.host);
+        } else {
+            //the user is legit, so just use their nick and hostmask.
+            user.setNick(message.nick);
+            user.setHostmask(message.prefix);
+        }
+    } else if (message && !options) {
+        options = message;
+    }
 
     if(options.nick) {
         user.setNick(options.nick)
