@@ -21,11 +21,8 @@
  */
 function PermissionsHandler(logger) {
     this.log = logger.child({module: "PermissionsHandler"});
+    this.permissions = require("./data/config/perm")(logger)
 }
-
-PermissionsHandler.prototype.loadPermissions = function() {
-    
-};
 
 PermissionsHandler.prototype.addPermission = function(user, channel, permission) {
     
