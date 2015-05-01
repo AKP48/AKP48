@@ -103,6 +103,10 @@ ClientManager.prototype.softReload = function() {
     //reload the API loader
     this.APIs = require("./API/")(this.log);
 
+    //reload the config files
+    this.config = new (require("./ConfigurationHandler"))(logger);
+    GLOBAL.config = this.config;
+
     //now we can reload all the clients.
     this.reloadClients();
 };
