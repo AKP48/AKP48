@@ -17,14 +17,14 @@
 
 // Just so you know, comments aren't valid JSON, so you should probably
 // remove any you see laying around.
-[
-    {
+{
+    "#botplace": {
         "name": "#botplace",
         "commandDelimiter": "."
     },
-    {
+    "#channel": {
         "name": "#channel",
         "commandDelimiter": "!",
         "mcBots": ["craftIRCBot"]
     }
-]
+}

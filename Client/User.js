@@ -25,19 +25,11 @@ function User() {
     // The user's full hostmask.
     this.hostmask = "";
 
-    // The user's permissions.
-    this.permissions = ["user.command.use"];
-
-    // The user's flood protection violation level.
-    this.violationLevel = 0;
+    // The user's power level.
+    this.powerLevel = 0;
 
     // Whether or not this user is a Real IRC User™.
     this.isRealIRCUser = true;
-
-    // Flood protection information for this user.
-    this.floodProtection = {
-        "isBanned": false
-    }
 }
 
 /**
@@ -73,76 +65,19 @@ User.prototype.getHostmask = function() {
 };
 
 /**
- * Set permissions.
- * @param {Array} permissions The permissions.
+ * Set power level.
+ * @param {Number} powerLevel The power level.
  */
-User.prototype.setPermissions = function(permissions) {
-    this.permissions = permissions;
+User.prototype.setPowerLevel = function(powerLevel) {
+    this.powerLevel = powerLevel;
 };
 
 /**
- * Get permissions.
- * @return {Array} The permissions.
+ * Get power level.
+ * @return {Number} The power level.
  */
-User.prototype.getPermissions = function() {
-    return this.permissions;
-};
-
-/**
- * Add a permission.
- * @param {String} permission The permission.
- */
-User.prototype.addPermission = function(permission) {
-    //just return if this permission is already in the array.
-    if(this.permissions.indexOf(permission) !== -1) {return;}
-    this.permissions.push(permission);
-};
-
-/**
- * Remove a permission.
- * @param  {String} permission The permission.
- * @return {Boolean}           True if permission added, false if permission already there.
- */
-User.prototype.removePermission = function(permission) {
-    //get index of permission, -1 if non-existent
-    var index = this.permissions.indexOf(permission);
-    if(index > -1) {
-        this.permissions.splice(index, 1);
-        return true;
-    }
-
-    return false;
-};
-
-/**
- * Whether or not the user has a permission.
- * @param  {String}  permission The permission to check.
- * @return {Boolean}            If the user has the permission.
- */
-User.prototype.hasPermission = function(permission) {
-    //get index of permission, -1 if non-existent
-    if(this.permissions.indexOf(permission) > -1) {
-        return true;
-    }
-    return false;
-};
-
-/**
- * Set violation level.
- * @param {Double} violationLevel Violation level.
- */
-User.prototype.setViolationLevel = function(violationLevel) {
-    this.violationLevel = violationLevel;
-    //ensure that violation level never goes lower than 0.
-    if(this.violationLevel < 0) {this.violationLevel = 0;}
-};
-
-/**
- * Get violation level.
- * @return {Double} Violation level.
- */
-User.prototype.getViolationLevel = function() {
-    return this.violationLevel;
+User.prototype.getPowerLevel = function() {
+    return this.powerLevel;
 };
 
 /**
@@ -167,29 +102,30 @@ module.exports.build = function build(message, context, options) {
     //Make ourselves a new User...
     var user = new User();
 
-    if(message && context) {
-        //if the user this came from is a Minecraft bot,
-        if(context.getChannel().getMcBots().indexOf(message.nick) !== -1){
-            //say so.
-            user.setIsRealIRCUser(false);
+    //TODO: Make this work.
+    // if(message && context) {
+    //     //if the user this came from is a Minecraft bot,
+    //     if(context.getChannel().getMcBots().indexOf(message.nick) !== -1){
+    //         //say so.
+    //         user.setIsRealIRCUser(false);
 
-            //find nick
-            start = message.args[1].indexOf('(');
-            end = message.args[1].indexOf(')');
+    //         //find nick
+    //         start = message.args[1].indexOf('(');
+    //         end = message.args[1].indexOf(')');
 
-            //set nick
-            user.setNick(message.args[1].substring(start + 1, end));
+    //         //set nick
+    //         user.setNick(message.args[1].substring(start + 1, end));
 
-            //set hostmask
-            user.setHostmask(user.getNick()+"!"+message.user+"@"+message.host);
-        } else {
-            //the user is legit, so just use their nick and hostmask.
-            user.setNick(message.nick);
-            user.setHostmask(message.prefix);
-        }
-    } else if (message && !options) {
-        options = message;
-    }
+    //         //set hostmask
+    //         user.setHostmask(user.getNick()+"!"+message.user+"@"+message.host);
+    //     } else {
+    //         //the user is legit, so just use their nick and hostmask.
+    //         user.setNick(message.nick);
+    //         user.setHostmask(message.prefix);
+    //     }
+    // } else if (message && !options) {
+    //     options = message;
+    // }
 
     if(options.nick) {
         user.setNick(options.nick)
@@ -197,11 +133,8 @@ module.exports.build = function build(message, context, options) {
     if(options.hostmask) {
         user.setHostmask(options.hostmask);
     }
-    if(options.permissions) {
-        user.setPermissions(options.permissions);
-    }
-    if(options.violationLevel) {
-        user.setViolationLevel(options.violationLevel);
+    if(options.powerLevel) {
+        user.setPowerLevel(options.powerLevel);
     }
     if(options.isRealIRCUser) {
         user.setIsRealIRCUser(options.isRealIRCUser);

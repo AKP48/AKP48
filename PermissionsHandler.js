@@ -34,3 +34,5 @@ PermissionsHandler.prototype.addPermission = function(user, channel, permission)
 PermissionsHandler.prototype.hasPermission = function(user, channel, permission) {
     
 };
+
+module.exports = PermissionsHandler;

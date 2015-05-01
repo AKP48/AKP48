@@ -22,13 +22,15 @@
 function ConfigurationHandler(logger) {
     this.log = logger.child({module: "ConfigurationHandler"});
 
-    this.permissionsHandler = new (require("./PermissionsHandler"));
+    this.permissionsHandler = new (require("./PermissionsHandler"))(logger);
 
     this.globalConfig = require("./data/config/config");
 
     this.serverConfig = require("./data/config/servers");
 
     this.apiConfig = require("./data/config/api");
+
+    this.channelConfig = require("./data/config/channels");
 }
 
 ConfigurationHandler.prototype.getServers = function() {
@@ -46,3 +48,9 @@ ConfigurationHandler.prototype.getAPIConfig = function() {
 ConfigurationHandler.prototype.getPermissionsHandler = function() {
     return this.permissionsHandler;
 };
+
+ConfigurationHandler.prototype.isMcBot = function(nick, channel, serverUUID) {
+    return (this.channelConfig[serverUUID][channel].mcBots.indexOf(nick) > -1);
+};
+
+module.exports = ConfigurationHandler;

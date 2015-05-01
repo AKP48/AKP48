@@ -16,7 +16,6 @@
  */
 
 var Client = require("./Client/Client");
-var Builder = require("./Client/Builder");
 var CommandProcessor = require("./CommandProcessor");
 var AutoResponseProcessor = require("./AutoResponseProcessor");
 var ActionHandler = require("./ActionHandler");
@@ -37,11 +36,13 @@ function ClientManager(logger) {
     // API objects.
     this.APIs = require("./API/")(logger);
 
-    // load all of the clients on creation of this object.
-    this.loadClients(require('./data/config/servers.json'));
+    // handles config stuff.
+    this.config = new (require("./ConfigurationHandler"))(logger);
+    // make config accessible globally.
+    GLOBAL.config = this.config;
 
-    // builder
-    this.builder = new Builder(logger);
+    // load all of the clients.
+    this.loadClients(this.config.getServers());
 
     // The CommandProcessor.
     this.commandProcessor = new CommandProcessor(this.log);
