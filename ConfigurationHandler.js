@@ -31,7 +31,7 @@ function ConfigurationHandler(logger) {
     this.apiConfig = require("./data/config/api");
 
     this.channelConfig = require("./data/config/channels")(logger);
-    console.log(channelConfig);
+    console.log(this.channelConfig);
 }
 
 ConfigurationHandler.prototype.getServers = function() {
