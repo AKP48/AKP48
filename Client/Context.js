@@ -170,9 +170,6 @@ module.exports.build = function build(message, client) {
     //set command processor
     context.setCommandProcessor(client.getCommandProcessor());
 
-    //set commands
-    context.setCommands(context.getCommandProcessor().aliasedCommands);
-
     var messageString = message.args[1];
 
     //process the command and arguments out of the message.
