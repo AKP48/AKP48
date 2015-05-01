@@ -48,9 +48,11 @@ data/config/*
 !data/config/perm
 data/config/perm/*
 !data/config/perm/example.*
+!data/config/perm/index.js
 !data/config/channels
 data/config/channels/*
 !data/config/channels/example.*
+!data/config/channels/index.js
 
 # Custom modules
 custom-*
