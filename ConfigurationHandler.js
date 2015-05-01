@@ -57,4 +57,12 @@ ConfigurationHandler.prototype.isMcBot = function(nick, channel, serverUUID) {
     return false;
 };
 
+ConfigurationHandler.prototype.getCommandDelimiter = function(channel, serverUUID) {
+    var CD = this.channelConfig[serverUUID][channel].commandDelimiter;
+    if(CD) {
+        return CD;
+    }
+    return ".";
+};
+
 module.exports = ConfigurationHandler;

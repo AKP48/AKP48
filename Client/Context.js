@@ -181,16 +181,16 @@ module.exports.build = function build(message, client) {
     }
 
     //if we have a command
-    if(messageString.substring(0, channel.getCommandDelimiter().length) === channel.getCommandDelimiter()) {
+    if(messageString.substring(0, config.getCommandDelimiter(channel, client.uuid).length) === config.getCommandDelimiter(channel, client.uuid)) {
 
         //find command
         var end = messageString.indexOf(' ');
-        context.setCommand(messageString.substring(channel.getCommandDelimiter().length,end).toLowerCase());
+        context.setCommand(messageString.substring(config.getCommandDelimiter(channel, client.uuid).length,end).toLowerCase());
 
         //if there wasn't actually a space, we won't have gotten a command.
         //instead, we'll just chop off the delimiter now.
         if(end === -1) {
-            context.setCommand(messageString.substring(channel.getCommandDelimiter().length));
+            context.setCommand(messageString.substring(config.getCommandDelimiter(channel, client.uuid).length));
         } else {
             //otherwise, we can cut off the command and save the arguments.
             var args = messageString.substring(end+1).split(' ');
