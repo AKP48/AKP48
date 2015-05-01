@@ -31,7 +31,6 @@ function ConfigurationHandler(logger) {
     this.apiConfig = require("./data/config/api");
 
     this.channelConfig = require("./data/config/channels")(logger);
-    console.log(this.channelConfig);
 }
 
 ConfigurationHandler.prototype.getServers = function() {
@@ -51,7 +50,11 @@ ConfigurationHandler.prototype.getPermissionsHandler = function() {
 };
 
 ConfigurationHandler.prototype.isMcBot = function(nick, channel, serverUUID) {
-    return (this.channelConfig[serverUUID][channel].mcBots.indexOf(nick) > -1);
+    var mcBots = this.channelConfig[serverUUID][channel].mcBots;
+    if(mcBots) {
+        return (mcBots.indexOf(nick) > -1);
+    }
+    return false;
 };
 
 module.exports = ConfigurationHandler;
