@@ -451,12 +451,15 @@ module.exports.build = function build(options, logger) {
     }
 
     var channels = (require("../data/config/channels/"+options.uuid+".json"));
-    for (var i = 0; i < channels.length; i++) {
-        client.addChannel(channels[i].name);
-        if(channels[i].alert) {
-            client.alert.push(channels[i].name);
+    for (var key in channels) {
+       if (channels.hasOwnProperty(key)) {
+            var obj = channels[key];
+            client.addChannel(key);
+            if(obj.alert) {
+                client.alert.push(key);
+            }
         }
-    };
+    }
 
     log.debug("Built client", client.getNick(), "on", client.getServer()+":"+client.getPort()+".");
     //return it.
