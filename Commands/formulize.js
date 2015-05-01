@@ -15,20 +15,21 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-var Git = require("../API/git");
-
-function Version(logger) {
+function Formulize(logger) {
     //the name of the command.
-    this.name = "Version";
+    this.name = "Formulize";
 
     //help text to show for this command.
-    this.helpText = "Gets the version of the bot that is running.";
+    this.helpText = "Creates an image for a formula.";
 
     //usage message. only include the parameters. the command name will be automatically added.
-    this.usageText = "";
+    this.usageText = "[TeX code]";
 
     //ways to call this command.
-    this.aliases = ['version', 'ver', 'v'];
+    this.aliases = ['formulize', 'formula', 'math', 'tex', 'latex'];
+
+    //dependencies that this module has.
+    this.dependencies = ['googl'];
 
     //Name of the permission needed to use this command. All users have 'user.command.use' by default. Banned users have 'user.command.banned' by default.
     this.permissionName = 'user.command.use';
@@ -38,41 +39,25 @@ function Version(logger) {
 
     //whether or not to only allow this command if it's in a private message.
     this.isPmOnly = false;
-
-    // Base version
-    this.version_base = require('../package.json').version;
-
-    //Git API
-    this.git = new Git(logger);
-
-    this.version = this.buildVersion();
 }
 
-Version.prototype.execute = function(context) {
-    //if the user is a netop, send them the version the files are on, which may not be the version the server is running.
-    if (context.getUser().hasPermission("netop.command.use")) {
-        context.getClient().getIRCClient().notice(context.getUser().getNick(), "Server: "+this.buildVersion());
-    }
+Formulize.prototype.execute = function(context) {
+    //return if no arguments
+    if(!context.arguments.length) {return false;}
 
-    context.getClient().say(context, "v"+this.version);
+    //this is the link that we're going to send to imgur
+    var imageURL = "http://chart.googleapis.com/chart?cht=tx&chl=" + encodeURIComponent(context.arguments.join(" "));
+
+    //upload the image to imgur
+    getClientManager().getAPI("Imgur").uploadImageFromURL(imageURL, function (url) {
+        if(url) {
+            context.getClient().getCommandProcessor().aliasedCommands['googl'].shortenURL(context, url);
+        } else {
+            context.getClient().getCommandProcessor().aliasedCommands['googl'].shortenURL(context, imageURL);
+        }
+    });
+
     return true;
 };
 
-Version.prototype.buildVersion = function() {
-    var version = this.version_base;
-    var git = this.git;
-    if (git.isRepo()) {
-        var gitSHA = git.getCommit().substring(0, 7);
-        var tagOrBranch = git.getBranch() || git.getTag();
-
-        if (gitSHA) {
-            version += "+".append(gitSHA);
-        }
-        if (tagOrBranch) {
-            version += "-".append(tagOrBranch);
-        }
-    }
-    return version;
-};
-
-module.exports = Version;
+module.exports = Formulize;

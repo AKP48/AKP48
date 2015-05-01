@@ -25,20 +25,20 @@ function XKCD(logger) {
     this.log = logger.child({module: "XKCD API"});
 }
 
-XKCD.prototype.getComic = function(id, callback) {
+XKCD.prototype.getComic = function(id, callback, context) {
     this.log.debug({comic: id}, "Getting comic from XKCD.");
     var self = this;
     this.client.get('/'+id+'/info.0.json',  function(err, res, body) {
-        if(!err) {callback(self.constructComicString(body)); return;}
+        if(!err) {callback(self.constructComicString(body), context, false); return;}
         callback(null);
     });
 };
 
-XKCD.prototype.getLatestComic = function(callback) {
+XKCD.prototype.getLatestComic = function(callback, context) {
     this.log.debug("Getting latest comic from XKCD.");
     var self = this;
     this.client.get('/info.0.json',  function(err, res, body) {
-        if(!err) {callback(self.constructComicString(body)); return;}
+        if(!err) {callback(self.constructComicString(body), context, true); return;}
         callback(null);
     });
 }

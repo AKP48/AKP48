@@ -15,20 +15,18 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-var Git = require("../API/git");
-
-function Version(logger) {
+function XKCD(logger) {
     //the name of the command.
-    this.name = "Version";
+    this.name = "XKCD";
 
     //help text to show for this command.
-    this.helpText = "Gets the version of the bot that is running.";
+    this.helpText = "Get an XKCD comic.";
 
     //usage message. only include the parameters. the command name will be automatically added.
-    this.usageText = "";
+    this.usageText = "[comic]";
 
     //ways to call this command.
-    this.aliases = ['version', 'ver', 'v'];
+    this.aliases = ['xkcd'];
 
     //Name of the permission needed to use this command. All users have 'user.command.use' by default. Banned users have 'user.command.banned' by default.
     this.permissionName = 'user.command.use';
@@ -38,41 +36,29 @@ function Version(logger) {
 
     //whether or not to only allow this command if it's in a private message.
     this.isPmOnly = false;
-
-    // Base version
-    this.version_base = require('../package.json').version;
-
-    //Git API
-    this.git = new Git(logger);
-
-    this.version = this.buildVersion();
 }
 
-Version.prototype.execute = function(context) {
-    //if the user is a netop, send them the version the files are on, which may not be the version the server is running.
-    if (context.getUser().hasPermission("netop.command.use")) {
-        context.getClient().getIRCClient().notice(context.getUser().getNick(), "Server: "+this.buildVersion());
+XKCD.prototype.execute = function(context) {
+    //if we got no arguments, get the latest XKCD.
+    if(!context.arguments.length) {getClientManager().getAPI("XKCD").getLatestComic(this.sendResponse, context);return true;}
+
+    var cachedResponse = getClientManager().getCache().getCached(("XKCD"+context.arguments.join(" ")).sha1());
+    if(cachedResponse) {
+        context.getClient().getIRCClient().say(context.getChannel().getName(), cachedResponse);
+        return true;
     }
 
-    context.getClient().say(context, "v"+this.version);
+    getClientManager().getAPI("XKCD").getComic(context.arguments[0], this.sendResponse, context);
     return true;
 };
 
-Version.prototype.buildVersion = function() {
-    var version = this.version_base;
-    var git = this.git;
-    if (git.isRepo()) {
-        var gitSHA = git.getCommit().substring(0, 7);
-        var tagOrBranch = git.getBranch() || git.getTag();
-
-        if (gitSHA) {
-            version += "+".append(gitSHA);
-        }
-        if (tagOrBranch) {
-            version += "-".append(tagOrBranch);
-        }
+XKCD.prototype.sendResponse = function(response, context, latest) {
+    if(!latest) {
+        response += " · http://xkcd.com/"+context.arguments[0];
+        var cacheExpire = (Date.now() / 1000 | 0) + 1576800000; //make cache expire in 50 years
+        getClientManager().getCache().addToCache(("XKCD"+context.arguments.join(" ")).sha1(), response, cacheExpire);
     }
-    return version;
+    context.getClient().getIRCClient().say(context.getChannel().getName(), response);
 };
 
-module.exports = Version;
+module.exports = XKCD;

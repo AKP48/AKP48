@@ -300,9 +300,10 @@ Client.prototype.initialize = function(clientManager, holdIRCClient) {
         this.ircClient = new irc.Client(this.getServer(), this.getNick(), { channels: channels, realName: this.getRealName(), password: password, userName: this.getUserName(), port: this.getPort(), autoRejoin: true, showErrors: true});
     }
 
-    //attempt to remove eventListeners, then add new one.
+    //attempt to remove eventListeners, then add new ones.
     this.ircClient.removeAllListeners('message');
     this.ircClient.removeAllListeners('action');
+    this.ircClient.removeAllListeners('invite');
 
     var self = this;
 
@@ -317,6 +318,13 @@ Client.prototype.initialize = function(clientManager, holdIRCClient) {
     this.ircClient.on('action', function(from, to, text, message) {
         //on each IRC action, run the action handler.
         self.getActionHandler().process(message, self);
+    });
+
+    this.ircClient.on('invite', function(channel, from, message) {
+        self.addChannel({name: channel, commandDelimiter: "."});
+        self.getIRCClient().join(channel, function(){
+            self.getIRCClient().say(channel, "Thanks for inviting me, "+from+"! I'm glad to be here. For more information about me, say `.help`.");
+        });
     });
 
     var botID = this.botID;
