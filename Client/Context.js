@@ -96,7 +96,7 @@ Context.prototype.setCommand = function(command) {
 
 Context.prototype.getCommand = function() {
     if(!this.commandExists()){return false;}
-    return this.commands[this.command];
+    return this.getCommandProcessor().aliasedCommands[this.command];
 };
 
 Context.prototype.setArguments = function(args) {
@@ -108,7 +108,7 @@ Context.prototype.getArguments = function() {
 };
 
 Context.prototype.commandExists = function() {
-    return (this.commands[this.command] !== undefined && typeof this.commands[this.command].execute === 'function');
+    return (this.getCommandProcessor().aliasedCommands[this.command] !== undefined && typeof this.getCommandProcessor().aliasedCommands[this.command].execute === 'function');
 };
 
 module.exports = Context;
