@@ -30,7 +30,7 @@ function ConfigurationHandler(logger) {
 
     this.apiConfig = require("./data/config/api");
 
-    this.channelConfig = require("./data/config/channels")();
+    this.channelConfig = require("./data/config/channels")(logger);
     console.log(channelConfig);
 }
 
