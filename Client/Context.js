@@ -145,7 +145,7 @@ module.exports.build = function build(message, client) {
     var prefix = message.prefix;
 
     //if the message is from a Minecraft bot, figure out who the user should be.
-    if(config.isMcBot(message.nick, context.getChannel, client.uuid)){
+    if(config.isMcBot(message.nick, context.getChannel(), client.uuid)){
         //find nick
         var start = message.args[1].indexOf('(');
         var end = message.args[1].indexOf(')');
