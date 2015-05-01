@@ -87,7 +87,7 @@ CommandProcessor.prototype.process = function(message, client) {
     if(!context) {return false; this.log.warn({msg: message}, "No context created.");}
 
     //if user isn't banned
-    if(!context.getChannel().isBanned(context.getUser())) {
+    //if(!context.getChannel().isBanned(context.getUser())) {
 
         //if the command exists
         if(context.commandExists()) {
@@ -123,7 +123,7 @@ CommandProcessor.prototype.process = function(message, client) {
             }
 
             //do flood protection/execute the command if we haven't returned by now.
-            if(context.getChannel().floodProtection(context)) {
+            //if(context.getChannel().floodProtection(context)) {
                 if(!context.getCommand().execute(context)) {
                     this.sendUsageMessage(context);
                     this.log.debug({
@@ -136,21 +136,21 @@ CommandProcessor.prototype.process = function(message, client) {
                     this.log.debug({user: context.getUser().getNick(), command: context.getCommand().name, args: "'" + context.getArguments().join("', '") + "'", fullMsg: context.getFullMessage()}, "Command executed.");
                 }
                 return true;
-            } else {
-                this.log.debug({
-                    user: context.getUser().getNick(),
-                    command: context.getCommand().name,
-                    reason: "User has been limited by flood protection."
-                }, "Command execution attempt failed.");
-            }
+            // } else {
+            //     this.log.debug({
+            //         user: context.getUser().getNick(),
+            //         command: context.getCommand().name,
+            //         reason: "User has been limited by flood protection."
+            //     }, "Command execution attempt failed.");
+            // }
         }
-    } else {
-        this.log.debug({
-            user: context.getUser().getNick(),
-            command: context.getCommand().name,
-            reason: "User is banned."
-        }, "Command execution attempt failed.");
-    }
+    // } else {
+    //     this.log.debug({
+    //         user: context.getUser().getNick(),
+    //         command: context.getCommand().name,
+    //         reason: "User is banned."
+    //     }, "Command execution attempt failed.");
+    // }
 
     return false;
 };
