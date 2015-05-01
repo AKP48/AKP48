@@ -115,10 +115,6 @@ ClientManager.prototype.reloadClients = function() {
 
     //require the code to refresh it
     var Client = require("./Client/Client");
-    var Builder = require("./Client/Builder");
-
-    //assign a new builder from refreshed code
-    this.builder = new Builder(this.log);
 
     for (var i = 0; i < this.clients.length; i++) {
         //keep a reference to the IRC client, so it doesn't disconnect.
