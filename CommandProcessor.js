@@ -15,6 +15,8 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
+var Context = require("./Client/Context");
+
 /**
  * The Command Processor.
  */
@@ -79,7 +81,7 @@ CommandProcessor.prototype.initCommandAliases = function() {
  */
 CommandProcessor.prototype.process = function(message, client) {
     //the context we will be sending to the command.
-    var context = client.getClientManager().builder.buildContext(message, client);
+    var context = Context.build(message, client);
 
     //if we don't get a context, something weird must have happened, and we shouldn't continue.
     if(!context) {return false; this.log.warn({msg: message}, "No context created.");}
