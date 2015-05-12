@@ -321,7 +321,7 @@ Client.prototype.initialize = function(clientManager, holdIRCClient) {
     });
 
     this.ircClient.on('invite', function(channel, from, message) {
-        self.addChannel({name: channel, commandDelimiter: "."});
+        self.addChannel(channel);
         self.getIRCClient().join(channel, function(){
             self.getIRCClient().say(channel, "Thanks for inviting me, "+from+"! I'm glad to be here. For more information about me, say `.help`.");
         });
