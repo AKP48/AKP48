@@ -32,4 +32,12 @@ PermissionsHandler.prototype.hasPermission = function(user, channel, permission)
     
 };
 
+PermissionsHandler.prototype.powerLevel = function(context) {
+    if(!this.permissions[context.getClient().uuid]) {return 1;}
+    if(!this.permissions[context.getClient().uuid][context.getChannel()]) {return 1;}
+    if(!this.permissions[context.getClient().uuid][context.getChannel()].users) {return 1;}
+    if(!this.permissions[context.getClient().uuid][context.getChannel()].users[context.getUser().getHostMask()]) {return 1;}
+    return this.permissions[context.getClient().uuid][context.getChannel()].users[context.getUser().getHostMask()].powerLevel;
+};
+
 module.exports = PermissionsHandler;

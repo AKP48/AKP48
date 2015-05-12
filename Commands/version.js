@@ -47,7 +47,7 @@ function Version(logger) {
 
 Version.prototype.execute = function(context) {
     //if the user is a netop, send them the version the files are on, which may not be the version the server is running.
-    if (context.getUser().hasPermission("netop.command.use")) {
+    if (config.getPerms().powerLevel(context) > 9000) {
         context.getClient().getIRCClient().notice(context.getUser().getNick(), "Server: "+this.buildVersion());
     }
 

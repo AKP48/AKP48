@@ -86,8 +86,8 @@ CommandProcessor.prototype.process = function(message, client) {
     //if we don't get a context, something weird must have happened, and we shouldn't continue.
     if(!context) {return false; this.log.warn({msg: message}, "No context created.");}
 
-    //if user isn't banned
-    //if(!context.getChannel().isBanned(context.getUser())) {
+    //if user isn't banned - power level should be 1 or greater if unbanned.
+    if(config.getPerms().powerLevel(context)) {
 
         //if the command exists
         if(context.commandExists()) {
@@ -144,13 +144,13 @@ CommandProcessor.prototype.process = function(message, client) {
             //     }, "Command execution attempt failed.");
             // }
         }
-    // } else {
-    //     this.log.debug({
-    //         user: context.getUser().getNick(),
-    //         command: context.getCommand().name,
-    //         reason: "User is banned."
-    //     }, "Command execution attempt failed.");
-    // }
+    } else {
+        this.log.debug({
+            user: context.getUser().getNick(),
+            command: context.getCommand().name,
+            reason: "User is banned."
+        }, "Command execution attempt failed.");
+    }
 
     return false;
 };

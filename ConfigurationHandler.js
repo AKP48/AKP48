@@ -49,6 +49,10 @@ ConfigurationHandler.prototype.getPermissionsHandler = function() {
     return this.permissionsHandler;
 };
 
+ConfigurationHandler.prototype.getPerms = function() {
+    return this.permissionsHandler;
+};
+
 ConfigurationHandler.prototype.isMcBot = function(nick, channel, serverUUID) {
     var mcBots = this.channelConfig[serverUUID][channel].mcBots;
     if(mcBots) {
