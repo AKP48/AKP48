@@ -188,7 +188,7 @@ Client.prototype.getChannels = function() {
 Client.prototype.addChannel = function(channel) {
     //just return if this channel is already in the array.
     if (typeof channel === 'string') {
-        channel = Channel.build({name: channel});
+        channel = Channel.build({name: channel}, this.log);
         channel.client = this;
     }
     this.channels.push(channel);
