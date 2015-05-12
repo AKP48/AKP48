@@ -18,7 +18,7 @@
 // Just so you know, comments aren't valid JSON, so you should probably
 // remove any you see laying around.
 {
-    "users": [
+    "users": {
         
-    ]
+    }
 }
