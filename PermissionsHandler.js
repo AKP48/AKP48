@@ -24,14 +24,6 @@ function PermissionsHandler(logger) {
     this.permissions = require("./data/config/perm")(logger)
 }
 
-PermissionsHandler.prototype.addPermission = function(user, channel, permission) {
-    
-};
-
-PermissionsHandler.prototype.hasPermission = function(user, channel, permission) {
-    
-};
-
 PermissionsHandler.prototype.powerLevel = function(userHostmask, channel, clientUUID) {
     if(!this.permissions[clientUUID]) {
         this.log.warn({uuid: clientUUID}, "Client not found."); return 1;}

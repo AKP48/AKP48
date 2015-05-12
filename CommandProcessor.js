@@ -86,8 +86,8 @@ CommandProcessor.prototype.process = function(message, client) {
     //if we don't get a context, something weird must have happened, and we shouldn't continue.
     if(!context) {return false; this.log.warn({msg: message}, "No context created.");}
 
-    //if user isn't banned - power level should be 1 or greater if unbanned.
-    if(config.getPerms().powerLevelFromContext(context)) {
+    //if user isn't banned or a bot - power level should be 1 or greater if unbanned.
+    if(!context.getUser().isBot && config.getPerms().powerLevelFromContext(context)) {
 
         //if the command exists
         if(context.commandExists()) {

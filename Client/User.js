@@ -28,8 +28,12 @@ function User() {
     // The user's power level.
     this.powerLevel = 0;
 
-    // Whether or not this user is a Real IRC User™.
+    // Whether or not this user is a Real IRC User™. 
+    // (as opposed to being a user on a Minecraft server.)
     this.isRealIRCUser = true;
+
+    // Whether or not this user is a bot.
+    this.isBot = false;
 }
 
 /**
@@ -88,6 +92,14 @@ User.prototype.setIsRealIRCUser = function(isRealIRCUser) {
     this.isRealIRCUser = isRealIRCUser;
 };
 
+/**
+ * Set isBot.
+ * @param {Boolean} isBot Whether or not the user is a bot.
+ */
+User.prototype.setIsBot = function(isBot) {
+    this.isBot = isBot;
+};
+
 module.exports = User;
 
 /**
@@ -137,6 +149,9 @@ module.exports.build = function build(message, context, options) {
     }
     if(options.isRealIRCUser) {
         user.setIsRealIRCUser(options.isRealIRCUser);
+    }
+    if(options.isBot) {
+        user.setIsBot(options.isBot);
     }
 
     return user;

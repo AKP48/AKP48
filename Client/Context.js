@@ -123,6 +123,12 @@ module.exports.build = function build(message, client) {
         return false;
     }
 
+    var bot = false;
+
+    if(message.args[1].startsWith("\u000399")) {
+        bot = true;
+    }
+
     //Make ourselves a new Context...
     var context = new Context();
 
@@ -159,7 +165,7 @@ module.exports.build = function build(message, client) {
         prefix = nick+"!"+message.user+"@"+message.host;
     }
 
-    var user = User.build(message, context, {});
+    var user = User.build(message, context, {isBot: bot});
 
     //now we have a user.
     context.setUser(user);
