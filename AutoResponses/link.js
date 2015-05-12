@@ -151,7 +151,7 @@ LinkHandler.prototype.handleLink = function(link, cached, context) {
                 getClientManager().getCache().addToCache(link.sha1(), oS, cacheExpire);
                 context.getClient().getIRCClient().say(context.getChannel().getName(), oS);
             } else {
-                self.log.error({res: response}, "Title unavailable for " + word);
+                self.log.error({res: response}, "Title unavailable for " + self.link);
             }
         } else {
             if(response){
