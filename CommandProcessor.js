@@ -148,7 +148,7 @@ CommandProcessor.prototype.process = function(message, client) {
         this.log.debug({
             user: context.getUser().getNick(),
             command: context.getCommand().name,
-            reason: "User is banned."
+            reason: "User is banned, or is a bot."
         }, "Command execution attempt failed.");
     }
 
