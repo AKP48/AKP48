@@ -15,6 +15,8 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
+var jf = require('jsonfile');
+
 /**
  * Handles getting data from and saving data to the config files.
  * @param {Logger} logger The logger to use.
@@ -67,6 +69,23 @@ ConfigurationHandler.prototype.getCommandDelimiter = function(channel, serverUUI
         return CD;
     }
     return ".";
+};
+
+ConfigurationHandler.prototype.save = function() {     
+    var globalFile = './data/config/config.json';
+    var apiFile = './data/config/api.json';
+    var serverFile = './data/config/servers.json';
+     
+    jf.writeFileSync(globalFile, this.globalConfig);
+    jf.writeFileSync(apiFile, this.apiConfig);
+    jf.writeFileSync(serverFile, this.serverConfig);
+
+    for(var server in this.channelConfig) {
+        var file = './data/config/channels/' + server + '.json';
+        jf.writeFileSync(file, this.channelConfig[server]);
+    }
+
+    this.permissionsHandler.save();
 };
 
 module.exports = ConfigurationHandler;

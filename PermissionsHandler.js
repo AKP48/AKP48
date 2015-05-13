@@ -15,6 +15,8 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
+var jf = require('jsonfile');
+
 /**
  * Handles getting data from and saving data to the permissions files.
  * @param {Logger} logger The logger to use.
@@ -24,6 +26,28 @@ function PermissionsHandler(logger) {
     this.permissions = require("./data/config/perm")(logger)
 }
 
+PermissionsHandler.prototype.setPowerLevel = function(userHostmask, channel, clientUUID, powerLevel) {
+    if(!this.permissions[clientUUID]) {
+        this.permissions[clientUUID] = {};
+    }
+
+    if(!this.permissions[clientUUID][channel]) {
+        !this.permissions[clientUUID][channel] = {};
+    }
+
+    if(!this.permissions[clientUUID][channel].users) {
+        !this.permissions[clientUUID][channel].users = {};
+    }
+
+    if(!this.permissions[clientUUID][channel].users[userHostmask]) {
+        !this.permissions[clientUUID][channel].users[userHostmask] = {};
+    }
+
+    this.permissions[clientUUID][channel].users[userHostmask].powerLevel = powerLevel;
+
+    this.save();
+};
+
 PermissionsHandler.prototype.powerLevel = function(userHostmask, channel, clientUUID) {
     if(!this.permissions[clientUUID]) {
         this.log.warn({uuid: clientUUID}, "Client not found."); return 1;}
@@ -32,10 +56,10 @@ PermissionsHandler.prototype.powerLevel = function(userHostmask, channel, client
         this.log.warn({uuid: clientUUID, channel: channel, perms: this.permissions[clientUUID]}, "Channel not found."); return 1;}
 
     if(!this.permissions[clientUUID][channel].users) {
-        this.log.warn({uuid: clientUUID, channel: channel, perms: this.permissions[clientUUID]}, "Channel has no users defined."); return 1;}
+        this.log.debug({uuid: clientUUID, channel: channel, perms: this.permissions[clientUUID]}, "Channel has no users defined."); return 1;}
 
     if(!this.permissions[clientUUID][channel].users[userHostmask]) {
-        this.log.warn({uuid: clientUUID, channel: channel, user: userHostmask, perms: this.permissions[clientUUID]}, "User not found."); return 1;}
+        this.log.debug({uuid: clientUUID, channel: channel, user: userHostmask, perms: this.permissions[clientUUID]}, "User not found."); return 1;}
 
     return this.permissions[clientUUID][channel].users[userHostmask].powerLevel;
 };
@@ -46,6 +70,13 @@ PermissionsHandler.prototype.powerLevelFromContext = function(context) {
     var user = context.getUser().getHostmask();
 
     return this.powerLevel(user, channel, uuid);
+};
+
+PermissionsHandler.prototype.save = function() {
+    for(var server in this.permissions) {
+        var file = './data/config/perm/' + server + '.json';
+        jf.writeFileSync(file, this.permissions[server]);
+    }
 };
 
 module.exports = PermissionsHandler;

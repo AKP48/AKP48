@@ -16,6 +16,7 @@
     "irc": "^0.3.10",
     "irc-colors": "^1.1.0",
     "jsdom": "^4.1.0",
+    "jsonfile": "^2.0.0",
     "moment": "^2.8.4",
     "numeral": "^1.5.3",
     "request": "^2.55.0",
