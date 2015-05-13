@@ -32,15 +32,15 @@ PermissionsHandler.prototype.setPowerLevel = function(userHostmask, channel, cli
     }
 
     if(!this.permissions[clientUUID][channel]) {
-        !this.permissions[clientUUID][channel] = {};
+        this.permissions[clientUUID][channel] = {};
     }
 
     if(!this.permissions[clientUUID][channel].users) {
-        !this.permissions[clientUUID][channel].users = {};
+        this.permissions[clientUUID][channel].users = {};
     }
 
     if(!this.permissions[clientUUID][channel].users[userHostmask]) {
-        !this.permissions[clientUUID][channel].users[userHostmask] = {};
+        this.permissions[clientUUID][channel].users[userHostmask] = {};
     }
 
     this.permissions[clientUUID][channel].users[userHostmask].powerLevel = powerLevel;
