@@ -25,8 +25,11 @@ function PermissionsHandler(cm, logger) {
     this.log = logger.child({module: "PermissionsHandler"});
     this.permissions = require("./data/config/perm")(logger);
     this.clientManager = cm;
-    this.powerLevels = config.getPowerLevels();
-    this.verifyPowerLevels(cm, powerLevels);
+    this.powerLevels = {};
+    setTimeout(function(){
+        this.powerLevels = config.getPowerLevels();
+        this.verifyPowerLevels(cm, this.powerLevels);
+    }, 10);
 }
 
 PermissionsHandler.prototype.setPowerLevel = function(userHostmask, channel, clientUUID, powerLevel) {
