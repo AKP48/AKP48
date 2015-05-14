@@ -125,11 +125,14 @@ ConfigurationHandler.prototype.getCommandDelimiter = function(channel, serverUUI
 ConfigurationHandler.prototype.save = function() {     
     var globalFile = './data/config/config.json';
     var apiFile = './data/config/api.json';
-    var serverFile = './data/config/servers.json';
      
     jf.writeFileSync(globalFile, this.globalConfig);
     jf.writeFileSync(apiFile, this.apiConfig);
-    jf.writeFileSync(serverFile, this.serverConfig);
+    
+    for(var server in this.serverConfig) {
+        var file = './data/config/servers/' + server + '.json';
+        jf.writeFileSync(file, this.serverConfig[server]);
+    }
 
     for(var server in this.channelConfig) {
         var file = './data/config/channels/' + server + '.json';
