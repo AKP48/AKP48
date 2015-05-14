@@ -86,8 +86,8 @@ CommandProcessor.prototype.process = function(message, client) {
     //if we don't get a context, something weird must have happened, and we shouldn't continue.
     if(!context) {return false; this.log.warn({msg: message}, "No context created.");}
 
-    //if user isn't banned or a bot - power level should be 1 or greater if unbanned.
-    if(!context.getUser().isBot && config.getPerms().powerLevelFromContext(context)) {
+    //if user isn't a bot
+    if(!context.getUser().isBot) {
 
         //if the command exists
         if(context.commandExists()) {
@@ -103,7 +103,9 @@ CommandProcessor.prototype.process = function(message, client) {
             }
 
             //return if command is not allowed as a privmsg and this is one (unless we have the root permission.)
-            if(!context.getCommand().allowPm && context.isPm && !context.getUser().hasPermission("root.command.use")) {
+            if(!context.getCommand().allowPm && context.isPm &&
+                !(config.getPerms().powerLevelFromContext(context) < config.powerLevels[context.getClient().uuid]["root"])) {
+                
                 this.log.debug({
                     user: context.getUser().getNick(),
                     command: context.getCommand().name,
@@ -113,7 +115,7 @@ CommandProcessor.prototype.process = function(message, client) {
             }
 
             //check privilege
-            if(context.getCommand().permissionName && context.getUser().hasPermission(context.getCommand().permissionName) && !context.getUser().hasPermission("root.command.use")) {
+            if(context.getCommand().powerLevel && (config.getPerms().powerLevelFromContext(context) < context.getCommand().powerLevel)) {
                 this.log.debug({
                     user: context.getUser().getNick(),
                     command: context.getCommand().name,
