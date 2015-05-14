@@ -16,6 +16,7 @@
  */
 
 var jf = require('jsonfile');
+jf.spaces = 4;
 
 /**
  * Handles getting data from and saving data to the permissions files.

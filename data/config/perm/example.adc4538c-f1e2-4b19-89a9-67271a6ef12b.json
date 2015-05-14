@@ -31,5 +31,12 @@
                 "powerLevel": 1000
             }
         }
+    },
+    "global": { // The global channel. This is used for private messages.
+        "users": {
+            "Nickname!Username@hostname.com": {
+                "powerLevel": 9001
+            }
+        }
     }
 }
