@@ -26,7 +26,7 @@ function ConfigurationHandler(cm, logger) {
 
     this.clientManager = cm;
 
-    this.permissionsHandler = new (require("./PermissionsHandler"))(cm, logger);
+    this.permissionsHandler = new (require("./PermissionsHandler"))(logger);
 
     this.globalConfig = require("./data/config/config");
 
@@ -35,6 +35,9 @@ function ConfigurationHandler(cm, logger) {
     this.apiConfig = require("./data/config/api");
 
     this.channelConfig = require("./data/config/channels")(logger);
+
+    this.powerLevels = this.getPowerLevels();
+    this.verifyPowerLevels(cm, this.powerLevels);
 }
 
 ConfigurationHandler.prototype.getServers = function() {
@@ -67,6 +70,32 @@ ConfigurationHandler.prototype.setPowerLevels = function(pl) {
     }
 
     this.save();
+};
+
+ConfigurationHandler.prototype.verifyPowerLevels = function(cm, pl) {
+    var uuids = [];
+    for (var i = 0; i < cm.clients.length; i++) {
+        if(!pl[cm.clients[i].uuid]){
+            uuids.push(cm.clients[i].uuid);
+        }
+    };
+
+    if(uuids.length){this.setUpPowerLevels(uuids);}
+};
+
+ConfigurationHandler.prototype.setUpPowerLevels = function(uuids) {
+    for (var i = 0; i < uuids; i++) {
+        this.powerLevels[uuids[i]] = {
+            banned: -1,
+            user: 1,
+            channelMod: 100,
+            channelOp: 1000,
+            serverOp: 5000,
+            root: 9000
+        };
+    };
+
+    this.setPowerLevels(this.powerLevels);
 };
 
 ConfigurationHandler.prototype.getPermissionsHandler = function() {

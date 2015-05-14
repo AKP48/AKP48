@@ -21,15 +21,9 @@ var jf = require('jsonfile');
  * Handles getting data from and saving data to the permissions files.
  * @param {Logger} logger The logger to use.
  */
-function PermissionsHandler(cm, logger) {
+function PermissionsHandler(logger) {
     this.log = logger.child({module: "PermissionsHandler"});
     this.permissions = require("./data/config/perm")(logger);
-    this.clientManager = cm;
-    this.powerLevels = {};
-    setTimeout(function(){
-        this.powerLevels = config.getPowerLevels();
-        this.verifyPowerLevels(cm, this.powerLevels);
-    }, 10);
 }
 
 PermissionsHandler.prototype.setPowerLevel = function(userHostmask, channel, clientUUID, powerLevel) {
@@ -76,32 +70,6 @@ PermissionsHandler.prototype.powerLevelFromContext = function(context) {
     var user = context.getUser().getHostmask();
 
     return this.powerLevel(user, channel, uuid);
-};
-
-PermissionsHandler.prototype.verifyPowerLevels = function(cm, pl) {
-    var uuids = [];
-    for (var i = 0; i < cm.clients.length; i++) {
-        if(!pl[cm.clients[i].uuid]){
-            uuids.push(cm.clients[i].uuid);
-        }
-    };
-
-    if(uuids.length){this.setUpPowerLevels(uuids);}
-};
-
-PermissionsHandler.prototype.setUpPowerLevels = function(uuids) {
-    for (var i = 0; i < uuids; i++) {
-        this.powerLevels[uuids[i]] = {
-            banned: -1,
-            user: 1,
-            channelMod: 100,
-            channelOp: 1000,
-            serverOp: 5000,
-            root: 9000
-        };
-    };
-
-    config.setPowerLevels(this.powerLevels);
 };
 
 PermissionsHandler.prototype.save = function() {
