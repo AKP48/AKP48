@@ -51,15 +51,15 @@ Help.prototype.execute = function(context) {
             var send = true;
 
             //check permission on user
-            if(!context.getUser().hasPermission(command.permissionName)) {
-                send = false;
-            }
+            if(command.powerLevel) {
+                if(config.getPerms().powerLevelFromContext(context) > command.powerLevel)) {
+                    send = false;
+                }
 
-            //get user from global channel
-            var globalUser = context.getClient().getChannel("global").getUser(context.getUser().getNick());
-            //check permission on global channel user
-            if(globalUser && !globalUser.hasPermission(command.permissionName)) {
-                send = false;
+                if(config.getPerms().powerLevel(context.getUser().getHostmask(),
+                   global, context.getClient().uuid) > command.powerLevel) {
+                    send = true;
+                }
             }
 
             if(send) {
