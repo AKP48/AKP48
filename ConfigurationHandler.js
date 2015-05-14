@@ -118,18 +118,24 @@ ConfigurationHandler.prototype.getPerms = function() {
 };
 
 ConfigurationHandler.prototype.isMcBot = function(nick, channel, serverUUID) {
-    var mcBots = this.channelConfig[serverUUID][channel].mcBots;
-    if(mcBots) {
-        return (mcBots.indexOf(nick) > -1);
+    if(this.channelConfig[serverUUID][channel]){
+        var mcBots = this.channelConfig[serverUUID][channel].mcBots;
+        if(mcBots) {
+            return (mcBots.indexOf(nick) > -1);
+        }
     }
+    
     return false;
 };
 
 ConfigurationHandler.prototype.getCommandDelimiter = function(channel, serverUUID) {
-    var CD = this.channelConfig[serverUUID][channel].commandDelimiter;
-    if(CD) {
-        return CD;
+    if(this.channelConfig[serverUUID][channel]) {
+        var CD = this.channelConfig[serverUUID][channel].commandDelimiter;
+        if(CD) {
+            return CD;
+        }
     }
+    
     return ".";
 };
 

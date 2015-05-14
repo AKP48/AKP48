@@ -27,5 +27,10 @@
         "commandDelimiter": "!",
         "mcBots": ["craftIRCBot"], // Which users should be considered bots from a Minecraft server.
         "alert": true // Whether or not the bot should alert this channel upon detecting changes from GitHub.
+    },
+    "global": { // The global channel. Used for private messages.
+        "name": "global",
+        "commandDelimiter": ".",
+        "mcBots": []
     }
 }
