@@ -37,7 +37,7 @@ function ConfigurationHandler(cm, logger) {
     this.channelConfig = require("./data/config/channels")(logger);
 
     this.powerLevels = this.getPowerLevels();
-    this.verifyPowerLevels(cm, this.powerLevels);
+    this.verifyPowerLevels(this.powerLevels);
 }
 
 ConfigurationHandler.prototype.getServers = function() {
@@ -66,17 +66,22 @@ ConfigurationHandler.prototype.getPowerLevels = function() {
 
 ConfigurationHandler.prototype.setPowerLevels = function(pl) {
     for(var uuid in pl) {
-        this.serverConfig[uuid].powerLevels = pl[uuid];
+        if (pl.hasOwnProperty(uuid)) {
+            this.serverConfig[uuid].powerLevels = pl[uuid];
+        }
     }
 
     this.save();
 };
 
-ConfigurationHandler.prototype.verifyPowerLevels = function(cm, pl) {
+ConfigurationHandler.prototype.verifyPowerLevels = function(pl) {
     var uuids = [];
-    for (var i = 0; i < cm.clients.length; i++) {
-        if(!pl[cm.clients[i].uuid]){
-            uuids.push(cm.clients[i].uuid);
+    var servers = this.getServers();
+    for (var server in servers) {
+        if (servers.hasOwnProperty(server)) {
+            if(!pl[server]){
+                uuids.push(server);
+            }
         }
     };
 
@@ -130,13 +135,17 @@ ConfigurationHandler.prototype.save = function() {
     jf.writeFileSync(apiFile, this.apiConfig);
     
     for(var server in this.serverConfig) {
-        var file = './data/config/servers/' + server + '.json';
-        jf.writeFileSync(file, this.serverConfig[server]);
+        if (this.serverConfig.hasOwnProperty(server)) {
+            var file = './data/config/servers/' + server + '.json';
+            jf.writeFileSync(file, this.serverConfig[server]);
+        }
     }
 
     for(var server in this.channelConfig) {
-        var file = './data/config/channels/' + server + '.json';
-        jf.writeFileSync(file, this.channelConfig[server]);
+        if (this.channelConfig.hasOwnProperty(server)) {
+            var file = './data/config/channels/' + server + '.json';
+            jf.writeFileSync(file, this.channelConfig[server]);
+        }
     }
 
     this.permissionsHandler.save();
