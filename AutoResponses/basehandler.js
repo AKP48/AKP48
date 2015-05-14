@@ -19,9 +19,6 @@ function AutoResponseHandler() {
     //the name of the handler.
     this.name = "Generic Automatic Response Handler";
 
-    //name of the permission needed to use this handler. All users have 'user.handler.use' by default. Banned users have 'user.handler.banned' by default.
-    this.permissionName = 'user.handler.use';
-
     //whether or not to allow this handler in a private message.
     this.allowPm = true;
 
