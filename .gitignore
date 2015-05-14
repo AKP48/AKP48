@@ -38,6 +38,9 @@ node_modules
 # proportion of contributors will probably not be using SublimeText
 *.sublime-project
 
+# Visual Studio Code settings
+.settings/
+
 # sftp configuration file
 sftp-config.json
 

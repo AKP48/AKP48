@@ -30,7 +30,7 @@ function ConfigurationHandler(cm, logger) {
 
     this.globalConfig = require("./data/config/config");
 
-    this.serverConfig = require("./data/config/servers");
+    this.serverConfig = require("./data/config/servers")(logger);
 
     this.apiConfig = require("./data/config/api");
 
