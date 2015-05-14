@@ -78,7 +78,7 @@ PermissionsHandler.prototype.powerLevelFromContext = function(context) {
 PermissionsHandler.prototype.verifyPowerLevels = function(cm, pl) {
     var uuids = [];
     for (var i = 0; i < cm.clients.length; i++) {
-        if(!pl.[cm.clients[i].uuid]){
+        if(!pl[cm.clients[i].uuid]){
             uuids.push(cm.clients[i].uuid);
         }
     };
