@@ -37,7 +37,7 @@ function ClientManager(logger) {
     this.APIs = require("./API/")(logger);
 
     // handles config stuff.
-    this.config = new (require("./ConfigurationHandler"))(logger);
+    this.config = new (require("./ConfigurationHandler"))(this, logger);
     // make config accessible globally.
     GLOBAL.config = this.config;
 

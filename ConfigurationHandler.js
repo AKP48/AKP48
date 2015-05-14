@@ -21,10 +21,12 @@ var jf = require('jsonfile');
  * Handles getting data from and saving data to the config files.
  * @param {Logger} logger The logger to use.
  */
-function ConfigurationHandler(logger) {
+function ConfigurationHandler(cm, logger) {
     this.log = logger.child({module: "ConfigurationHandler"});
 
-    this.permissionsHandler = new (require("./PermissionsHandler"))(logger);
+    this.clientManager = cm;
+
+    this.permissionsHandler = new (require("./PermissionsHandler"))(cm, logger);
 
     this.globalConfig = require("./data/config/config");
 
@@ -45,6 +47,26 @@ ConfigurationHandler.prototype.getGlobalConfig = function() {
 
 ConfigurationHandler.prototype.getAPIConfig = function() {
     return this.apiConfig;
+};
+
+ConfigurationHandler.prototype.getPowerLevels = function() {
+    var powerLevels = {};
+
+    for (var uuid in this.serverConfig) {
+        if(this.serverConfig[uuid].powerLevels) {
+            powerLevels[uuid] = this.serverConfig[uuid].powerLevels;
+        }
+    };
+
+    return powerLevels;
+};
+
+ConfigurationHandler.prototype.setPowerLevels = function(pl) {
+    for(var uuid in pl) {
+        this.serverConfig[uuid].powerLevels = pl[uuid];
+    }
+
+    this.save();
 };
 
 ConfigurationHandler.prototype.getPermissionsHandler = function() {

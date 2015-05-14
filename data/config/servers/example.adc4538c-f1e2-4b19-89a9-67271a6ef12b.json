@@ -18,11 +18,11 @@
 // Just so you know, comments aren't valid JSON, so you should probably
 // remove any you see laying around.
 {
-    "adc4538c-f1e2-4b19-89a9-67271a6ef12b": {
-        "server": "kuroi.irc.nolimitzone.com", // IRC server for the bot to connect to.
-        "nick": "IRCBot9000", // Nick to use on the IRC server.
-        "realname": "IRCBot9000", // Real name to use on the IRC server.
-        "username": "IRCBot9000", // User name to use on the IRC server.
-        "password": "PasswordGoesHere" // Password the bot should use upon connecting.
-    }
+    "uuid": "adc4538c-f1e2-4b19-89a9-67271a6ef12b", // UUID of this server. If you don't know what to put, leave it blank and it will be set automatically.
+    "nick": "IRCBot9000", // Nick to use on the IRC server.
+    "server": "kuroi.irc.nolimitzone.com", // IRC server for the bot to connect to.
+    "port": 6667, // The port to connect to the IRC server on.
+    "realname": "IRCBot9000", // Real name to use on the IRC server.
+    "username": "IRCBot9000", // User name to use on the IRC server.
+    "password": "PasswordGoesHere" // Password the bot should use upon connecting.
 }
