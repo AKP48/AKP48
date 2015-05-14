@@ -24,5 +24,13 @@
     "port": 6667, // The port to connect to the IRC server on.
     "realname": "IRCBot9000", // Real name to use on the IRC server.
     "username": "IRCBot9000", // User name to use on the IRC server.
-    "password": "PasswordGoesHere" // Password the bot should use upon connecting.
+    "password": "PasswordGoesHere", // Password the bot should use upon connecting.
+    "powerLevels": { // Power level constants. Names must stay the same, but numbers can be changed, and new levels can be added for custom use.
+        "banned": -1,
+        "user": 1,
+        "channelMod": 100,
+        "channelOp": 1000,
+        "serverOp": 5000,
+        "root": 9000
+    }
 }

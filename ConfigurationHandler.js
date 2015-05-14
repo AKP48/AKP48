@@ -56,8 +56,10 @@ ConfigurationHandler.prototype.getPowerLevels = function() {
     var powerLevels = {};
 
     for (var uuid in this.serverConfig) {
-        if(this.serverConfig[uuid].powerLevels) {
-            powerLevels[uuid] = this.serverConfig[uuid].powerLevels;
+        if (this.serverConfig.hasOwnProperty(uuid)) {
+            if(this.serverConfig[uuid].powerLevels) {
+                powerLevels[uuid] = this.serverConfig[uuid].powerLevels;
+            }
         }
     };
 
@@ -70,6 +72,8 @@ ConfigurationHandler.prototype.setPowerLevels = function(pl) {
             this.serverConfig[uuid].powerLevels = pl[uuid];
         }
     }
+
+    this.powerLevels = pl;
 
     this.save();
 };
@@ -89,8 +93,9 @@ ConfigurationHandler.prototype.verifyPowerLevels = function(pl) {
 };
 
 ConfigurationHandler.prototype.setUpPowerLevels = function(uuids) {
-    for (var i = 0; i < uuids; i++) {
-        this.powerLevels[uuids[i]] = {
+    var pl = {};
+    for (var i = 0; i < uuids.length; i++) {
+        pl[uuids[i]] = {
             banned: -1,
             user: 1,
             channelMod: 100,
@@ -100,7 +105,7 @@ ConfigurationHandler.prototype.setUpPowerLevels = function(uuids) {
         };
     };
 
-    this.setPowerLevels(this.powerLevels);
+    this.setPowerLevels(pl);
 };
 
 ConfigurationHandler.prototype.getPermissionsHandler = function() {

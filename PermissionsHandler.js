@@ -74,8 +74,10 @@ PermissionsHandler.prototype.powerLevelFromContext = function(context) {
 
 PermissionsHandler.prototype.save = function() {
     for(var server in this.permissions) {
-        var file = './data/config/perm/' + server + '.json';
-        jf.writeFileSync(file, this.permissions[server]);
+        if (this.permissions.hasOwnProperty(server)) {
+            var file = './data/config/perm/' + server + '.json';
+            jf.writeFileSync(file, this.permissions[server]);
+        }
     }
 };
 
