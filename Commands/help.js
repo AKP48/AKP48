@@ -65,7 +65,11 @@ Help.prototype.execute = function(context) {
             if(send) {
                 markdown += "##" + command.name + "  \n";
                 markdown += "*" + command.helpText + "*  \n";
-                markdown += "**Usage:** " + context.getChannel().getCommandDelimiter() + command.aliases[0] + " " + command.usageText.replace(/</, "&lt;").replace(/>/, "&gt;").replace(/\r?\n/, " | ") + "  \n";
+
+                markdown += "**Usage:** " + config.getCommandDelimiter(context.getChannel(), context.getClient().uuid)
+                 + command.aliases[0] + " " + command.usageText.replace(/</, "&lt;")
+                 .replace(/>/, "&gt;").replace(/\r?\n/, " | ") + "  \n";
+
                 if(command.aliases.length > 1) {
                     markdown += "**Aliases:** ";
                     for (var i = 0; i < command.aliases.length; i++) {
