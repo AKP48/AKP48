@@ -19,12 +19,13 @@
 // remove any you see laying around.
 {
     "#botplace": {
-        "name": "#botplace",
-        "commandDelimiter": "."
+        "name": "#botplace", // Name of this channel.
+        "commandDelimiter": "." // Delimiter for commands in this channel.
     },
     "#channel": {
         "name": "#channel",
         "commandDelimiter": "!",
-        "mcBots": ["craftIRCBot"]
+        "mcBots": ["craftIRCBot"], // Which users should be considered bots from a Minecraft server.
+        "alert": true // Whether or not the bot should alert this channel upon detecting changes from GitHub.
     }
 }
