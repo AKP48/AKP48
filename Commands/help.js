@@ -52,7 +52,7 @@ Help.prototype.execute = function(context) {
 
             //check permission on user
             if(command.powerLevel) {
-                if(config.getPerms().powerLevelFromContext(context) > command.powerLevel)) {
+                if(config.getPerms().powerLevelFromContext(context) > command.powerLevel) {
                     send = false;
                 }
 
