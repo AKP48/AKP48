@@ -53,13 +53,13 @@ PermissionsHandler.prototype.powerLevel = function(userHostmask, channel, client
         this.log.warn({uuid: clientUUID}, "Client not found."); return 1;}
 
     if(!this.permissions[clientUUID][channel]) {
-        this.log.warn({uuid: clientUUID, channel: channel, perms: this.permissions[clientUUID]}, "Channel not found."); return 1;}
+        this.log.warn({uuid: clientUUID, channel: channel}, "Channel not found."); return 1;}
 
     if(!this.permissions[clientUUID][channel].users) {
-        this.log.debug({uuid: clientUUID, channel: channel, perms: this.permissions[clientUUID]}, "Channel has no users defined."); return 1;}
+        this.log.debug({uuid: clientUUID, channel: channel}, "Channel has no users defined."); return 1;}
 
     if(!this.permissions[clientUUID][channel].users[userHostmask]) {
-        this.log.debug({uuid: clientUUID, channel: channel, user: userHostmask, perms: this.permissions[clientUUID]}, "User not found."); return 1;}
+        this.log.debug({uuid: clientUUID, channel: channel, user: userHostmask}, "User not found."); return 1;}
 
     return this.permissions[clientUUID][channel].users[userHostmask].powerLevel;
 };
