@@ -50,15 +50,15 @@ ActionHandler.prototype.process = function(message, client) {
     }
 
     //if user isn't banned
-    //if(!context.getChannel().isBanned(context.getUser())) {
+    if(!(config.getPerms().powerLevelFromContext(context) <= config.powerLevels[context.getClient().uuid]["banned"])) {
         //process the message
         this.executeAll(context);
-    // } else {
-    //     this.log.debug({
-    //         user: context.getUser().getNick(),
-    //         reason: "User is banned."
-    //     }, "ActionHandler execution blocked.");
-    // }
+    } else {
+        this.log.debug({
+            user: context.getUser().getNick(),
+            reason: "User is banned."
+        }, "ActionHandler execution blocked.");
+    }
 };
 
 /**
