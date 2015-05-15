@@ -25,7 +25,7 @@ var MALAPI = require("./mal");
 var RiotAPI = require("./riot");
 var SteamAPI = require("./steam");
 var XKCDAPI = require("./xkcd");
-var config = require("../config.json");
+var config = require("../data/config/api.json");
 
 /**
  * Load all APIs.

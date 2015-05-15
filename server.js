@@ -17,7 +17,7 @@
 
 var path = require('path');
 var bunyan = require('bunyan');
-var config = require('./config.json');
+var config = require('./data/config/config');
 
 var streams = [{
     stream: process.stdout,
@@ -51,7 +51,7 @@ log.info("Initializing polyfill...");
 require('./polyfill.js')(log);
 
 log.info("Creating Client Manager.");
-var clientmanager = new ClientManager(config, log);
+var clientmanager = new ClientManager(log);
 
 GLOBAL.getClientManager = function() {
     return clientmanager;

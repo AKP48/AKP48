@@ -18,7 +18,8 @@
 // We need the shell
 require('shelljs/global');
 
-var config = require("./config.json");
+var config = require("./data/config/config");
+var apiConfig = require("./data/config/api");
 var GitHooks = require("githubhook");
 var Git = require("./API/git");
 var Google = require("./API/google");
@@ -59,7 +60,7 @@ function GitListener(clientmanager, logger) {
     }
 
     //google API module for using Google APIs.
-    this.googleAPI = new Google(config.google.apiKey, logger);
+    this.googleAPI = new Google(apiConfig.google.apiKey, logger);
 
     //git API module.
     this.gitAPI = new Git(logger);

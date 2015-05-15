@@ -15,26 +15,22 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-function AlienHandler(logger) {
-    //the name of the handler.
-    this.name = "Alien Handler";
+/**
+ * Load all server channel files.
+ * @return {Object}        Server channel configurations.
+ */
+var loadPermissions = function(logger) {
+    var servers = [];
+    var _log = logger.child({module: "Permissions Loader"});
+    require('fs').readdirSync(__dirname + '/').each(function(file) {
+        if (file.match(/.+\.json/g) !== null && !file.startsWith("example.")) {
+            _log.trace("Loading " + file);
+            var name = file.replace('.json', '');
 
-    //whether or not to allow this handler in a private message.
-    this.allowPm = true;
-
-    //the regex used to match this handler
-    this.regex = /ayy|ʎʎɐ/i;
-
-    // the amount of times we should respond with this handler, 0 is no limit
-    this.limit = 1;
-
-    //logger
-    this.log = logger;
-}
-
-AlienHandler.prototype.execute = function(word, context) {
-    this.log.trace("ayy lmao");
-	context.getClient().getIRCClient().say(context.getChannel(), "ayy lmao");
+            servers[name] = require('./' + file);
+        }
+    });
+    return servers;
 };
 
-module.exports = AlienHandler;
+module.exports = loadPermissions;

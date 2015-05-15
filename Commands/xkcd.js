@@ -28,9 +28,6 @@ function XKCD(logger) {
     //ways to call this command.
     this.aliases = ['xkcd'];
 
-    //Name of the permission needed to use this command. All users have 'user.command.use' by default. Banned users have 'user.command.banned' by default.
-    this.permissionName = 'user.command.use';
-
     //whether or not to allow this command in a private message.
     this.allowPm = true;
 
@@ -44,7 +41,7 @@ XKCD.prototype.execute = function(context) {
 
     var cachedResponse = getClientManager().getCache().getCached(("XKCD"+context.arguments.join(" ")).sha1());
     if(cachedResponse) {
-        context.getClient().getIRCClient().say(context.getChannel().getName(), cachedResponse);
+        context.getClient().getIRCClient().say(context.getChannel(), cachedResponse);
         return true;
     }
 
@@ -58,7 +55,7 @@ XKCD.prototype.sendResponse = function(response, context, latest) {
         var cacheExpire = (Date.now() / 1000 | 0) + 1576800000; //make cache expire in 50 years
         getClientManager().getCache().addToCache(("XKCD"+context.arguments.join(" ")).sha1(), response, cacheExpire);
     }
-    context.getClient().getIRCClient().say(context.getChannel().getName(), response);
+    context.getClient().getIRCClient().say(context.getChannel(), response);
 };
 
 module.exports = XKCD;

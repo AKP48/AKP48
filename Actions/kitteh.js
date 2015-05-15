@@ -21,9 +21,6 @@ function KittehActionHandler(logger) {
     //the name of the handler.
     this.name = "Kitteh Action Handler";
 
-    //name of the permission needed to use this handler. All users have 'user.handler.use' by default. Banned users have 'user.handler.banned' by default.
-    this.permissionName = 'user.handler.use';
-
     //whether or not to allow this handler in a private message.
     this.allowPm = true;
 
@@ -66,7 +63,7 @@ KittehActionHandler.prototype.execute = function(word, context) {
     var action = word.split(" ").slice(1).join(" ").toLowerCase().trim().slice(0,-1);
     if(action === "pets ^o^") {
         if(chance.integer({min:1, max:100}) < 25 && this.timer <= 1) {
-            context.getClient().getIRCClient().say(context.getChannel().getName(),
+            context.getClient().getIRCClient().say(context.getChannel(),
                 this.sadResponses.randomElement().replace(/<name>/i, context.getUser().getNick()));
             this.setPettingTimer();
         }
@@ -76,10 +73,10 @@ KittehActionHandler.prototype.execute = function(word, context) {
 
     if(action === "pets akp48") {
         if(randNumber <= 175) {
-            context.getClient().getIRCClient().say(context.getChannel().getName(),
+            context.getClient().getIRCClient().say(context.getChannel(),
                 this.happyResponses.randomElement().replace(/<name>/i, context.getUser().getNick()));
         } else if (randNumber > 730) {
-            context.getClient().getIRCClient().say(context.getChannel().getName(),
+            context.getClient().getIRCClient().say(context.getChannel(),
                 this.neutralResponses.randomElement().replace(/<name>/i, context.getUser().getNick()));
         }
     }

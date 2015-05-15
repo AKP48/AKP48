@@ -15,6 +15,8 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
+var Context = require("./Client/Context");
+
 function ActionHandler(logger) {
     //logger
     this.log = logger.child({module: "ActionHandler"});
@@ -36,7 +38,7 @@ ActionHandler.prototype.addHandler = function(handler) {
  */
 ActionHandler.prototype.process = function(message, client) {
     //the context we will be sending to the handler.
-    var context = client.getClientManager().builder.buildContext(message, client);
+    var context = Context.build(message, client);
 
     //if we don't get a context, something weird must have happened, and we shouldn't continue.
     //if we get a message that identifies as a bot, we shouldn't process it
@@ -48,15 +50,15 @@ ActionHandler.prototype.process = function(message, client) {
     }
 
     //if user isn't banned
-    if(!context.getChannel().isBanned(context.getUser())) {
+    //if(!context.getChannel().isBanned(context.getUser())) {
         //process the message
         this.executeAll(context);
-    } else {
-        this.log.debug({
-            user: context.getUser().getNick(),
-            reason: "User is banned."
-        }, "ActionHandler execution blocked.");
-    }
+    // } else {
+    //     this.log.debug({
+    //         user: context.getUser().getNick(),
+    //         reason: "User is banned."
+    //     }, "ActionHandler execution blocked.");
+    // }
 };
 
 /**

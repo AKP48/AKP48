@@ -28,9 +28,6 @@ function Help(logger) {
     //ways to call this command.
     this.aliases = ['help', 'halp'];
 
-    //Name of the permission needed to use this command. All users have 'user.command.use' by default. Banned users have 'user.command.banned' by default.
-    this.permissionName = 'user.command.use';
-
     //whether or not to allow this command in a private message.
     this.allowPm = true;
 
@@ -54,21 +51,25 @@ Help.prototype.execute = function(context) {
             var send = true;
 
             //check permission on user
-            if(!context.getUser().hasPermission(command.permissionName)) {
-                send = false;
-            }
+            if(command.powerLevel) {
+                if(config.getPerms().powerLevelFromContext(context) > command.powerLevel) {
+                    send = false;
+                }
 
-            //get user from global channel
-            var globalUser = context.getClient().getChannel("global").getUser(context.getUser().getNick());
-            //check permission on global channel user
-            if(globalUser && !globalUser.hasPermission(command.permissionName)) {
-                send = false;
+                if(config.getPerms().powerLevel(context.getUser().getHostmask(),
+                   global, context.getClient().uuid) > command.powerLevel) {
+                    send = true;
+                }
             }
 
             if(send) {
                 markdown += "##" + command.name + "  \n";
                 markdown += "*" + command.helpText + "*  \n";
-                markdown += "**Usage:** " + context.getChannel().getCommandDelimiter() + command.aliases[0] + " " + command.usageText.replace(/</, "&lt;").replace(/>/, "&gt;").replace(/\r?\n/, " | ") + "  \n";
+
+                markdown += "**Usage:** " + config.getCommandDelimiter(context.getChannel(), context.getClient().uuid)
+                 + command.aliases[0] + " " + command.usageText.replace(/</, "&lt;")
+                 .replace(/>/, "&gt;").replace(/\r?\n/, " | ") + "  \n";
+
                 if(command.aliases.length > 1) {
                     markdown += "**Aliases:** ";
                     for (var i = 0; i < command.aliases.length; i++) {

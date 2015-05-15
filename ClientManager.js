@@ -16,7 +16,6 @@
  */
 
 var Client = require("./Client/Client");
-var Builder = require("./Client/Builder");
 var CommandProcessor = require("./CommandProcessor");
 var AutoResponseProcessor = require("./AutoResponseProcessor");
 var ActionHandler = require("./ActionHandler");
@@ -27,7 +26,7 @@ var GitListener = require('./GitListener');
  * @param {JSON}   config The IRCBot configuration.
  * @param {Logger} logger The bunyan logger.
  */
-function ClientManager(config, logger) {
+function ClientManager(logger) {
     // The logger.
     this.log = logger.child({module: "ClientManager"});
 
@@ -37,11 +36,13 @@ function ClientManager(config, logger) {
     // API objects.
     this.APIs = require("./API/")(logger);
 
-    // load all of the clients on creation of this object.
-    this.loadClients(config);
+    // handles config stuff.
+    this.config = new (require("./ConfigurationHandler"))(this, logger);
+    // make config accessible globally.
+    GLOBAL.config = this.config;
 
-    // builder
-    this.builder = new Builder(logger);
+    // load all of the clients.
+    this.loadClients(this.config.getServers());
 
     // The CommandProcessor.
     this.commandProcessor = new CommandProcessor(this.log);
@@ -60,12 +61,12 @@ function ClientManager(config, logger) {
 }
 
 /**
- * Load all clients from config file.
- * @param {JSON} config The config file.
+ * Load all clients from server config file.
+ * @param {JSON} servers The server config file.
  */
-ClientManager.prototype.loadClients = function(config) {
+ClientManager.prototype.loadClients = function(servers) {
     this.log.info("Loading client information...");
-    config.servers.each(function (server) {
+    servers.each(function (server) {
         this.addClient(Client.build(server, this.log));
     }, this);
 };
@@ -102,6 +103,10 @@ ClientManager.prototype.softReload = function() {
     //reload the API loader
     this.APIs = require("./API/")(this.log);
 
+    //reload the config files
+    this.config = new (require("./ConfigurationHandler"))(this, this.log);
+    GLOBAL.config = this.config;
+
     //now we can reload all the clients.
     this.reloadClients();
 };
@@ -114,10 +119,6 @@ ClientManager.prototype.reloadClients = function() {
 
     //require the code to refresh it
     var Client = require("./Client/Client");
-    var Builder = require("./Client/Builder");
-
-    //assign a new builder from refreshed code
-    this.builder = new Builder(this.log);
 
     for (var i = 0; i < this.clients.length; i++) {
         //keep a reference to the IRC client, so it doesn't disconnect.
@@ -125,6 +126,7 @@ ClientManager.prototype.reloadClients = function() {
 
         //build a new client using the values from this client.
         var tempClient = Client.build({
+            uuid: this.clients[i].uuid,
             nick: this.clients[i].getNick(),
             realname: this.clients[i].getRealName(),
             username: this.clients[i].getUserName(),
@@ -154,29 +156,14 @@ ClientManager.prototype.reloadClients = function() {
  * Save the configuration of this ClientManager.
  */
 ClientManager.prototype.save = function() {
-    this.log.info("Saving configuration...");
+    var serverArr = [];
 
-    //get the current config
-    var config = require("./config.json");
-    //remove the current server config
-    config.servers = [];
-
-    // TODO: fix this
     for (var i = 0; i < this.clients.length; i++) {
-        //copy the client, keeping only properties.
-        var client = this.clients[i].clone();
-
-        //delete everything we don't need to save.
-        delete client.commandProcessor;
-        delete client.ircClient;
-        delete client.clientManager;
-        delete client.isTemporary;
-
-        config.servers.push(client);
+        serverArr.push(this.clients[i].getConfigObject());
     };
 
-    require('fs').writeFile('./config.json', JSON.stringify(config, null, 4), function (err) {
-        if (err) return console.log(err);
+    require('fs').writeFile('./data/config/servers.json', JSON.stringify(serverArr, null, 4), function (err) {
+        if (err) return this.log.err(err, "Error saving configuration.");
         this.log.info('Configuration saved.');
     });
 };

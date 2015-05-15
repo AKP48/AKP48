@@ -28,9 +28,6 @@ function Choose() {
     //ways to call this command.
     this.aliases = ['choose', 'pick'];
 
-    //Name of the permission needed to use this command. All users have 'user.command.use' by default. Banned users have 'user.command.banned' by default.
-    this.permissionName = 'user.command.use';
-
     //whether or not to allow this command in a private message.
     this.allowPm = true;
 
@@ -104,7 +101,7 @@ Choose.prototype.attack = function(context) {
     var person = context.arguments.randomElement(1);
 
     //say the result.
-    context.getClient().getIRCClient().say(context.getChannel().getName(), context.getUser().getNick() + " attacks " + person + ": " + atk + ".");
+    context.getClient().getIRCClient().say(context.getChannel(), context.getUser().getNick() + " attacks " + person + ": " + atk + ".");
     return true;
 };
 
@@ -135,7 +132,7 @@ Choose.prototype.feel = function(context) {
     oS += "should feel " + feel + ".";
 
     //say the result.
-    context.getClient().getIRCClient().say(context.getChannel().getName(), oS);
+    context.getClient().getIRCClient().say(context.getChannel(), oS);
     return true;
 };
 

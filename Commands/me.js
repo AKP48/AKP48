@@ -28,9 +28,6 @@ function Me() {
     //ways to call this command.
     this.aliases = ['me'];
 
-    //Name of the permission needed to use this command. All users have 'user.command.use' by default. Banned users have 'user.command.banned' by default.
-    this.permissionName = 'user.command.use';
-
     //whether or not to allow this command in a private message.
     this.allowPm = true;
 
@@ -39,7 +36,7 @@ function Me() {
 }
 
 Me.prototype.execute = function(context) {
-    var channel = context.getChannel().getName();
+    var channel = context.getChannel();
 
     //if we don't have any arguments, return.
     if(!context.arguments.length) {return false;}

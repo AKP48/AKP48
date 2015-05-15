@@ -15,26 +15,28 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-function AlienHandler(logger) {
-    //the name of the handler.
-    this.name = "Alien Handler";
-
-    //whether or not to allow this handler in a private message.
-    this.allowPm = true;
-
-    //the regex used to match this handler
-    this.regex = /ayy|ʎʎɐ/i;
-
-    // the amount of times we should respond with this handler, 0 is no limit
-    this.limit = 1;
-
-    //logger
-    this.log = logger;
+// Just so you know, comments aren't valid JSON, so you should probably
+// remove any you see laying around.
+{
+    "#botplace": {
+        "users": {
+            "Nickname!Username@hostname.com": {
+                "powerLevel": 9001 // User's power level. See example server config for default power levels.
+            }
+        }
+    },
+    "#channel": {
+        "users": {
+            "Nickname!Username@hostname.com": {
+                "powerLevel": 1000
+            }
+        }
+    },
+    "global": { // The global channel. This is used for private messages.
+        "users": {
+            "Nickname!Username@hostname.com": {
+                "powerLevel": 9001
+            }
+        }
+    }
 }
-
-AlienHandler.prototype.execute = function(word, context) {
-    this.log.trace("ayy lmao");
-	context.getClient().getIRCClient().say(context.getChannel(), "ayy lmao");
-};
-
-module.exports = AlienHandler;

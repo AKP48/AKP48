@@ -31,9 +31,6 @@ function Lart() {
     //disable this command.
     //this.dependencies = [''];
 
-    //Name of the permission needed to use this command. All users have 'user.command.use' by default. Banned users have 'user.command.banned' by default.
-    this.permissionName = 'user.command.use';
-
     //whether or not to allow this command in a private message.
     this.allowPm = true;
 
@@ -57,11 +54,11 @@ Lart.prototype.execute = function(context) {
             if(err) {console.error(err);}
             self.larts = data.toString().split("\n");
             var item = self.larts[Math.floor(Math.random()*self.larts.length)];
-            context.getClient().getIRCClient().say(context.getChannel().getName(), context.getUser().getNick() + " " + item.replace(/\{user\}/g, object));
+            context.getClient().getIRCClient().say(context.getChannel(), context.getUser().getNick() + " " + item.replace(/\{user\}/g, object));
         });
     } else {
         var item = this.larts[Math.floor(Math.random()*this.larts.length)];
-        context.getClient().getIRCClient().say(context.getChannel().getName(), context.getUser().getNick() + " " + item.replace(/\{user\}/g, object));
+        context.getClient().getIRCClient().say(context.getChannel(), context.getUser().getNick() + " " + item.replace(/\{user\}/g, object));
     }
     return true;
 };

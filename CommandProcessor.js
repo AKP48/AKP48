@@ -15,6 +15,8 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
+var Context = require("./Client/Context");
+
 /**
  * The Command Processor.
  */
@@ -79,13 +81,13 @@ CommandProcessor.prototype.initCommandAliases = function() {
  */
 CommandProcessor.prototype.process = function(message, client) {
     //the context we will be sending to the command.
-    var context = client.getClientManager().builder.buildContext(message, client);
+    var context = Context.build(message, client);
 
     //if we don't get a context, something weird must have happened, and we shouldn't continue.
     if(!context) {return false; this.log.warn({msg: message}, "No context created.");}
 
-    //if user isn't banned
-    if(!context.getChannel().isBanned(context.getUser())) {
+    //if user isn't a bot
+    if(!context.getUser().isBot) {
 
         //if the command exists
         if(context.commandExists()) {
@@ -101,7 +103,9 @@ CommandProcessor.prototype.process = function(message, client) {
             }
 
             //return if command is not allowed as a privmsg and this is one (unless we have the root permission.)
-            if(!context.getCommand().allowPm && context.isPm && !context.getUser().hasPermission("root.command.use")) {
+            if(!context.getCommand().allowPm && context.isPm &&
+                !(config.getPerms().powerLevelFromContext(context) < config.powerLevels[context.getClient().uuid]["root"])) {
+                
                 this.log.debug({
                     user: context.getUser().getNick(),
                     command: context.getCommand().name,
@@ -110,8 +114,9 @@ CommandProcessor.prototype.process = function(message, client) {
                 return false;
             }
 
-            //check privilege
-            if(!context.getUser().hasPermission(context.getCommand().permissionName) && !context.user.hasPermission("root.command.use")) {
+            //check privilege - If there's a required powerLevel for this command, check against it, as well as the root permission level.
+            if(context.getCommand().powerLevel && ((config.getPerms().powerLevelFromContext(context) < context.getCommand().powerLevel)
+             || (config.getPerms().powerLevelFromContext(context) > config.powerLevels[context.getClient().uuid]["root"]))) {
                 this.log.debug({
                     user: context.getUser().getNick(),
                     command: context.getCommand().name,
@@ -120,8 +125,9 @@ CommandProcessor.prototype.process = function(message, client) {
                 return false;
             }
 
+            //TODO: reimplement flood protection.
             //do flood protection/execute the command if we haven't returned by now.
-            if(context.getChannel().floodProtection(context)) {
+            //if(context.getChannel().floodProtection(context)) {
                 if(!context.getCommand().execute(context)) {
                     this.sendUsageMessage(context);
                     this.log.debug({
@@ -134,19 +140,19 @@ CommandProcessor.prototype.process = function(message, client) {
                     this.log.debug({user: context.getUser().getNick(), command: context.getCommand().name, args: "'" + context.getArguments().join("', '") + "'", fullMsg: context.getFullMessage()}, "Command executed.");
                 }
                 return true;
-            } else {
-                this.log.debug({
-                    user: context.getUser().getNick(),
-                    command: context.getCommand().name,
-                    reason: "User has been limited by flood protection."
-                }, "Command execution attempt failed.");
-            }
+            // } else {
+            //     this.log.debug({
+            //         user: context.getUser().getNick(),
+            //         command: context.getCommand().name,
+            //         reason: "User has been limited by flood protection."
+            //     }, "Command execution attempt failed.");
+            // }
         }
     } else {
         this.log.debug({
             user: context.getUser().getNick(),
             command: context.getCommand().name,
-            reason: "User is banned."
+            reason: "User is banned, or is a bot."
         }, "Command execution attempt failed.");
     }
 
