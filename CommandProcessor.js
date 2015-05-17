@@ -116,7 +116,7 @@ CommandProcessor.prototype.process = function(message, client) {
 
             //check privilege - If there's a required powerLevel for this command, check against it, as well as the root permission level.
             if(context.getCommand().powerLevel && ((config.getPerms().powerLevelFromContext(context) < context.getCommand().powerLevel)
-             || (config.getPerms().powerLevelFromContext(context) > config.powerLevels[context.getClient().uuid]["root"]))) {
+             || !(config.getPerms().powerLevelFromContext(context) >= config.powerLevels[context.getClient().uuid]["root"]))) {
                 this.log.debug({
                     user: context.getUser().getNick(),
                     command: context.getCommand().name,
