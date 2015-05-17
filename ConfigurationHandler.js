@@ -39,10 +39,17 @@ function ConfigurationHandler(cm, logger) {
 
     this.powerLevels = this.getPowerLevels();
     this.verifyPowerLevels(this.powerLevels);
+    this.initialize();
 }
 
 ConfigurationHandler.prototype.initialize = function() {
-    // This function will initialize the configuration files.
+    for(var server in this.serverConfig) {
+        if(!this.channelConfig[server]) {
+            this.channelConfig[server] = {};
+        }
+    }
+
+    this.save();
 };
 
 ConfigurationHandler.prototype.getServers = function() {
@@ -122,18 +129,26 @@ ConfigurationHandler.prototype.getPerms = function() {
 };
 
 ConfigurationHandler.prototype.isMcBot = function(nick, channel, serverUUID) {
-    if(this.channelConfig[serverUUID][channel]){
+    if(this.channelConfig[serverUUID]){
+        if(!this.channelConfig[serverUUID][channel]){
+            this.channelConfig[serverUUID][channel] = {};
+        }
         var mcBots = this.channelConfig[serverUUID][channel].mcBots;
         if(mcBots) {
             return (mcBots.indexOf(nick) > -1);
         }
+    } else {
+        this.initialize();
     }
     
     return false;
 };
 
 ConfigurationHandler.prototype.toggleIsMcBot = function(nick, channel, serverUUID) {
-    if(this.channelConfig[serverUUID][channel]){
+    if(this.channelConfig[serverUUID]){
+        if(!this.channelConfig[serverUUID][channel]){
+            this.channelConfig[serverUUID][channel] = {};
+        }
         var mcBots = this.channelConfig[serverUUID][channel].mcBots;
         if(mcBots) {
             if(mcBots.indexOf(nick) > -1) {
@@ -156,18 +171,26 @@ ConfigurationHandler.prototype.toggleIsMcBot = function(nick, channel, serverUUI
 };
 
 ConfigurationHandler.prototype.isBot = function(nick, channel, serverUUID) {
-    if(this.channelConfig[serverUUID][channel]){
+    if(this.channelConfig[serverUUID]){
+        if(!this.channelConfig[serverUUID][channel]){
+            this.channelConfig[serverUUID][channel] = {};
+        }
         var bots = this.channelConfig[serverUUID][channel].bots;
         if(bots) {
             return (bots.indexOf(nick) > -1);
         }
+    } else {
+        this.initialize();
     }
     
     return false;
 };
 
 ConfigurationHandler.prototype.toggleIsBot = function(nick, channel, serverUUID) {
-    if(this.channelConfig[serverUUID][channel]){
+    if(this.channelConfig[serverUUID]){
+        if(!this.channelConfig[serverUUID][channel]){
+            this.channelConfig[serverUUID][channel] = {};
+        }
         var bots = this.channelConfig[serverUUID][channel].bots;
         if(bots) {
             if(bots.indexOf(nick) > -1) {
@@ -190,11 +213,16 @@ ConfigurationHandler.prototype.toggleIsBot = function(nick, channel, serverUUID)
 };
 
 ConfigurationHandler.prototype.getCommandDelimiter = function(channel, serverUUID) {
-    if(this.channelConfig[serverUUID][channel]) {
+    if(this.channelConfig[serverUUID]) {
+        if(!this.channelConfig[serverUUID][channel]){
+            this.channelConfig[serverUUID][channel] = {};
+        }
         var CD = this.channelConfig[serverUUID][channel].commandDelimiter;
         if(CD) {
             return CD;
         }
+    } else {
+        this.initialize();
     }
     
     return ".";
