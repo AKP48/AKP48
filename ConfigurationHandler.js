@@ -41,6 +41,10 @@ function ConfigurationHandler(cm, logger) {
     this.verifyPowerLevels(this.powerLevels);
 }
 
+ConfigurationHandler.prototype.initialize = function() {
+    // This function will initialize the configuration files.
+};
+
 ConfigurationHandler.prototype.getServers = function() {
     return this.serverConfig;
 };
@@ -126,6 +130,63 @@ ConfigurationHandler.prototype.isMcBot = function(nick, channel, serverUUID) {
     }
     
     return false;
+};
+
+ConfigurationHandler.prototype.toggleIsMcBot = function(nick, channel, serverUUID) {
+    if(this.channelConfig[serverUUID][channel]){
+        var mcBots = this.channelConfig[serverUUID][channel].mcBots;
+        if(mcBots) {
+            if(mcBots.indexOf(nick) > -1) {
+                mcBots.splice(mcBots.indexOf(nick), 1);
+                return false;
+            } else {
+                mcBots.push(nick);
+                return true;
+            }
+        } else {
+            this.channelConfig[serverUUID][channel].mcBots = [];
+            this.channelConfig[serverUUID][channel].mcBots.push(nick);
+            return true;
+        }
+        this.save();
+    } else {
+        this.initialize();
+        this.toggleIsMcBot(nick, channel, serverUUID);
+    }
+};
+
+ConfigurationHandler.prototype.isBot = function(nick, channel, serverUUID) {
+    if(this.channelConfig[serverUUID][channel]){
+        var bots = this.channelConfig[serverUUID][channel].bots;
+        if(bots) {
+            return (bots.indexOf(nick) > -1);
+        }
+    }
+    
+    return false;
+};
+
+ConfigurationHandler.prototype.toggleIsBot = function(nick, channel, serverUUID) {
+    if(this.channelConfig[serverUUID][channel]){
+        var bots = this.channelConfig[serverUUID][channel].bots;
+        if(bots) {
+            if(bots.indexOf(nick) > -1) {
+                bots.splice(bots.indexOf(nick), 1);
+                return false;
+            } else {
+                mcBots.push(nick);
+                return true;
+            }
+        } else {
+            this.channelConfig[serverUUID][channel].bots = [];
+            this.channelConfig[serverUUID][channel].bots.push(nick);
+            return true;
+        }
+        this.save();
+    } else {
+        this.initialize();
+        this.toggleIsBot(nick, channel, serverUUID);
+    }
 };
 
 ConfigurationHandler.prototype.getCommandDelimiter = function(channel, serverUUID) {
