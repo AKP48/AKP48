@@ -149,6 +149,10 @@ module.exports.build = function build(message, client) {
     //set the channel in the context.
     context.setChannel(channel);
 
+    if(config.isBot(message.nick, context.getChannel(), client.uuid)) {
+        bot = true;
+    }
+
     var nick = message.nick;
     var prefix = message.prefix;
 
