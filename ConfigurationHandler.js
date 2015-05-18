@@ -228,6 +228,19 @@ ConfigurationHandler.prototype.getCommandDelimiter = function(channel, serverUUI
     return ".";
 };
 
+ConfigurationHandler.prototype.addChannel = function(channel, serverUUID) {
+    if(this.channelConfig[serverUUID]) {
+        this.channelConfig[serverUUID][channel] = {"name": channel,
+                                                   "commandDelimiter": ".",
+                                                   "mcBots": []};
+        this.permissionsHandler.addChannel(channel, serverUUID);
+        this.save();
+    } else {
+        this.initialize();
+        this.addChannel(channel, serverUUID);
+    }
+};
+
 ConfigurationHandler.prototype.save = function() {     
     var globalFile = './data/config/config.json';
     var apiFile = './data/config/api.json';

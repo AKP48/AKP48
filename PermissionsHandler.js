@@ -73,6 +73,16 @@ PermissionsHandler.prototype.powerLevelFromContext = function(context) {
     return this.powerLevel(user, channel, uuid);
 };
 
+PermissionsHandler.prototype.addChannel = function(channel, clientUUID) {
+    if(!this.permissions[clientUUID]) {
+        this.permissions[clientUUID] = {};
+    }
+
+    this.permissions[clientUUID][channel] = {
+        "users": {}
+    }
+};
+
 PermissionsHandler.prototype.save = function() {
     for(var server in this.permissions) {
         if (this.permissions.hasOwnProperty(server)) {
