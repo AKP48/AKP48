@@ -100,12 +100,12 @@ ClientManager.prototype.softReload = function() {
     //reload the ActionHandler
     this.actionHandler = new (require("./ActionHandler"))(this.log);
 
-    //reload the API loader
-    this.APIs = require("./API/")(this.log);
-
     //reload the config files
     this.config = new (require("./ConfigurationHandler"))(this, this.log);
     GLOBAL.config = this.config;
+
+    //reload the API loader
+    this.APIs = require("./API/")(this.log);
 
     //now we can reload all the clients.
     this.reloadClients();
