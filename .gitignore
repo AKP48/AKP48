@@ -63,6 +63,3 @@ data/config/servers/*
 
 # Custom modules
 custom-*
-
-# config folder - TODO: Change when merging config branch
-data/config
