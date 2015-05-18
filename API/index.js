@@ -25,7 +25,7 @@ var MALAPI = require("./mal");
 var RiotAPI = require("./riot");
 var SteamAPI = require("./steam");
 var XKCDAPI = require("./xkcd");
-var config = require("../data/config/api.json");
+var APIConfig = config.getAPIConfig();
 
 /**
  * Load all APIs.
@@ -39,10 +39,10 @@ var loadAPIs = function(logger) {
         Dinner: new DinnerAPI(logger),
         Gist: new GistAPI(logger),
         Git: new GitAPI(logger),
-        Google: new GoogleAPI(config.google.apiKey, logger),
-        Imgur: new ImgurAPI(config.imgur.clientID, logger),
+        Google: new GoogleAPI(APIConfig.google.apiKey, logger),
+        Imgur: new ImgurAPI(APIConfig.imgur.clientID, logger),
         MAL: new MALAPI(logger),
-        Riot: new RiotAPI(config.riot.apiKey, logger),
+        Riot: new RiotAPI(APIConfig.riot.apiKey, logger),
         Steam: new SteamAPI(logger),
         XKCD: new XKCDAPI(logger),
     };

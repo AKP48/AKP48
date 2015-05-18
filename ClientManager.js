@@ -33,13 +33,13 @@ function ClientManager(logger) {
     // array of all clients
     this.clients = [];
 
-    // API objects.
-    this.APIs = require("./API/")(logger);
-
     // handles config stuff.
     this.config = new (require("./ConfigurationHandler"))(this, logger);
     // make config accessible globally.
     GLOBAL.config = this.config;
+
+    // API objects.
+    this.APIs = require("./API/")(logger);
 
     // load all of the clients.
     this.loadClients(this.config.getServers());
