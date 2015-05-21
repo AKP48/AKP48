@@ -303,6 +303,7 @@ Client.prototype.initialize = function(clientManager, holdIRCClient) {
     this.ircClient.removeAllListeners('message');
     this.ircClient.removeAllListeners('action');
     this.ircClient.removeAllListeners('invite');
+    this.ircClient.removeAllListeners('kick');
 
     var self = this;
 
@@ -327,15 +328,14 @@ Client.prototype.initialize = function(clientManager, holdIRCClient) {
             self.log.info("Joined channel "+channel+" after invite from "+from+".");
         });
     });
-
-
+    
     this.ircClient.on('nick', function (oldNick, newNick) {
         if (oldNick === self.nick) {
             self.nick = newNick;
         }
     });
 
-    this.ircClient.on('kick', function (channel, nick, by, reason, message) {
+    this.ircClient.on('kick', function(channel, nick, by, reason, message) {
         if(nick == self.getIRCClient().nick) {
             self.removeChannel(channel);
             config.removeChannel(channel, self.uuid);
