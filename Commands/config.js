@@ -74,6 +74,8 @@ Config.prototype.execute = function(context) {
         default:
             this.help(context);
     }
+    
+    return true;
 };
 
 Config.prototype.addChannel = function(context) {
