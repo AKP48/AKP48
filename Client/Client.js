@@ -304,6 +304,7 @@ Client.prototype.initialize = function(clientManager, holdIRCClient) {
     this.ircClient.removeAllListeners('action');
     this.ircClient.removeAllListeners('invite');
     this.ircClient.removeAllListeners('kick');
+    this.ircClient.removeAllListeners('error');
 
     var self = this;
 
