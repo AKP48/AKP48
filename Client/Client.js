@@ -296,7 +296,7 @@ Client.prototype.initialize = function(clientManager, holdIRCClient) {
 
     if(!holdIRCClient) {
         //create the IRC client. This automatically connects, as well.
-        this.ircClient = new irc.Client(this.getServer(), this.getNick(), { channels: channels, realName: this.getRealName(), password: password, userName: this.getUserName(), port: this.getPort(), autoRejoin: true, showErrors: true});
+        this.ircClient = new irc.Client(this.getServer(), this.getNick(), { channels: channels, realName: this.getRealName(), password: password, userName: this.getUserName(), port: this.getPort(), showErrors: true});
     }
 
     //attempt to remove eventListeners, then add new ones.
@@ -327,9 +327,18 @@ Client.prototype.initialize = function(clientManager, holdIRCClient) {
         });
     });
 
+
     this.ircClient.on('nick', function (oldNick, newNick) {
         if (oldNick === self.nick) {
             self.nick = newNick;
+        }
+    });
+
+    this.ircClient.on('kick', function (channel, nick, by, reason, message) {
+        if(nick == self.getIRCClient().nick) {
+            self.removeChannel(channel);
+            config.removeChannel(channel, self.uuid);
+            log.info("Kicked from channel "+channel+" by "+by+" for \""+reason+"\".");
         }
     });
 
