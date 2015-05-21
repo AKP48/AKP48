@@ -324,6 +324,7 @@ Client.prototype.initialize = function(clientManager, holdIRCClient) {
         config.addChannel(channel, self.uuid);
         self.getIRCClient().join(channel, function(){
             self.getIRCClient().say(channel, "Thanks for inviting me, "+from+"! I'm glad to be here. For more information about me, say `.help`.");
+            self.log.info("Joined channel "+channel+" after invite from "+from+".");
         });
     });
 
@@ -338,7 +339,7 @@ Client.prototype.initialize = function(clientManager, holdIRCClient) {
         if(nick == self.getIRCClient().nick) {
             self.removeChannel(channel);
             config.removeChannel(channel, self.uuid);
-            log.info("Kicked from channel "+channel+" by "+by+" for \""+reason+"\".");
+            self.log.info("Kicked from channel "+channel+" by "+by+" for \""+reason+"\".");
         }
     });
 
