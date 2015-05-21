@@ -77,7 +77,20 @@ Config.prototype.execute = function(context) {
 };
 
 Config.prototype.addChannel = function(context) {
-    // body...
+    if(context.arguments.length < 2) {
+        var oS = "Usage: "+config.getCommandDelimiter(context.getChannel(), context.getClient().uuid);
+        oS += "config "+context.arguments[0] + " <channel(s)...>";
+        context.getClient().getIRCClient().notice(context.getUser().getNick(), oS);
+    }
+
+    var channels = context.arguments.slice(1);
+
+    channels.forEach(function(channel) {
+        config.addChannel(channel, context.getClient().uuid);
+        context.getClient().getIRCClient().join(channel, function(){
+            context.getClient().getIRCClient().say(channel, "Hi! I'm "+context.getClient().getNick()+", and I'm here to help! Speaking of help... say .help to get some!");
+        });
+    });
 };
 
 Config.prototype.removeChannel = function(context) {
