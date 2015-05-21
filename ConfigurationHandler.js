@@ -235,14 +235,30 @@ ConfigurationHandler.prototype.getCommandDelimiter = function(channel, serverUUI
 
 ConfigurationHandler.prototype.addChannel = function(channel, serverUUID) {
     if(this.channelConfig[serverUUID]) {
-        this.channelConfig[serverUUID][channel] = {"name": channel,
-                                                   "commandDelimiter": ".",
-                                                   "mcBots": []};
+        this.channelConfig[serverUUID][channel] = 
+        {
+            "name": channel,
+            "commandDelimiter": ".",
+            "mcBots": []
+        };
+
         this.permissionsHandler.addChannel(channel, serverUUID);
         this.save();
     } else {
         this.initialize();
         this.addChannel(channel, serverUUID);
+    }
+};
+
+ConfigurationHandler.prototype.removeChannel = function(channel, serverUUID) {
+    if(this.channelConfig[serverUUID]) {
+        if(this.channelConfig[serverUUID][channel]) {
+            delete this.channelConfig[serverUUID][channel];
+            this.permissionsHandler.removeChannel(channel, serverUUID);
+            this.save();
+        }
+    } else {
+        this.initialize();
     }
 };
 
