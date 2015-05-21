@@ -345,7 +345,9 @@ Client.prototype.initialize = function(clientManager, holdIRCClient) {
     });
 
     this.ircClient.addListener('error', function(message) {
-        self.log.warn(message, "IRC client error!");
+        var err = new Error("IRCClientError: "+message.command);
+        err.ircMessage = message;
+        self.log.info(err, "IRC client error!");
     });
 
     var botID = this.botID;
