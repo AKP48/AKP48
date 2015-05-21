@@ -57,7 +57,7 @@ Help.prototype.execute = function(context) {
                 }
 
                 if(config.getPerms().powerLevel(context.getUser().getHostmask(),
-                   global, context.getClient().uuid) > command.powerLevel) {
+                   "global", context.getClient().uuid) > command.powerLevel) {
                     send = true;
                 }
             }
