@@ -266,8 +266,12 @@ ConfigurationHandler.prototype.removeChannel = function(channel, serverUUID) {
 };
 
 ConfigurationHandler.prototype.isInChannel = function(channel, serverUUID) {
-    if(!this.channelConfig[serverUUID]) {return false;}
-    if(!this.channelConfig[serverUUID][channel] || !this.channelConfig[serverUUID][channel].disabled) {return false;}
+    var serverUUIDExists = this.channelConfig[serverUUID];
+    var channelExists = this.channelConfig[serverUUID][channel];
+    var channelIsDisabled = this.channelConfig[serverUUID][channel].disabled;
+    if(!serverUUIDExists) {return false;}
+    if(!channelExists) {return false;}
+    if(channelIsDisabled) {return false;}
     return true;
 };
 
