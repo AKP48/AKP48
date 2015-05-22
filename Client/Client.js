@@ -478,9 +478,11 @@ module.exports.build = function build(options, logger) {
     for (var key in channels) {
        if (channels.hasOwnProperty(key)) {
             var obj = channels[key];
-            client.addChannel(key);
-            if(obj.alert) {
-                client.alert.push(key);
+            if(!obj.disabled) {
+                client.addChannel(key);
+                if(obj.alert) {
+                    client.alert.push(key);
+                }
             }
         }
     }
