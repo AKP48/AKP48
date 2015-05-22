@@ -262,6 +262,12 @@ ConfigurationHandler.prototype.removeChannel = function(channel, serverUUID) {
     }
 };
 
+ConfigurationHandler.prototype.isInChannel = function(channel, serverUUID) {
+    if(!this.channelConfig[serverUUID]) {return false;}
+    if(!this.channelConfig[serverUUID][channel]) {return false;}
+    return true;
+};
+
 ConfigurationHandler.prototype.save = function() {     
     var globalFile = './data/config/config.json';
     var apiFile = './data/config/api.json';
