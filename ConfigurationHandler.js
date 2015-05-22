@@ -267,7 +267,7 @@ ConfigurationHandler.prototype.removeChannel = function(channel, serverUUID) {
 
 ConfigurationHandler.prototype.isInChannel = function(channel, serverUUID) {
     if(!this.channelConfig[serverUUID]) {return false;}
-    if(!this.channelConfig[serverUUID][channel]) {return false;}
+    if(!this.channelConfig[serverUUID][channel] && !this.channelConfig[serverUUID][channel].disabled) {return false;}
     return true;
 };
 
