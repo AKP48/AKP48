@@ -67,13 +67,6 @@ Config.prototype.execute = function(context) {
         case "removechannel":
             this.removeChannel(context);
             break;
-        case "blacklist":
-        case "bot":
-            this.botBlacklist(context);
-            break;
-        case "powerlevel":
-            this.setUserPowerLevel(context);
-            break;
         default:
             this.help(context);
             break;
@@ -126,14 +119,6 @@ Config.prototype.addServer = function(context) {
 };
 
 Config.prototype.removeServer = function(context) {
-    // body...
-};
-
-Config.prototype.botBlacklist = function(context) {
-    // body...
-};
-
-Config.prototype.setUserPowerLevel = function(context) {
     // body...
 };
 
