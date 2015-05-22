@@ -62,6 +62,7 @@ Config.prototype.execute = function(context) {
         case "join":
         case "addchannel":
             this.addChannel(context);
+            break;
         case "part":
         case "removechannel":
             this.removeChannel(context);
