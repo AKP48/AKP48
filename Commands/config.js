@@ -41,6 +41,7 @@ function Config() {
 Config.prototype.execute = function(context) {
     if(!context.arguments.length) {
         this.help(context);
+        return true;
     }
 
     switch(context.arguments[0].toLowerCase()) {
@@ -71,8 +72,10 @@ Config.prototype.execute = function(context) {
             break;
         case "powerlevel":
             this.setUserPowerLevel(context);
+            break;
         default:
             this.help(context);
+            break;
     }
     
     return true;
