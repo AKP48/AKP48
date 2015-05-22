@@ -92,7 +92,7 @@ Config.prototype.addChannel = function(context) {
     var channels = context.arguments.slice(1);
 
     channels.forEach(function(channel) {
-        if(!config.isInChannel(channel, context.getClient().uuid)) {
+        if(!config.isInChannel(channel, context.getClient().uuid) && channel.isChannel()) {
             config.addChannel(channel, context.getClient().uuid);
             context.getClient().getIRCClient().join(channel, function(){
                 context.getClient().getIRCClient().say(channel, "Hi! I'm "+context.getClient().getNick()+", and I'm here to help! Speaking of help... say .help to get some!");
@@ -112,7 +112,7 @@ Config.prototype.removeChannel = function(context) {
     var channels = context.arguments.slice(1);
 
     channels.forEach(function(channel) {
-        if(config.isInChannel(channel, context.getClient().uuid)) {
+        if(config.isInChannel(channel, context.getClient().uuid) && channel.isChannel()) {
             config.removeChannel(channel, context.getClient().uuid);    
             context.getClient().getIRCClient().part(channel, function(){
                 context.getClient().getIRCClient().notice(context.getUser().getNick(), "Parted "+channel+".");
