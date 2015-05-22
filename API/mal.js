@@ -43,8 +43,11 @@ MyAnimeList.prototype.getInfo = function(link, callback) {
         if(err || !body.archived_snapshots.closest || !body.archived_snapshots.closest.available) {
             self.getInfoFromURL("http://webcache.googleusercontent.com/search?q=cache:" + search, "Google cache", callback); return;
         }
-
-        self.getInfoFromURL(body.archived_snapshots.closest.url, "Wayback Machine", callback);
+        try {
+            self.getInfoFromURL(body.archived_snapshots.closest.url, "Wayback Machine", callback);
+        } catch(e) {
+            self.getInfoFromURL("http://webcache.googleusercontent.com/search?q=cache:" + search, "Google cache", callback);
+        }
 
         return;
     });
