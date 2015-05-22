@@ -54,7 +54,7 @@ function LinkHandler(logger) {
 
 // TODO: cache responses
 LinkHandler.prototype.execute = function(word, context) {
-    if(/noinfo/i.exec(link)) {
+    if(/noinfo/i.exec(word)) {
         return this.log.debug("Ignoring link due to noinfo parameter.");
     }
 
