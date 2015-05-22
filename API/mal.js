@@ -43,17 +43,18 @@ MyAnimeList.prototype.getInfo = function(link, callback) {
         if(err || !body.archived_snapshots.closest || !body.archived_snapshots.closest.available) {
             self.getInfoFromURL("http://webcache.googleusercontent.com/search?q=cache:" + search, "Google cache", callback); return;
         }
-        try {
-            self.getInfoFromURL(body.archived_snapshots.closest.url, "Wayback Machine", callback);
-        } catch(e) {
-            self.getInfoFromURL("http://webcache.googleusercontent.com/search?q=cache:" + search, "Google cache", callback);
-        }
+
+        self.getInfoFromURL(body.archived_snapshots.closest.url, "Wayback Machine", callback, function(){
+            self.getInfoFromURL("http://webcache.googleusercontent.com/search?q=cache:" + search, "Google cache", callback, function(){
+                self.outputString({}, callback, "MAL_NoContent");
+            });
+        });
 
         return;
     });
 };
 
-MyAnimeList.prototype.getInfoFromURL = function(url, place, callback) {
+MyAnimeList.prototype.getInfoFromURL = function(url, place, callback, errCallback) {
     options.url = url;
     this.log.debug({url: url}, "Retrieving information from " + place + ".");
 
@@ -88,6 +89,11 @@ MyAnimeList.prototype.getInfoFromURL = function(url, place, callback) {
                 if(opts.score) {
                     opts["raw_score"] = parseFloat(opts.score.split(" ")[0]);
                     opts["score_users"] = opts.score.split(" ")[3];
+                }
+
+                if(!opts || opts.isEmpty()) {
+                    errCallback();
+                    return;
                 }
 
                 self.outputString(opts, callback);
