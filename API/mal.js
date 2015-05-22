@@ -107,19 +107,8 @@ MyAnimeList.prototype.getInfoFromURL = function(url, place, callback) {
 MyAnimeList.prototype.outputString = function(options, callback, error) {
     var oS = c.pink("[MyAnimeList] ");
 
-    if(!options || options.isEmpty()) {
-        oS += "Sorry, but I couldn't find this one. :(";
-        callback(oS);
-        return;
-    }
-
-    if(error) {
-        if(error == "blocked") {
-            oS += "Google has blocked me from viewing this page. Sorry about that. :(";
-        } else {
-            oS += "Something went wrong. Sorry about that. :(";
-        }
-
+    if(!options || options.isEmpty() || error) {
+        oS += "Something went wrong. Sorry about that. :(";
         callback(oS);
         return;
     }
