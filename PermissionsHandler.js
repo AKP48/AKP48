@@ -78,16 +78,6 @@ PermissionsHandler.prototype.addChannel = function(channel, clientUUID) {
     }
 };
 
-PermissionsHandler.prototype.removeChannel = function(channel, clientUUID) {
-    if(!this.permissions[clientUUID]) {
-        return;
-    }
-
-    if(this.permissions[clientUUID][channel]) {
-        delete this.permissions[clientUUID][channel];
-    }
-};
-
 PermissionsHandler.prototype.save = function() {
     for(var server in this.permissions) {
         if (this.permissions.hasOwnProperty(server)) {
