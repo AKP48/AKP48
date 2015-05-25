@@ -28,9 +28,6 @@ function Config() {
     //ways to call this command.
     this.aliases = ['config', 'conf'];
 
-    //The power level needed to use this command.
-    this.powerLevel = 9000;
-
     //whether or not to allow this command in a private message.
     this.allowPm = true;
 
@@ -39,6 +36,10 @@ function Config() {
 }
 
 Config.prototype.execute = function(context) {
+    if(config.getPerms().powerLevelFromContext(context) < config.powerLevels[context.getClient().uuid]["root"]) {
+        return true;
+    }
+
     if(!context.arguments.length) {
         this.help(context);
         return true;

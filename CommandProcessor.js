@@ -89,19 +89,18 @@ CommandProcessor.prototype.process = function(message, client) {
     var perms = {
         hasPowerLevel: context.getCommand().powerLevel,
         userHasPowerLevel: (config.getPerms().powerLevelFromContext(context) >= context.getCommand().powerLevel),
-        userIsRoot: (config.getPerms().powerLevelFromContext(context) >= config.powerLevels[context.getClient().uuid]["root"]),
         userGlobalRoot: (config.getPerms().powerLevel(context.getUser().getHostmask(), "global", context.getClient().uuid)),
         userIsBanned: (config.getPerms().powerLevelFromContext(context) <= config.powerLevels[context.getClient().uuid]["banned"])
     };
 
     //if user isn't a bot and isn't banned.
-    if(!context.getUser().isBot && !perms.userIsBanned) {
+    if(!context.getUser().isBot && !perms.userIsBanned && !perms.userGlobalRoot) {
 
         //if the command exists
         if(context.commandExists()) {
 
             //return if this needs to be a privmsg and isn't.
-            if(context.getCommand().isPmOnly && !context.isPm) {
+            if(context.getCommand().isPmOnly && !context.isPm && !perms.userGlobalRoot) {
                 this.log.debug({
                     user: context.getUser().getNick(),
                     command: context.getCommand().name,
@@ -111,25 +110,13 @@ CommandProcessor.prototype.process = function(message, client) {
             }
 
             //return if command is not allowed as a privmsg and this is one (unless we have the root permission.)
-            if(!context.getCommand().allowPm && context.isPm && !(perms.userIsRoot || perms.userGlobalRoot)) {
+            if(!context.getCommand().allowPm && context.isPm && !perms.userGlobalRoot) {
                 this.log.debug({
                     user: context.getUser().getNick(),
                     command: context.getCommand().name,
                     reason: "Non-PMable command attempted in PM."
                 }, "Command execution attempt failed.");
                 return false;
-            }
-
-            //check privilege - If there's a required powerLevel for this command, check against it, as well as the root permission level.
-            if(perms.hasPowerLevel && !(perms.userHasPowerLevel || perms.userIsRoot)) {
-                if(!perms.userGlobalRoot) {
-                    this.log.debug({
-                        user: context.getUser().getNick(),
-                        command: context.getCommand().name,
-                        reason: "User does not have permission."
-                    }, "Command execution attempt failed.");
-                    return false;
-                }
             }
 
             //TODO: reimplement flood protection.
