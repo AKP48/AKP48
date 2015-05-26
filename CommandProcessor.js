@@ -89,7 +89,7 @@ CommandProcessor.prototype.process = function(message, client) {
     var perms = {
         hasPowerLevel: context.getCommand().powerLevel,
         userHasPowerLevel: (config.getPerms().powerLevelFromContext(context) >= context.getCommand().powerLevel),
-        userGlobalRoot: (config.getPerms().powerLevel(context.getUser().getHostmask(), "global", context.getClient().uuid)),
+        userGlobalRoot: (config.getPerms().powerLevel(context.getUser().getHostmask(), "global", context.getClient().uuid) >= config.powerLevels[context.getClient().uuid]["root"]),
         userIsBanned: (config.getPerms().powerLevelFromContext(context) <= config.powerLevels[context.getClient().uuid]["banned"])
     };
 
