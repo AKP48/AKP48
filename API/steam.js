@@ -136,7 +136,7 @@ Steam.prototype.getGame = function(appId, callback, nohist, allStores) {
     });
 };
 
-Steam.prototype.getPkg = function(appId, callback, nohist) {
+Steam.prototype.getPkg = function(appId, callback, nohist, allStores) {
 
     var self = {};
     self.appId = appId;
