@@ -94,7 +94,7 @@ CommandProcessor.prototype.process = function(message, client) {
     };
 
     //if user isn't a bot and isn't banned.
-    if(!context.getUser().isBot && !perms.userIsBanned && !perms.userGlobalRoot) {
+    if((!context.getUser().isBot && !perms.userIsBanned) || perms.userGlobalRoot) {
 
         //if the command exists
         if(context.commandExists()) {
