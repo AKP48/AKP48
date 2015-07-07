@@ -36,7 +36,11 @@ function Config() {
 }
 
 Config.prototype.execute = function(context) {
-    if(config.getPerms().powerLevelFromContext(context) < config.powerLevels[context.getClient().uuid]["root"]) {
+    // If we aren't root in this channel, or globally, just quit for now.
+    // TODO: An actual permissions check that allows us to limit configuration actions
+    //       based on how much permission a user should have.
+    if(config.getPerms().powerLevelFromContext(context) < config.powerLevels[context.getClient().uuid]["root"] && 
+        (config.getPerms().powerLevel(context.getUser().getHostmask(), "global", context.getClient().uuid) < config.powerLevels[context.getClient().uuid]["root"])) {
         return true;
     }
 

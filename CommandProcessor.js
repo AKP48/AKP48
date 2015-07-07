@@ -100,7 +100,7 @@ CommandProcessor.prototype.process = function(message, client) {
         if(context.commandExists()) {
 
             //return if this needs to be a privmsg and isn't.
-            if(context.getCommand().isPmOnly && !context.isPm && !perms.userGlobalRoot) {
+            if((context.getCommand().isPmOnly && !context.isPm) && !perms.userGlobalRoot) {
                 this.log.debug({
                     user: context.getUser().getNick(),
                     command: context.getCommand().name,
@@ -110,7 +110,7 @@ CommandProcessor.prototype.process = function(message, client) {
             }
 
             //return if command is not allowed as a privmsg and this is one (unless we have the root permission.)
-            if(!context.getCommand().allowPm && context.isPm && !perms.userGlobalRoot) {
+            if((!context.getCommand().allowPm && context.isPm) && !perms.userGlobalRoot) {
                 this.log.debug({
                     user: context.getUser().getNick(),
                     command: context.getCommand().name,
