@@ -26,7 +26,7 @@ function LoLFreeChamps(logger) {
     this.usageText = "";
 
     //ways to call this command.
-    this.aliases = ['lolfreechamps', 'lolfree'];
+    this.aliases = ['lolfreechamps', 'lolfree', 'lolrotation'];
 
     //Name of the permission needed to use this command. All users have 'user.command.use' by default. Banned users have 'user.command.banned' by default.
     this.permissionName = 'user.command.use';
