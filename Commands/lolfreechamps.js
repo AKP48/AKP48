@@ -26,7 +26,7 @@ function LoLFreeChamps(logger) {
     this.usageText = "";
 
     //ways to call this command.
-    this.aliases = ['lolfreechamps', 'lolfree'];
+    this.aliases = ['lolfreechamps', 'lolfree', 'lolrotation'];
 
     //whether or not to allow this command in a private message.
     this.allowPm = true;
