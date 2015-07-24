@@ -36,6 +36,14 @@ function Config() {
 }
 
 Config.prototype.execute = function(context) {
+
+    var perms = {
+        userGlobalRoot: (config.getPerms().powerLevel(context.getUser().getHostmask(), "global", context.getClient().uuid) >= config.powerLevels[context.getClient().uuid]["root"]),
+        userChannelOp: (config.getPerms().powerLevel(context.getUser().getHostmask(), "global", context.getClient().uuid) >= config.powerLevels[context.getClient().uuid]["channelOp"]),
+        userChannelMod: (config.getPerms().powerLevel(context.getUser().getHostmask(), "global", context.getClient().uuid) >= config.powerLevels[context.getClient().uuid]["channelMod"]),
+        userServerOp: (config.getPerms().powerLevel(context.getUser().getHostmask(), "global", context.getClient().uuid) >= config.powerLevels[context.getClient().uuid]["serverOp"])
+    };
+
     // If we aren't root in this channel, or globally, just quit for now.
     // TODO: An actual permissions check that allows us to limit configuration actions
     //       based on how much permission a user should have.
