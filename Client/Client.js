@@ -327,6 +327,12 @@ Client.prototype.initialize = function(clientManager, holdIRCClient) {
         });
     });
 
+    this.ircClient.on('nick', function (oldNick, newNick) {
+        if (oldNick === self.nick) {
+            self.nick = newNick;
+        }
+    });
+
     var botID = this.botID;
     this.ircClient._splitLongLines = function(words, maxLen, dest) {
         var ret = irc.Client.prototype._splitLongLines.call(this, words, maxLen-botID.length-1, dest);

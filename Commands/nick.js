@@ -39,10 +39,11 @@ function Nick() {
 }
 
 Nick.prototype.execute = function(context) {
-    if(context.arguments[0]) {
-        context.client.getIRCClient().send("NICK", context.arguments[0]);
-        context.client.nick = context.arguments[0];
+    if (context.arguments.length !== 1) {
+        return false;
     }
+
+    context.client.getIRCClient().send("NICK", context.arguments[0]);
     return true;
 };
 
