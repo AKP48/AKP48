@@ -39,16 +39,13 @@ Config.prototype.execute = function(context) {
 
     var perms = {
         userGlobalRoot: (config.getPerms().powerLevel(context.getUser().getHostmask(), "global", context.getClient().uuid) >= config.powerLevels[context.getClient().uuid]["root"]),
-        userChannelOp: (config.getPerms().powerLevel(context.getUser().getHostmask(), "global", context.getClient().uuid) >= config.powerLevels[context.getClient().uuid]["channelOp"]),
-        userChannelMod: (config.getPerms().powerLevel(context.getUser().getHostmask(), "global", context.getClient().uuid) >= config.powerLevels[context.getClient().uuid]["channelMod"]),
+        userChannelOp: (config.getPerms().powerLevelFromContext(context) >= config.powerLevels[context.getClient().uuid]["channelOp"]),
+        userChannelMod: (config.getPerms().powerLevelFromContext(context) >= config.powerLevels[context.getClient().uuid]["channelMod"]),
         userServerOp: (config.getPerms().powerLevel(context.getUser().getHostmask(), "global", context.getClient().uuid) >= config.powerLevels[context.getClient().uuid]["serverOp"])
     };
 
-    // If we aren't root in this channel, or globally, just quit for now.
-    // TODO: An actual permissions check that allows us to limit configuration actions
-    //       based on how much permission a user should have.
-    if(config.getPerms().powerLevelFromContext(context) < config.powerLevels[context.getClient().uuid]["root"] && 
-        (config.getPerms().powerLevel(context.getUser().getHostmask(), "global", context.getClient().uuid) < config.powerLevels[context.getClient().uuid]["root"])) {
+    // If we don't have any permissions, quit. We can check permissions better at the next level (subcommands).
+    if(!perms.userGlobalRoot && !perms.userChannelMod && !perms.userChannelOp && !perms.userServerOp) {
         return true;
     }
 
@@ -84,7 +81,7 @@ Config.prototype.execute = function(context) {
             this.help(context);
             break;
     }
-    
+
     return true;
 };
 
@@ -119,7 +116,7 @@ Config.prototype.removeChannel = function(context) {
 
     channels.forEach(function(channel) {
         if(config.isInChannel(channel, context.getClient().uuid) && channel.isChannel()) {
-            config.removeChannel(channel, context.getClient().uuid);    
+            config.removeChannel(channel, context.getClient().uuid);
             context.getClient().getIRCClient().part(channel, function(){
                 context.getClient().getIRCClient().notice(context.getUser().getNick(), "Parted "+channel+".");
             });
