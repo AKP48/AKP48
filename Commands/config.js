@@ -33,11 +33,15 @@ function Config() {
 
     //whether or not to only allow this command if it's in a private message.
     this.isPmOnly = false;
+
+    //this gets filled upon command execution.
+    this.perms = {};
 }
 
 Config.prototype.execute = function(context) {
 
-    var perms = {
+    //populate permissions object.
+    this.perms = {
         userGlobalRoot: (config.getPerms().powerLevel(context.getUser().getHostmask(), "global", context.getClient().uuid) >= config.powerLevels[context.getClient().uuid]["root"]),
         userChannelOp: (config.getPerms().powerLevelFromContext(context) >= config.powerLevels[context.getClient().uuid]["channelOp"]),
         userChannelMod: (config.getPerms().powerLevelFromContext(context) >= config.powerLevels[context.getClient().uuid]["channelMod"]),
@@ -45,7 +49,7 @@ Config.prototype.execute = function(context) {
     };
 
     // If we don't have any permissions, quit. We can check permissions better at the next level (subcommands).
-    if(!perms.userGlobalRoot && !perms.userChannelMod && !perms.userChannelOp && !perms.userServerOp) {
+    if(!this.perms.userGlobalRoot && !this.perms.userChannelMod && !this.perms.userChannelOp && !this.perms.userServerOp) {
         return true;
     }
 
@@ -86,6 +90,11 @@ Config.prototype.execute = function(context) {
 };
 
 Config.prototype.addChannel = function(context) {
+    // If the user isn't root or server op, exit now.
+    if(!this.perms.userServerOp && !this.perms.userGlobalRoot) {
+        return true;
+    }
+
     if(context.arguments.length < 2) {
         var oS = "Usage: "+config.getCommandDelimiter(context.getChannel(), context.getClient().uuid);
         oS += "config "+context.arguments[0] + " <channel(s)...>";
@@ -106,6 +115,11 @@ Config.prototype.addChannel = function(context) {
 };
 
 Config.prototype.removeChannel = function(context) {
+    // If the user isn't root or server op, exit now.
+    if(!this.perms.userServerOp && !this.perms.userGlobalRoot) {
+        return true;
+    }
+
     if(context.arguments.length < 2) {
         var oS = "Usage: "+config.getCommandDelimiter(context.getChannel(), context.getClient().uuid);
         oS += "config "+context.arguments[0] + " <channel(s)...>";
@@ -125,15 +139,25 @@ Config.prototype.removeChannel = function(context) {
 };
 
 Config.prototype.addServer = function(context) {
-    // body...
+    // If the user isn't root, exit now.
+    if(!this.perms.userGlobalRoot) {
+        return true;
+    }
+
+    // TODO: add server.
 };
 
 Config.prototype.removeServer = function(context) {
-    // body...
+    // If the user isn't root, exit now.
+    if(!this.perms.userGlobalRoot) {
+        return true;
+    }
+
+    //TODO: remove server.
 };
 
 Config.prototype.help = function(context) {
-    // body...
+    //TODO: help.
 };
 
 module.exports = Config;
