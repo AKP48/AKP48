@@ -144,7 +144,30 @@ Config.prototype.addServer = function(context) {
         return true;
     }
 
-    // TODO: add server.
+    // If we don't have any parameters, send the user an appropriate message and exit.
+    if(context.arguments.length < 2) {
+        context.getClient().getIRCClient().notice(context.getUser().getNick(), "Wrong command usage!"); //TODO: better message.
+        return true;
+    }
+
+    //time to parse the server information.
+    //format: user!nick:pass@server:port#chan#chan#chan
+    var user, nick, pass, server, port = "";
+    var channels = [];
+
+    var tempParse = context.arguments[2].split("@");
+
+    pass = tempParse[0].split(":")[1];
+    user = tempParse[0].split(":")[0].split("!")[0];
+    nick = tempParse[0].split(":")[0].split("!")[1];
+    tempParse = tempParse[1].split("#");
+    server = tempParse[0].split(":")[0];
+    port = tempParse[0].split(":")[1];
+    tempParse.shift();
+    channels = tempParse;
+
+    //string should be parsed. time to check and see what we got.
+    //TODO: finish this.
 };
 
 Config.prototype.removeServer = function(context) {
