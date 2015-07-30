@@ -155,7 +155,7 @@ Config.prototype.addServer = function(context) {
     var user, nick, pass, server, port = "";
     var channels = [];
 
-    var tempParse = context.arguments[2].split("@");
+    var tempParse = context.arguments[1].split("@");
 
     pass = tempParse[0].split(":")[1];
     user = tempParse[0].split(":")[0].split("!")[0];
