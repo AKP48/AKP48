@@ -62,3 +62,5 @@ Dinner.prototype.outputString = function(string, link, veg, callback) {
 };
 
 module.exports = Dinner;
+// Name of this API. Will be used to reference the API from other modules.
+module.exports.name = "Dinner";

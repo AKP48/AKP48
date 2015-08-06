@@ -15,16 +15,6 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-var BibleAPI = require("./bible");
-var DinnerAPI = require("./dinner");
-var GistAPI = require("./gist");
-var GitAPI = require("./git");
-var GoogleAPI = require("./google");
-var ImgurAPI = require("./imgur");
-var MALAPI = require("./mal");
-var RiotAPI = require("./riot");
-var SteamAPI = require("./steam");
-var XKCDAPI = require("./xkcd");
 var APIConfig = config.getAPIConfig();
 
 /**
@@ -34,18 +24,25 @@ var APIConfig = config.getAPIConfig();
  */
 var loadAPIs = function(logger) {
     var _log = logger.child({module: "API Loader"});
-    var APIs = {
-        Bible: new BibleAPI(logger),
-        Dinner: new DinnerAPI(logger),
-        Gist: new GistAPI(logger),
-        Git: new GitAPI(logger),
-        Google: new GoogleAPI(APIConfig.google.apiKey, logger),
-        Imgur: new ImgurAPI(APIConfig.imgur.clientID, logger),
-        MAL: new MALAPI(logger),
-        Riot: new RiotAPI(APIConfig.riot.apiKey, logger),
-        Steam: new SteamAPI(logger),
-        XKCD: new XKCDAPI(logger),
-    };
+    var APIs = {};
+    require('fs').readdirSync(__dirname + '/').each(function(file) {
+        if (file.match(/.+\.js/g) !== null && file !== 'index.js') {
+            _log.trace("Loading " + file);
+
+            var loadModule = require('./' + file);
+
+            //get name from module
+            var name = loadModule.name;
+
+            //set up logger
+            var log = logger.child({module: "AutoResponses/"+name});
+
+            var tempModule = new loadModule(log, APIConfig);
+
+            APIs[name] = tempModule;
+        }
+    });
+
     return APIs;
 };
 

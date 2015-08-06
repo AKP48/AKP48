@@ -18,9 +18,9 @@ var request = require('request-json');
 var n = require('numeral');
 var m = require('moment');
 
-function Imgur(client_id, logger) {
+function Imgur(logger, APIConfig) {
     // Imgur client id.
-    this.clientID = client_id;
+    this.clientID = APIConfig.imgur.clientID;
 
     // Imgur client.
     this.client = request.createClient('https://api.imgur.com/3/');
@@ -113,3 +113,5 @@ Imgur.prototype.getAlbumInfo = function(image_id, callback) {
 };
 
 module.exports = Imgur;
+// Name of this API. Will be used to reference the API from other modules.
+module.exports.name = "Imgur";
