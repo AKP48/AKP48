@@ -15,8 +15,6 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-var APIConfig = config.getAPIConfig();
-
 /**
  * Load all APIs.
  * @param  {Logger} logger The logger to pass to loaded APIs.
@@ -25,6 +23,7 @@ var APIConfig = config.getAPIConfig();
 var loadAPIs = function(logger) {
     var _log = logger.child({module: "API Loader"});
     var APIs = {};
+    
     require('fs').readdirSync(__dirname + '/').each(function(file) {
         if (file.match(/.+\.js/g) !== null && file !== 'index.js') {
             _log.trace("Loading " + file);
@@ -37,7 +36,7 @@ var loadAPIs = function(logger) {
             //set up logger
             var log = logger.child({module: "AutoResponses/"+name});
 
-            var tempModule = new loadModule(log, APIConfig);
+            var tempModule = new loadModule(log, config.getAPIConfig());
 
             APIs[name] = tempModule;
         }
