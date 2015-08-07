@@ -20,7 +20,8 @@ var Context = require("./Client/Context");
 function AutoResponseProcessor(logger) {
     //logger
     this.log = logger.child({module: "AutoResponseProcessor"});
-    this.handlers = require('./AutoResponses')(logger);
+    this.handlers = require('./AutoResponses')(logger, false);
+    this.fullMsgHandlers = require('./AutoResponses')(logger, true);
 }
 
 /**
@@ -29,6 +30,14 @@ function AutoResponseProcessor(logger) {
  */
 AutoResponseProcessor.prototype.addHandler = function(handler) {
     this.handlers.push(handler);
+};
+
+/**
+ * Adds a full message handler to the group of handlers that are called for each message.
+ * @param {Handler} handler The handler to add.
+ */
+AutoResponseProcessor.prototype.addFullMsgHandler = function(handler) {
+    this.fullMsgHandlers.push(handler);
 };
 
 /**
@@ -86,6 +95,11 @@ AutoResponseProcessor.prototype.executeAll = function(context) {
             return responses < 3;
         });
     };
+
+    // Run all full message handlers on the message.
+    this.fullMsgHandlers.every(function(handler) {
+        handler.execute(context.getFullMessage(), context);
+    });
 }
 
 //export the module
