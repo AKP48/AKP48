@@ -60,7 +60,7 @@ function GitListener(clientmanager, logger) {
     }
 
     //google API module for using Google APIs.
-    this.googleAPI = new Google(apiConfig.google.apiKey, logger);
+    this.googleAPI = new Google(logger, apiConfig);
 
     //git API module.
     this.gitAPI = new Git(logger);
