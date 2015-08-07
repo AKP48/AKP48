@@ -25,19 +25,15 @@ function User() {
     // The user's full hostmask.
     this.hostmask = "";
 
-    // The user's permissions.
-    this.permissions = ["user.command.use"];
+    // The user's power level.
+    this.powerLevel = 0;
 
-    // The user's flood protection violation level.
-    this.violationLevel = 0;
-
-    // Whether or not this user is a Real IRC User™.
+    // Whether or not this user is a Real IRC User™. 
+    // (as opposed to being a user on a Minecraft server.)
     this.isRealIRCUser = true;
 
-    // Flood protection information for this user.
-    this.floodProtection = {
-        "isBanned": false
-    }
+    // Whether or not this user is a bot.
+    this.isBot = false;
 }
 
 /**
@@ -73,76 +69,19 @@ User.prototype.getHostmask = function() {
 };
 
 /**
- * Set permissions.
- * @param {Array} permissions The permissions.
+ * Set power level.
+ * @param {Number} powerLevel The power level.
  */
-User.prototype.setPermissions = function(permissions) {
-    this.permissions = permissions;
+User.prototype.setPowerLevel = function(powerLevel) {
+    this.powerLevel = powerLevel;
 };
 
 /**
- * Get permissions.
- * @return {Array} The permissions.
+ * Get power level.
+ * @return {Number} The power level.
  */
-User.prototype.getPermissions = function() {
-    return this.permissions;
-};
-
-/**
- * Add a permission.
- * @param {String} permission The permission.
- */
-User.prototype.addPermission = function(permission) {
-    //just return if this permission is already in the array.
-    if(this.permissions.indexOf(permission) !== -1) {return;}
-    this.permissions.push(permission);
-};
-
-/**
- * Remove a permission.
- * @param  {String} permission The permission.
- * @return {Boolean}           True if permission added, false if permission already there.
- */
-User.prototype.removePermission = function(permission) {
-    //get index of permission, -1 if non-existent
-    var index = this.permissions.indexOf(permission);
-    if(index > -1) {
-        this.permissions.splice(index, 1);
-        return true;
-    }
-
-    return false;
-};
-
-/**
- * Whether or not the user has a permission.
- * @param  {String}  permission The permission to check.
- * @return {Boolean}            If the user has the permission.
- */
-User.prototype.hasPermission = function(permission) {
-    //get index of permission, -1 if non-existent
-    if(this.permissions.indexOf(permission) > -1) {
-        return true;
-    }
-    return false;
-};
-
-/**
- * Set violation level.
- * @param {Double} violationLevel Violation level.
- */
-User.prototype.setViolationLevel = function(violationLevel) {
-    this.violationLevel = violationLevel;
-    //ensure that violation level never goes lower than 0.
-    if(this.violationLevel < 0) {this.violationLevel = 0;}
-};
-
-/**
- * Get violation level.
- * @return {Double} Violation level.
- */
-User.prototype.getViolationLevel = function() {
-    return this.violationLevel;
+User.prototype.getPowerLevel = function() {
+    return this.powerLevel;
 };
 
 /**
@@ -151,6 +90,14 @@ User.prototype.getViolationLevel = function() {
  */
 User.prototype.setIsRealIRCUser = function(isRealIRCUser) {
     this.isRealIRCUser = isRealIRCUser;
+};
+
+/**
+ * Set isBot.
+ * @param {Boolean} isBot Whether or not the user is a bot.
+ */
+User.prototype.setIsBot = function(isBot) {
+    this.isBot = isBot;
 };
 
 module.exports = User;
@@ -169,7 +116,7 @@ module.exports.build = function build(message, context, options) {
 
     if(message && context) {
         //if the user this came from is a Minecraft bot,
-        if(context.getChannel().getMcBots().indexOf(message.nick) !== -1){
+        if(config.isMcBot(message.nick, context.getChannel(), context.getClient().uuid)){
             //say so.
             user.setIsRealIRCUser(false);
 
@@ -197,14 +144,14 @@ module.exports.build = function build(message, context, options) {
     if(options.hostmask) {
         user.setHostmask(options.hostmask);
     }
-    if(options.permissions) {
-        user.setPermissions(options.permissions);
-    }
-    if(options.violationLevel) {
-        user.setViolationLevel(options.violationLevel);
+    if(options.powerLevel) {
+        user.setPowerLevel(options.powerLevel);
     }
     if(options.isRealIRCUser) {
         user.setIsRealIRCUser(options.isRealIRCUser);
+    }
+    if(options.isBot) {
+        user.setIsBot(options.isBot);
     }
 
     return user;

@@ -30,9 +30,6 @@ function Version(logger) {
     //ways to call this command.
     this.aliases = ['version', 'ver', 'v'];
 
-    //Name of the permission needed to use this command. All users have 'user.command.use' by default. Banned users have 'user.command.banned' by default.
-    this.permissionName = 'user.command.use';
-
     //whether or not to allow this command in a private message.
     this.allowPm = true;
 
@@ -50,7 +47,7 @@ function Version(logger) {
 
 Version.prototype.execute = function(context) {
     //if the user is a netop, send them the version the files are on, which may not be the version the server is running.
-    if (context.getUser().hasPermission("netop.command.use")) {
+    if (config.getPerms().powerLevelFromContext(context) > 9000) {
         context.getClient().getIRCClient().notice(context.getUser().getNick(), "Server: "+this.buildVersion());
     }
 

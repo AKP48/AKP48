@@ -30,9 +30,6 @@ function Rainbow() {
     //ways to call this command.
     this.aliases = ['rainbow', 'r'];
 
-    //Name of the permission needed to use this command. All users have 'user.command.use' by default. Banned users have 'user.command.banned' by default.
-    this.permissionName = 'user.command.use';
-
     //whether or not to allow this command in a private message.
     this.allowPm = true;
 
@@ -43,7 +40,7 @@ function Rainbow() {
 Rainbow.prototype.execute = function(context) {
     if(context.arguments.length) {
         var msg = context.arguments.join(' ');
-        context.getClient().getIRCClient().say(context.getChannel().getName(), c.rainbow(msg));
+        context.getClient().getIRCClient().say(context.getChannel(), c.rainbow(msg));
     }
     return true;
 };

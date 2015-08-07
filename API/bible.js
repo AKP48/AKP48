@@ -33,3 +33,5 @@ Bible.prototype.getBibleVerses = function(verses, context, callback) {
 };
 
 module.exports = Bible;
+// Name of this API. Will be used to reference the API from other modules.
+module.exports.name = "Bible";

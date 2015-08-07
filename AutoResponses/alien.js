@@ -19,14 +19,14 @@ function AlienHandler(logger) {
     //the name of the handler.
     this.name = "Alien Handler";
 
-    //name of the permission needed to use this handler. All users have 'user.handler.use' by default. Banned users have 'user.handler.banned' by default.
-    this.permissionName = 'user.handler.use';
-
     //whether or not to allow this handler in a private message.
     this.allowPm = true;
 
     //the regex used to match this handler
-    this.regex = /ayy|ʎʎɐ/i;
+    this.regex = null;
+
+    //whether or not this handler runs on the only full message
+    this.fullMsgOnly = true;
 
     // the amount of times we should respond with this handler, 0 is no limit
     this.limit = 1;
@@ -35,9 +35,10 @@ function AlienHandler(logger) {
     this.log = logger;
 }
 
-AlienHandler.prototype.execute = function(word, context) {
-    this.log.trace("ayy lmao");
-	context.getClient().getIRCClient().say(context.getChannel().getName(), "ayy lmao");
+AlienHandler.prototype.execute = function(message, context) {
+    if(message.toLowerCase().includes("ayy")) {
+        context.getClient().getIRCClient().say(context.getChannel(), "ayy lmao");
+    }
 };
 
 module.exports = AlienHandler;

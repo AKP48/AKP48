@@ -19,9 +19,6 @@ function AyyActionHandler(logger) {
     //the name of the handler.
     this.name = "Ayy Action Handler";
 
-    //name of the permission needed to use this handler. All users have 'user.handler.use' by default. Banned users have 'user.handler.banned' by default.
-    this.permissionName = 'user.handler.use';
-
     //whether or not to allow this handler in a private message.
     this.allowPm = true;
 
@@ -36,7 +33,7 @@ function AyyActionHandler(logger) {
 }
 
 AyyActionHandler.prototype.execute = function(word, context) {
-    context.getClient().getIRCClient().say(context.getChannel().getName(), "ayy lmao");
+    context.getClient().getIRCClient().say(context.getChannel(), "ayy lmao");
 };
 
 module.exports = AyyActionHandler;

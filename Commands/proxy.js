@@ -31,8 +31,8 @@ function Proxy() {
     //dependencies that this module has.
     //this.dependencies = [''];
 
-    //Name of the permission needed to use this command. All users have 'user.command.use' by default. Banned users have 'user.command.banned' by default.
-    this.permissionName = 'netop.command.use';
+    //The power level needed to use this command.
+    this.powerLevel = 9000;
 
     //whether or not to allow this command in a private message.
     this.allowPm = true;

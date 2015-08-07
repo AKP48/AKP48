@@ -38,11 +38,28 @@ node_modules
 # proportion of contributors will probably not be using SublimeText
 *.sublime-project
 
+# Visual Studio Code settings
+.settings/
+
 # sftp configuration file
 sftp-config.json
 
-# AKP48 config file
-config.json
+# AKP48 config files
+!data/config/
+data/config/*
+!data/config/example.*
+!data/config/perm/
+data/config/perm/*
+!data/config/perm/example.*
+!data/config/perm/index.js
+!data/config/channels/
+data/config/channels/*
+!data/config/channels/example.*
+!data/config/channels/index.js
+!data/config/servers/
+data/config/servers/*
+!data/config/servers/example.*
+!data/config/servers/index.js
 
 # Custom modules
 custom-*

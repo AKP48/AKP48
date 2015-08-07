@@ -17,10 +17,12 @@
 
 /**
  * Load all AutoResponse handlers.
- * @param  {Logger} logger The logger to pass to loaded autoresponse handlers.
- * @return {Object}        The autoresponse handlers.
+ * @param  {Logger}  logger  The logger to pass to loaded autoresponse handlers.
+ * @param  {Boolean} fullMsg Whether or not this should return full message handlers.
+ * @return {Object}          The autoresponse handlers.
  */
-var loadHandlers = function(logger) {
+var loadHandlers = function(logger, fullMsg) {
+    if(!fullMsg) {fullMsg = false;}
     var handlers = {};
     var _log = logger.child({module: "AutoResponse Handler Loader"});
     require('fs').readdirSync(__dirname + '/').each(function(file) {
@@ -34,7 +36,9 @@ var loadHandlers = function(logger) {
             var loadModule = require('./' + file);
             var tempModule = new loadModule(log);
 
-            handlers[name] = tempModule;
+            if(tempModule.fullMsgOnly == fullMsg) {
+                handlers[name] = tempModule;
+            }
         }
     });
     return handlers;

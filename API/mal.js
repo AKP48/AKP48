@@ -44,13 +44,17 @@ MyAnimeList.prototype.getInfo = function(link, callback) {
             self.getInfoFromURL("http://webcache.googleusercontent.com/search?q=cache:" + search, "Google cache", callback); return;
         }
 
-        self.getInfoFromURL(body.archived_snapshots.closest.url, "Wayback Machine", callback);
+        self.getInfoFromURL(body.archived_snapshots.closest.url, "Wayback Machine", callback, function(){
+            self.getInfoFromURL("http://webcache.googleusercontent.com/search?q=cache:" + search, "Google cache", callback, function(){
+                self.outputString({}, callback, "MAL_NoContent");
+            });
+        });
 
         return;
     });
 };
 
-MyAnimeList.prototype.getInfoFromURL = function(url, place, callback) {
+MyAnimeList.prototype.getInfoFromURL = function(url, place, callback, errCallback) {
     options.url = url;
     this.log.debug({url: url}, "Retrieving information from " + place + ".");
 
@@ -87,6 +91,11 @@ MyAnimeList.prototype.getInfoFromURL = function(url, place, callback) {
                     opts["score_users"] = opts.score.split(" ")[3];
                 }
 
+                if(!opts || opts.isEmpty()) {
+                    errCallback();
+                    return;
+                }
+
                 self.outputString(opts, callback);
             });
         } else {
@@ -104,19 +113,8 @@ MyAnimeList.prototype.getInfoFromURL = function(url, place, callback) {
 MyAnimeList.prototype.outputString = function(options, callback, error) {
     var oS = c.pink("[MyAnimeList] ");
 
-    if(!options || options.isEmpty()) {
-        oS += "Sorry, but I couldn't find this one. :(";
-        callback(oS);
-        return;
-    }
-
-    if(error) {
-        if(error == "blocked") {
-            oS += "Google has blocked me from viewing this page. Sorry about that. :(";
-        } else {
-            oS += "Something went wrong. Sorry about that. :(";
-        }
-
+    if(!options || options.isEmpty() || error) {
+        oS += "Something went wrong. Sorry about that. :(";
         callback(oS);
         return;
     }
@@ -191,3 +189,5 @@ MyAnimeList.prototype.outputString = function(options, callback, error) {
 };
 
 module.exports = MyAnimeList;
+// Name of this API. Will be used to reference the API from other modules.
+module.exports.name = "MAL";

@@ -15,10 +15,13 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
+var Context = require("./Client/Context");
+
 function AutoResponseProcessor(logger) {
     //logger
     this.log = logger.child({module: "AutoResponseProcessor"});
-    this.handlers = require('./AutoResponses')(logger);
+    this.handlers = require('./AutoResponses')(logger, false);
+    this.fullMsgHandlers = require('./AutoResponses')(logger, true);
 }
 
 /**
@@ -30,13 +33,21 @@ AutoResponseProcessor.prototype.addHandler = function(handler) {
 };
 
 /**
+ * Adds a full message handler to the group of handlers that are called for each message.
+ * @param {Handler} handler The handler to add.
+ */
+AutoResponseProcessor.prototype.addFullMsgHandler = function(handler) {
+    this.fullMsgHandlers.push(handler);
+};
+
+/**
  * Process a message.
  * @param  {IRCMessage} message The message object directly from the IRC module.
  * @param  {Client}     client  The client that this message came from.
  */
 AutoResponseProcessor.prototype.process = function(message, client) {
     //the context we will be sending to the handler.
-    var context = client.getClientManager().builder.buildContext(message, client);
+    var context = Context.build(message, client);
 
     //if we don't get a context, something weird must have happened, and we shouldn't continue.
     //if we get a message that identifies as a bot, we shouldn't process it
@@ -48,7 +59,7 @@ AutoResponseProcessor.prototype.process = function(message, client) {
     }
 
     //if user isn't banned
-    if(!context.getChannel().isBanned(context.getUser())) {
+    if(!(config.getPerms().powerLevelFromContext(context) <= config.powerLevels[context.getClient().uuid]["banned"])) {
         //process the message
         this.executeAll(context);
     } else {
@@ -84,6 +95,12 @@ AutoResponseProcessor.prototype.executeAll = function(context) {
             return responses < 3;
         });
     };
+
+    // Run all full message handlers on the message.
+    this.fullMsgHandlers.every(function(handler) {
+        handler.execute(context.getFullMessage(), context);
+        return true;
+    });
 }
 
 //export the module

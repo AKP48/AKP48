@@ -20,9 +20,9 @@ var c = require('irc-colors');
 var n = require('numeral');
 var m = require('moment');
 
-function Riot(api_key, logger) {
+function Riot(logger, APIConfig) {
     this.log = logger.child({module: "Riot API"});
-    this.api_key = api_key;
+    this.api_key = APIConfig.riot.apiKey;
     this.client = request.createClient('https://na.api.pvp.net/');
 
     this.champions = [];
@@ -95,3 +95,5 @@ Riot.prototype.getServerStatus = function(region, callback) {
 };
 
 module.exports = Riot;
+// Name of this API. Will be used to reference the API from other modules.
+module.exports.name = "Riot";

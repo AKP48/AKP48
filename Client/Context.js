@@ -15,6 +15,8 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
+var User = require("./User");
+
 /**
  * A context.
  */
@@ -36,9 +38,6 @@ function Context() {
 
     // The CommandProcessor being used to respond to this context.
     this.commandProcessor = null;
-
-    // The commands available to this context.
-    this.commands = null;
 
     // The command being requested in this context.
     this.command = null;
@@ -91,25 +90,17 @@ Context.prototype.getCommandProcessor = function() {
     return this.commandProcessor;
 };
 
-Context.prototype.setCommands = function(commands) {
-    this.commands = commands;
-};
-
-Context.prototype.getCommands = function() {
-    return this.commands;
-};
-
 Context.prototype.setCommand = function(command) {
     this.command = command.toLowerCase();
 };
 
 Context.prototype.getCommand = function() {
     if(!this.commandExists()){return false;}
-    return this.commands[this.command];
+    return this.getCommandProcessor().aliasedCommands[this.command];
 };
 
-Context.prototype.setArguments = function(arguments) {
-    this.arguments = arguments;
+Context.prototype.setArguments = function(args) {
+    this.arguments = args;
 };
 
 Context.prototype.getArguments = function() {
@@ -117,7 +108,111 @@ Context.prototype.getArguments = function() {
 };
 
 Context.prototype.commandExists = function() {
-    return (this.commands[this.command] !== undefined && typeof this.commands[this.command].execute === 'function');
+    return (this.getCommandProcessor().aliasedCommands[this.command] !== undefined && typeof this.getCommandProcessor().aliasedCommands[this.command].execute === 'function');
 };
 
 module.exports = Context;
+
+module.exports.build = function build(message, client) {
+    //Before we do anything else, check to see if we sent this message.
+    //We can safely toss this out if we are the sender.
+    if(message.nick === client.getNick()){
+        this.log.debug({
+            reason: "Captured message was sent from self."
+        }, "Context failed to build.");
+        return false;
+    }
+
+    var bot = false;
+
+    if(message.args[1].startsWith("\u000399")) {
+        bot = true;
+    }
+
+    //Make ourselves a new Context...
+    var context = new Context();
+
+    //set the client first, as it's the easiest.
+    context.setClient(client);
+
+    //temporary var for the channel.
+    var channel = message.args[0];
+
+    //if the channel name is the same as our nickname, it's a PRIVMSG.
+    if(channel == client.getNick()) {
+        channel = "global";
+
+        //set isPm
+        context.setIsPm(true);
+    }
+
+    //set the channel in the context.
+    context.setChannel(channel);
+
+    if(config.isBot(message.nick, context.getChannel(), client.uuid)) {
+        bot = true;
+    }
+
+    var nick = message.nick;
+    var prefix = message.prefix;
+
+    //if the message is from a Minecraft bot, figure out who the user should be.
+    if(config.isMcBot(message.nick, context.getChannel(), client.uuid)){
+        //find nick
+        var start = message.args[1].indexOf('(');
+        var end = message.args[1].indexOf(')');
+
+        //get the nickname
+        nick = message.args[1].substring(start + 1, end);
+
+        //set hostmask
+        prefix = nick+"!"+message.user+"@"+message.host;
+    }
+
+    var user = User.build(message, context, {isBot: bot});
+
+    //now we have a user.
+    context.setUser(user);
+
+    //set full message
+    context.setFullMessage(message.args[1]);
+
+    //set command processor
+    context.setCommandProcessor(client.getCommandProcessor());
+
+    var messageString = message.args[1];
+
+    //process the command and arguments out of the message.
+
+    //if the user is from a Minecraft bot
+    if(!user.isRealIRCUser) {
+        //cut off their name from the string.
+        messageString = messageString.substring(messageString.indexOf(')')+2);
+    }
+
+    //if we have a command
+    if(messageString.substring(0, config.getCommandDelimiter(channel, client.uuid).length) === config.getCommandDelimiter(channel, client.uuid)) {
+
+        //find command
+        var end = messageString.indexOf(' ');
+        context.setCommand(messageString.substring(config.getCommandDelimiter(channel, client.uuid).length,end).toLowerCase());
+
+        //if there wasn't actually a space, we won't have gotten a command.
+        //instead, we'll just chop off the delimiter now.
+        if(end === -1) {
+            context.setCommand(messageString.substring(config.getCommandDelimiter(channel, client.uuid).length));
+        } else {
+            //otherwise, we can cut off the command and save the arguments.
+            var args = messageString.substring(end+1).split(' ');
+
+            //remove any blank arguments
+            var i;
+            while((i = args.indexOf('')) !== -1) {
+                args.splice(i, 1);
+            }
+            context.setArguments(args);
+        }
+    }
+
+    return context;
+};

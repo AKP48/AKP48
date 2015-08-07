@@ -21,8 +21,8 @@ var n = require('numeral');
 var m = require('moment');
 var google = require('googleapis');
 
-function Google(api_key, logger) {
-    this.api_key = api_key;
+function Google(logger, APIConfig) {
+    this.api_key = APIConfig.google.apiKey;
     this.client = request.createClient('https://www.googleapis.com/');
     this.urlshortener = google.urlshortener({ version: 'v1', auth: this.api_key });
     this.youtube = google.youtube({version: 'v3', auth: this.api_key});
@@ -166,3 +166,5 @@ Google.prototype.search = function(query, type, callback) {
 }
 
 module.exports = Google;
+// Name of this API. Will be used to reference the API from other modules.
+module.exports.name = "Google";

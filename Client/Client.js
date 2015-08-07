@@ -16,7 +16,6 @@
  */
 
 var irc = require('irc');
-var Channel = require('./Channel');
 
 /**
  * An IRC client.
@@ -24,6 +23,9 @@ var Channel = require('./Channel');
 function Client(logger) {
     // The logger this client uses.
     this.log = logger.child({module: "Client"});
+
+    // This client's UUID.
+    this.uuid = "";
 
     // The nickname this client uses.
     this.nick = "IRCBot9000";
@@ -183,45 +185,43 @@ Client.prototype.getChannels = function() {
 
 /**
  * Add a channel.
- * @param {Channel} channel Channel to add.
+ * @param {String} channel Channel to add.
  */
-Client.prototype.addChannel = function(channel) {
+Client.prototype.addChannel = function(channel, callback) {
     //just return if this channel is already in the array.
-    if (typeof channel === 'string') {
-        channel = Channel.build({name: channel}, this.log);
-        channel.client = this;
+    if(this.channels.indexOf(channel) == -1) {
+        this.channels.push(channel);
+        if(this.getIRCClient()) {
+            this.getIRCClient().join(channel, callback);
+        }
     }
-    this.channels.push(channel);
 };
 
 /**
  * Remove a channel.
- * @param  {Channel} channel Channel to remove.
- * @return {Boolean}         Whether or not the channel was removed.
+ * @param  {String} channel Channel to remove.
  * @TODO Make IRC client disconnect upon changing here.
  */
-Client.prototype.removeChannel = function(channel) {
+Client.prototype.removeChannel = function(channel, message, callback) {
     //get index of channel, -1 if non-existent
     var index = this.channels.indexOf(channel);
     if(index > -1) {
         this.channels.splice(index, 1);
+        this.getIRCClient().part(channel, message, callback);
         return true;
     }
-
     return false;
 };
 
 /**
- * Get channel.
- * @param  {String}  The channel's name.
- * @return {Channel} The channel.
+ * Whether or not the client is in a channel.
+ * @param  {String}  channel The channel to check.
+ * @return {Boolean}         Whether or not we're there.
  */
-Client.prototype.getChannel = function(channame) {
-    for (var i = 0; i < this.channels.length; i++) {
-        if(this.channels[i].name.toLowerCase() === channame.toLowerCase()) {
-            return this.channels[i];
-        }
-    };
+Client.prototype.isInChannel = function(channel) {
+    if(this.channels.indexOf(channel) != -1) {
+        return true;
+    }
     return false;
 };
 
@@ -289,9 +289,8 @@ Client.prototype.initialize = function(clientManager, holdIRCClient) {
 
     //loop to get channel names
     this.getChannels().each(function (channel) {
-        var name = channel.getName();
-        if(name && name.isChannel()) {
-            channels.push(name);
+        if(channel.isChannel()) {
+            channels.push(channel);
         }
     });
 
@@ -322,6 +321,7 @@ Client.prototype.initialize = function(clientManager, holdIRCClient) {
 
     this.ircClient.on('invite', function(channel, from, message) {
         self.addChannel(channel);
+        config.addChannel(channel, self.uuid);
         self.getIRCClient().join(channel, function(){
             self.getIRCClient().say(channel, "Thanks for inviting me, "+from+"! I'm glad to be here. For more information about me, say `.help`.");
         });
@@ -353,39 +353,25 @@ Client.prototype.initialize = function(clientManager, holdIRCClient) {
  * @param  {String}  message The message.
  */
 Client.prototype.say = function(context, message) {
-    var channel = (context.getChannel().getName() === "global" ? context.getUser().getNick() : context.getChannel().getName());
+    var channel = (context.getChannel() === "global" ? context.getUser().getNick() : context.getChannel());
     this.getIRCClient().say(channel, context.getUser().getNick() + ": " + message);
     this.log.trace({message: message, user: context.getUser().getNick(), channel: channel}, "Sent message.");
 };
 
 /**
- * Clone this Client for configuration-saving.
- * @return {Client} The client.
+ * Get an object for the configuration file.
+ * @return {Object} The configuration object.
  */
-Client.prototype.clone = function() {
-    //just return a blank object if this is supposed to be temporary.
-    if(this.isTemporary) {return {};}
-
-    //create new client, set options
-    var client = new Client();
-    client.setNick(this.getNick());
-    client.setServer(this.getServer());
-    client.setPassword(this.getPassword());
-
-    //looping through all channels to fix having a blank channel.
-    for (var i = 0; i < this.getChannels().length; i++) {
-        if(this.getChannels()[i].getName !== "") {
-            client.addChannel(this.getChannels()[i]);
-        }
-    };
-
-    this.alert.each(
-function (channel) {
-        client.alert.push(channel);
-    });
-
-    //return the new client
-    return client;
+Client.prototype.getConfigObject = function() {
+    return {
+        "uuid": this.uuid,
+        "nick": this.getNick(),
+        "server": this.getServer(),
+        "port": this.getPort(),
+        "username": this.getUserName(),
+        "realname": this.getRealName(),
+        "password": this.getPassword()
+    }
 };
 
 /**
@@ -402,6 +388,7 @@ Client.prototype.shutdown = function(msg) {
  */
 Client.prototype.destroy = function() {
     this.log.debug("Destroying client", this.getNick(), "on", this.getServer()+":"+this.getPort()+".");
+    this.uuid = null;
     this.nick = null;
     this.server = null;
     this.port = null;
@@ -415,6 +402,7 @@ Client.prototype.destroy = function() {
     this.botID = null;
     this.alert = null;
 
+    delete this.uuid;
     delete this.nick;
     delete this.server;
     delete this.port;
@@ -447,6 +435,9 @@ module.exports.build = function build(options, logger) {
     var log = logger.child({module: "Client.build"});
 
     //set the options, if we get them.
+    if(options.uuid) {
+        client.uuid = options.uuid;
+    }
     if(options.nick) {
         client.setNick(options.nick);
     }
@@ -465,18 +456,18 @@ module.exports.build = function build(options, logger) {
     if(options.password) {
         client.setPassword(options.password);
     }
-    if (options.alert) {
-        options.alert.each(function(arg){
-            if (typeof arg === 'string') {
-                client.alert.push(arg);
+
+    var channels = (require("../data/config/channels/"+options.uuid+".json"));
+    for (var key in channels) {
+       if (channels.hasOwnProperty(key)) {
+            var obj = channels[key];
+            client.addChannel(key);
+            if(obj.alert) {
+                client.alert.push(key);
             }
-        });
+        }
     }
-    if(options.channels) {
-        for (var i = 0; i < options.channels.length; i++) {
-            client.addChannel(Channel.build(options.channels[i], log));
-        };
-    }
+
     log.debug("Built client", client.getNick(), "on", client.getServer()+":"+client.getPort()+".");
     //return it.
     return client;
