@@ -36,7 +36,7 @@ function AlienHandler(logger) {
 }
 
 AlienHandler.prototype.execute = function(message, context) {
-    if(message.includes("ayy")) {
+    if(message.toLowerCase().includes("ayy")) {
         context.getClient().getIRCClient().say(context.getChannel(), "ayy lmao");
     }
 };
