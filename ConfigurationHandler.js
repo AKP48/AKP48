@@ -64,6 +64,11 @@ ConfigurationHandler.prototype.getAPIConfig = function() {
     return this.apiConfig;
 };
 
+ConfigurationHandler.prototype.getChannel = function (server, channel) {
+    if(!this.channelConfig[server]) { return {}; }
+    return this.channelConfig[server][channel];
+};
+
 ConfigurationHandler.prototype.getPowerLevels = function() {
     var powerLevels = {};
 

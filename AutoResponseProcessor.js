@@ -99,6 +99,7 @@ AutoResponseProcessor.prototype.executeAll = function(context) {
     // Run all full message handlers on the message.
     this.fullMsgHandlers.every(function(handler) {
         handler.execute(context.getFullMessage(), context);
+        return true;
     });
 }
 
