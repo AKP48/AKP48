@@ -23,7 +23,10 @@ function AlienHandler(logger) {
     this.allowPm = true;
 
     //the regex used to match this handler
-    this.regex = /ayy|ʎʎɐ/i;
+    this.regex = null;
+
+    //whether or not this handler runs on the only full message
+    this.fullMsgOnly = true;
 
     // the amount of times we should respond with this handler, 0 is no limit
     this.limit = 1;
@@ -32,9 +35,10 @@ function AlienHandler(logger) {
     this.log = logger;
 }
 
-AlienHandler.prototype.execute = function(word, context) {
-    this.log.trace("ayy lmao");
-    context.getClient().getIRCClient().say(context.getChannel(), "ayy lmao");
+AlienHandler.prototype.execute = function(message, context) {
+    if(message.includes("ayy")) {
+        context.getClient().getIRCClient().say(context.getChannel(), "ayy lmao");
+    }
 };
 
 module.exports = AlienHandler;
