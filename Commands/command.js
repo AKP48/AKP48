@@ -56,9 +56,6 @@ Command.prototype.execute = function(context) {
         case "remove":
             this.removeCommand(context, global);
             break;
-        case "edit":
-            this.editCommand(context, global);
-            break;
         case "help":
         default:
             this.help(context);
@@ -89,13 +86,10 @@ Command.prototype.createCommand = function (context, global) {
     } else {
         context.getClient().say(context, "Command added!");
     }
+    return true;
 };
 
 Command.prototype.removeCommand = function (context, global) {
-    // TODO: this.
-};
-
-Command.prototype.editCommand = function (context, global) {
     // TODO: this.
 };
 
