@@ -75,7 +75,7 @@ Command.prototype.createCommand = function (context, global) {
 
     var nick = context.getUser().getNick();
 
-    message = message.replace(/[setByNick]/g, nick);
+    message = message.replace(/\[setByNick\]/g, nick);
 
     var channel = context.getChannel();
     var server = context.getClient().uuid;
