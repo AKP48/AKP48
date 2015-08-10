@@ -85,9 +85,9 @@ Command.prototype.createCommand = function (context, global) {
     }
 
     if (!this.CCD.addCommand({name: name, msg: message, channel: channel, server: server}, context)) {
-        context.getClient().say("Could not add command! Ask AKP for help.");
+        context.getClient().say(context, "Could not add command! Ask AKP for help.");
     } else {
-        context.getClient().say("Command added!");
+        context.getClient().say(context, "Command added!");
     }
 };
 
