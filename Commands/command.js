@@ -101,9 +101,9 @@ Command.prototype.removeCommand = function (context, global) {
     }
 
     if (!this.CCD.removeCommand(server, channel, name)) {
-        context.getClient().say(context, "Could not add command! Ask AKP for help.");
+        context.getClient().say(context, "Could not remove command! Ask AKP for help.");
     } else {
-        context.getClient().say(context, "Command added!");
+        context.getClient().say(context, "Command removed!");
     }
     return true;
 };
