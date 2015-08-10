@@ -31,6 +31,9 @@ function Command(logger) {
     //dependencies that this module has.
     this.dependencies = [];
 
+    //The power level needed to use this command.
+    this.powerLevel = 9000;
+
     //whether or not to allow this command in a private message.
     this.allowPm = true;
 
