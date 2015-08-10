@@ -15,7 +15,7 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-function Command() {
+function Command(logger) {
     //the name of the command.
     this.name = "Custom Command Configuration";
 
@@ -36,26 +36,28 @@ function Command() {
 
     //whether or not to only allow this command if it's in a private message.
     this.isPmOnly = false;
+
+    this.CCD = require("../lib/CCD.js")(logger);
 }
 
 Command.prototype.execute = function(context) {
     var global = (context.arguments[0] == "--global");
 
     if(global) {
-        context.arguments = context.arguments.slice(1);
+        context.arguments.splice(1);
     }
 
     switch(context.arguments[0]) {
         case "create":
         case "add":
-            this.createCommand(context);
+            this.createCommand(context, global);
             break;
         case "delete":
         case "remove":
-            this.removeCommand(context);
+            this.removeCommand(context, global);
             break;
         case "edit":
-            this.editCommand(context);
+            this.editCommand(context, global);
             break;
         case "help":
         default:
@@ -65,15 +67,35 @@ Command.prototype.execute = function(context) {
     return true;
 };
 
-Command.prototype.createCommand = function (context) {
+Command.prototype.createCommand = function (context, global) {
+    var args = context.arguments.slice(1);
+    var name = args[0];
+    args.splice(1);
+    var message = args.join(" ");
+
+    var nick = context.getUser().getNick();
+
+    message = message.replace(/[setByNick]/g, nick);
+
+    var channel = context.getChannel();
+    var server = context.getClient().uuid;
+
+    if(global) {
+        channel = server = "global";
+    }
+
+    if (!this.CCD.addCommand({name: name, msg: message, channel: channel, server: server})) {
+        context.getClient().say("Could not add command! Ask AKP for help.");
+    } else {
+        context.getClient().say("Command added!");
+    }
+};
+
+Command.prototype.removeCommand = function (context, global) {
     // TODO: this.
 };
 
-Command.prototype.removeCommand = function (context) {
-    // TODO: this.
-};
-
-Command.prototype.editCommand = function (context) {
+Command.prototype.editCommand = function (context, global) {
     // TODO: this.
 };
 
