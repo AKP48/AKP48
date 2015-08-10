@@ -81,7 +81,7 @@ Command.prototype.createCommand = function (context, global) {
         channel = server = "global";
     }
 
-    if (!this.CCD.addCommand({name: name, msg: message, channel: channel, server: server}, context)) {
+    if (!this.CCD.addCommand({name: name, msg: message, channel: channel, server: server})) {
         context.getClient().say(context, "Could not add command! Ask AKP for help.");
     } else {
         context.getClient().say(context, "Command added!");
@@ -90,7 +90,22 @@ Command.prototype.createCommand = function (context, global) {
 };
 
 Command.prototype.removeCommand = function (context, global) {
-    // TODO: this.
+    var args = context.arguments.slice(1);
+    var name = args[0];
+
+    var channel = context.getChannel();
+    var server = context.getClient().uuid;
+
+    if(global) {
+        channel = server = "global";
+    }
+
+    if (!this.CCD.removeCommand(server, channel, name)) {
+        context.getClient().say(context, "Could not add command! Ask AKP for help.");
+    } else {
+        context.getClient().say(context, "Command added!");
+    }
+    return true;
 };
 
 Command.prototype.help = function (context) {
