@@ -78,7 +78,15 @@ Command.prototype.editCommand = function (context) {
 };
 
 Command.prototype.help = function (context) {
-    // TODO: this.
+    var url = "https://gist.github.com/AKPWebDesign/cda34eb5e7b9b11f433a";
+    //Simply return the (shortened) link to the help file.
+    getClientManager().getAPI("Google").shorten_url(url, function(url) {
+        if(!context.getUser().isRealIRCUser) {
+            context.getClient().say(context, url);
+        } else {
+            context.client.getIRCClient().notice(context.getUser().getNick(), url);
+        }
+    });
 };
 
 module.exports = Command;
