@@ -39,8 +39,46 @@ function Command() {
 }
 
 Command.prototype.execute = function(context) {
-    //add content here.
+    var global = (context.arguments[0] == "--global");
+
+    if(global) {
+        context.arguments = context.arguments.slice(1);
+    }
+
+    switch(context.arguments[0]) {
+        case "create":
+        case "add":
+            this.createCommand(context);
+            break;
+        case "delete":
+        case "remove":
+            this.removeCommand(context);
+            break;
+        case "edit":
+            this.editCommand(context);
+            break;
+        case "help":
+        default:
+            this.help(context);
+            break;
+    }
     return true;
+};
+
+Command.prototype.createCommand = function (context) {
+    // TODO: this.
+};
+
+Command.prototype.removeCommand = function (context) {
+    // TODO: this.
+};
+
+Command.prototype.editCommand = function (context) {
+    // TODO: this.
+};
+
+Command.prototype.help = function (context) {
+    // TODO: this.
 };
 
 module.exports = Command;
