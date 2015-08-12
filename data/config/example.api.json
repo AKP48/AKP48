@@ -19,7 +19,8 @@
 // remove any you see laying around.
 {
     "google": {
-        "apiKey": "PutYourGoogleAPIKeyHere" // API key to use for Google API-related commands. If non-existent, Google-related commands will be disabled.
+        "apiKey": "PutYourGoogleAPIKeyHere", // API key to use for Google API-related commands. If non-existent, Google-related commands will be disabled.
+        "safe": "high" // SafeSearch setting. Possible values are "high", "medium", or "off". Default value is "high".
         // See https://developers.google.com/console/help/ for more information on obtaining a Google API key.
     },
     "riot": {
