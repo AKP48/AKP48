@@ -40,8 +40,8 @@ Help.prototype.execute = function(context) {
     var sendTo = "";
     if(context.arguments.length) {
         commandText = context.arguments[0];
-        if(commandText.startsWith(context.getChannel().getCommandDelimiter())) {
-            commandText = commandText.substring(context.getChannel().getCommandDelimiter().length, commandText.length);
+        if(commandText.startsWith(config.getCommandDelimiter(context.getChannel(), context.getClient().uuid))) {
+            commandText = commandText.substring(config.getCommandDelimiter(context.getChannel(), context.getClient().uuid).length, commandText.length);
         }
     }
     var markdown = "";
