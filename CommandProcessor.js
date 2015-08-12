@@ -171,7 +171,7 @@ CommandProcessor.prototype.process = function(message, client) {
  * @param  {Context} context The context that needs to be sent to.
  */
 CommandProcessor.prototype.sendUsageMessage = function(context) {
-    var message = context.getChannel().getCommandDelimiter() + context.getCommand().aliases[0] + " " + context.getCommand().usageText;
+    var message = config.getCommandDelimiter(context.getChannel(), context.getClient().uuid) + context.getCommand().aliases[0] + " " + context.getCommand().usageText;
     if(context.getUser().isRealIRCUser) {
         context.getClient().getIRCClient().notice(context.getUser().getNick(), message);
     } else {
