@@ -19,6 +19,10 @@ var path = require('path');
 var bunyan = require('bunyan');
 var config = require('./data/config/config');
 
+if(!config.productionMode) {
+    require('longjohn');
+}
+
 var streams = [{
     stream: process.stdout,
     level: (config.log.level || 'info')

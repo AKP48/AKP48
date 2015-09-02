@@ -32,9 +32,6 @@ function Git(logger) {
     //dependencies that this module has.
     this.dependencies = [];
 
-    //The power level needed to use this command.
-    this.powerLevel = 9000;
-
     //whether or not to allow this command in a private message.
     this.allowPm = true;
 
@@ -43,6 +40,10 @@ function Git(logger) {
 }
 
 Git.prototype.execute = function(context) {
+    if(config.getPerms().powerLevelFromContext(context) < config.powerLevels[context.getClient().uuid]["root"]) {
+        return true;
+    }
+
     var args = context.getArguments();
     if (args.length < 1) {
         return false;

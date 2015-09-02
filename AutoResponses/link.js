@@ -61,7 +61,7 @@ LinkHandler.prototype.execute = function(word, context) {
     this.log.debug({url: word}, "Routing link.");
     var cachedResponse = getClientManager().getCache().getCached(word.sha1());
     if(cachedResponse) {
-        this.log.debug({url: word, response: cached}, "Sending response from cache.");
+        this.log.debug({url: word, response: cachedResponse}, "Sending response from cache.");
         context.getClient().getIRCClient().say(context.getChannel(), cachedResponse);
         return true;
     }

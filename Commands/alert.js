@@ -32,9 +32,6 @@ function Alert() {
     // depend on git, will only enable if git is enabled
     this.dependencies = ['git'];
 
-    //The power level needed to use this command.
-    this.powerLevel = 9000;
-
     //whether or not to allow this command in a private message.
     this.allowPm = true;
 
@@ -43,6 +40,10 @@ function Alert() {
 }
 
 Alert.prototype.execute = function(context) {
+    if(config.getPerms().powerLevelFromContext(context) < config.powerLevels[context.getClient().uuid]["root"]) {
+        return true;
+    }
+
     var results = [];
 
     function _add(channel) {

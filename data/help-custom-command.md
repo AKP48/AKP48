@@ -16,3 +16,4 @@ There are tokens that you can place in the message to dynamically include inform
 
 - `[setByNick]` - The nick of the person who created the command.
 - `[time]` - The current Linux epoch time, as seen by AKP48.
+- `[user]` - The nick of the person who executed the command.
