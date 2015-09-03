@@ -190,4 +190,4 @@ MyAnimeList.prototype.outputString = function(options, callback, error) {
 
 module.exports = MyAnimeList;
 // Name of this API. Will be used to reference the API from other modules.
-module.exports.name = "MAL";
+module.exports.apiName = "MAL";

@@ -23,7 +23,7 @@
 var loadAPIs = function(logger) {
     var _log = logger.child({module: "API Loader"});
     var APIs = {};
-    
+
     require('fs').readdirSync(__dirname + '/').each(function(file) {
         if (file.match(/.+\.js/g) !== null && file !== 'index.js') {
             _log.trace("Loading " + file);
@@ -31,7 +31,7 @@ var loadAPIs = function(logger) {
             var loadModule = require('./' + file);
 
             //get name from module
-            var name = loadModule.name;
+            var name = loadModule.apiName;
 
             //set up logger
             var log = logger.child({module: "AutoResponses/"+name});

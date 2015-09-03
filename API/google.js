@@ -168,4 +168,4 @@ Google.prototype.search = function(query, type, callback) {
 
 module.exports = Google;
 // Name of this API. Will be used to reference the API from other modules.
-module.exports.name = "Google";
+module.exports.apiName = "Google";
