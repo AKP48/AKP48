@@ -221,4 +221,4 @@ function formatMoney(number, currency) {
 
 module.exports = Steam;
 // Name of this API. Will be used to reference the API from other modules.
-module.exports.name = "Steam";
+module.exports.apiName = "Steam";
