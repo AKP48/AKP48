@@ -96,4 +96,4 @@ Riot.prototype.getServerStatus = function(region, callback) {
 
 module.exports = Riot;
 // Name of this API. Will be used to reference the API from other modules.
-module.exports.name = "Riot";
+module.exports.apiName = "Riot";

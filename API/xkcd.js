@@ -69,4 +69,4 @@ XKCD.prototype.constructComicString = function(comic) {
 
 module.exports = XKCD;
 // Name of this API. Will be used to reference the API from other modules.
-module.exports.name = "XKCD";
+module.exports.apiName = "XKCD";
