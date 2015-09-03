@@ -36,7 +36,7 @@ var loadHandlers = function(logger, fullMsg) {
             var loadModule = require('./' + file);
             var tempModule = new loadModule(log);
 
-            if(tempModule.fullMsgOnly == fullMsg) {
+            if((tempModule.fullMsgOnly == fullMsg) || (!tempModule.fullMsgOnly && !fullMsg)) {
                 handlers[name] = tempModule;
             }
         }

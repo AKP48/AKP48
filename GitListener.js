@@ -163,7 +163,9 @@ GitListener.prototype.handle = function (branch, data) {
 
         manager.clients.each(function (client) {
             client.alert.each(function (channel) {
-                client.getIRCClient().say(channel, message);
+                if(GLOBAL.config.isInChannel(channel, client.uuid)) {
+                    client.getIRCClient().say(channel, message);
+                }
             });
         });
 

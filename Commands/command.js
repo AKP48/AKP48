@@ -70,7 +70,7 @@ Command.prototype.execute = function(context) {
 Command.prototype.createCommand = function (context, global) {
     var args = context.arguments.slice(1);
     var name = args[0];
-    args.splice(1);
+    args.splice(0, 1);
     var message = args.join(" ");
 
     var nick = context.getUser().getNick();

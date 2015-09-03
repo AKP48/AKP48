@@ -235,15 +235,44 @@ ConfigurationHandler.prototype.getCommandDelimiter = function(channel, serverUUI
 
 ConfigurationHandler.prototype.addChannel = function(channel, serverUUID) {
     if(this.channelConfig[serverUUID]) {
-        this.channelConfig[serverUUID][channel] = {"name": channel,
-                                                   "commandDelimiter": ".",
-                                                   "mcBots": []};
-        this.permissionsHandler.addChannel(channel, serverUUID);
+        if(this.channelConfig[serverUUID][channel]) {
+            this.channelConfig[serverUUID][channel].disabled = false;
+        } else {
+            this.channelConfig[serverUUID][channel] = 
+            {
+                "name": channel,
+                "commandDelimiter": ".",
+                "mcBots": []
+            };
+            this.permissionsHandler.addChannel(channel, serverUUID);
+        }
+
         this.save();
     } else {
         this.initialize();
         this.addChannel(channel, serverUUID);
     }
+};
+
+ConfigurationHandler.prototype.removeChannel = function(channel, serverUUID) {
+    if(this.channelConfig[serverUUID]) {
+        if(this.channelConfig[serverUUID][channel]) {
+            this.channelConfig[serverUUID][channel].disabled = true;
+            this.save();
+        }
+    } else {
+        this.initialize();
+    }
+};
+
+ConfigurationHandler.prototype.isInChannel = function(channel, serverUUID) {
+    var serverUUIDExists = this.channelConfig[serverUUID];
+    var channelExists = this.channelConfig[serverUUID][channel];
+    var channelIsDisabled = (channelExists && this.channelConfig[serverUUID][channel].disabled);
+    if(!serverUUIDExists) {return false;}
+    if(!channelExists) {return false;}
+    if(channelIsDisabled) {return false;}
+    return true;
 };
 
 ConfigurationHandler.prototype.save = function() {     

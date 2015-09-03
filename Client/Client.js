@@ -296,13 +296,15 @@ Client.prototype.initialize = function(clientManager, holdIRCClient) {
 
     if(!holdIRCClient) {
         //create the IRC client. This automatically connects, as well.
-        this.ircClient = new irc.Client(this.getServer(), this.getNick(), { channels: channels, realName: this.getRealName(), password: password, userName: this.getUserName(), port: this.getPort(), autoRejoin: true, showErrors: true});
+        this.ircClient = new irc.Client(this.getServer(), this.getNick(), { channels: channels, realName: this.getRealName(), password: password, userName: this.getUserName(), port: this.getPort(), showErrors: true});
     }
 
     //attempt to remove eventListeners, then add new ones.
     this.ircClient.removeAllListeners('message');
     this.ircClient.removeAllListeners('action');
     this.ircClient.removeAllListeners('invite');
+    this.ircClient.removeAllListeners('kick');
+    this.ircClient.removeAllListeners('error');
 
     var self = this;
 
@@ -324,13 +326,28 @@ Client.prototype.initialize = function(clientManager, holdIRCClient) {
         config.addChannel(channel, self.uuid);
         self.getIRCClient().join(channel, function(){
             self.getIRCClient().say(channel, "Thanks for inviting me, "+from+"! I'm glad to be here. For more information about me, say `.help`.");
+            self.log.info("Joined channel "+channel+" after invite from "+from+".");
         });
     });
-
+    
     this.ircClient.on('nick', function (oldNick, newNick) {
         if (oldNick === self.nick) {
             self.nick = newNick;
         }
+    });
+
+    this.ircClient.on('kick', function(channel, nick, by, reason, message) {
+        if(nick == self.getIRCClient().nick) {
+            self.removeChannel(channel);
+            config.removeChannel(channel, self.uuid);
+            self.log.info("Kicked from channel "+channel+" by "+by+" for \""+reason+"\".");
+        }
+    });
+
+    this.ircClient.addListener('error', function(message) {
+        var err = new Error("IRCClientError: "+message.command);
+        err.ircMessage = message;
+        self.log.info(err, "IRC client error!");
     });
 
     var botID = this.botID;
@@ -461,9 +478,11 @@ module.exports.build = function build(options, logger) {
     for (var key in channels) {
        if (channels.hasOwnProperty(key)) {
             var obj = channels[key];
-            client.addChannel(key);
-            if(obj.alert) {
-                client.alert.push(key);
+            if(!obj.disabled) {
+                client.addChannel(key);
+                if(obj.alert) {
+                    client.alert.push(key);
+                }
             }
         }
     }

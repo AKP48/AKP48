@@ -23,6 +23,7 @@ var google = require('googleapis');
 
 function Google(logger, APIConfig) {
     this.api_key = APIConfig.google.apiKey;
+    this.safe = (APIConfig.google.safe || "high");
     this.client = request.createClient('https://www.googleapis.com/');
     this.urlshortener = google.urlshortener({ version: 'v1', auth: this.api_key });
     this.youtube = google.youtube({version: 'v3', auth: this.api_key});
@@ -146,7 +147,7 @@ Google.prototype.geocode = function(location, region, callback) {
  * @param  {Function} callback The callback to call when finished.
  */
 Google.prototype.search = function(query, type, callback) {
-    var url = 'http://ajax.googleapis.com/ajax/services/search/'+type+'?v=1.0&safe=high&q='+encodeURIComponent(query);
+    var url = 'http://ajax.googleapis.com/ajax/services/search/'+type+'?v=1.0&safe='+this.safe+'&q='+encodeURIComponent(query);
     var self = this;
     this.log.info("Searching Google for "+query+".");
     this.client.get(url, function(err, res, body){

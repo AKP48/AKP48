@@ -28,9 +28,6 @@ function Reload(log) {
     //ways to call this command.
     this.aliases = ['reload', 'rl'];
 
-    //The power level needed to use this command.
-    this.powerLevel = 9000;
-
     //whether or not to allow this command in a private message.
     this.allowPm = true;
 
@@ -42,6 +39,10 @@ function Reload(log) {
 }
 
 Reload.prototype.execute = function(context) {
+    if(config.getPerms().powerLevelFromContext(context) < config.powerLevels[context.getClient().uuid]["root"]) {
+        return true;
+    }
+
     this.log.debug("Soft reload requested by " + context.getUser().getNick());
     context.getClient().getIRCClient().notice(context.getUser().getNick(), "Performing soft reload!");
     context.getClient().getClientManager().softReload();

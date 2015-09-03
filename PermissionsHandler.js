@@ -57,7 +57,16 @@ PermissionsHandler.prototype.powerLevel = function(userHostmask, channel, client
     if(!this.permissions[clientUUID][channel].users) {return userPL;}
     if(!this.permissions[clientUUID][channel].users[userHostmask]) {return userPL;}
 
-    return this.permissions[clientUUID][channel].users[userHostmask].powerLevel;
+    //somewhat hacky way to include global perms in here.
+    if(this.permissions[clientUUID]["global"]) {
+        if(this.permissions[clientUUID]["global"].users) {
+            if(this.permissions[clientUUID]["global"].users[userHostmask]) {
+                var globalPL = this.permissions[clientUUID]["global"].users[userHostmask].powerLevel;
+            }
+        }
+    }
+
+    return (globalPL || this.permissions[clientUUID][channel].users[userHostmask].powerLevel);
 };
 
 PermissionsHandler.prototype.powerLevelFromContext = function(context) {
