@@ -14,6 +14,8 @@
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
+ 
+var chance = require("chance");
 
 function AlienHandler(logger) {
     //the name of the handler.
@@ -36,8 +38,14 @@ function AlienHandler(logger) {
 }
 
 AlienHandler.prototype.execute = function(message, context) {
+	var msg = "ayy lmao";
+	
+	if(chance.bool({likelihood: 25});) {
+		msg = "ayy lamo"
+	}
+	
     if(message.toLowerCase().includes("ayy")) {
-        context.getClient().getIRCClient().say(context.getChannel(), "ayy lmao");
+        context.getClient().getIRCClient().say(context.getChannel(), msg);
     }
 };
 
