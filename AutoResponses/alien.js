@@ -15,7 +15,7 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
  
-var chance = require("chance");
+var chance = new (require("chance"))();
 
 function AlienHandler(logger) {
     //the name of the handler.
