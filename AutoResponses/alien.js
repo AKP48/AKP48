@@ -40,7 +40,7 @@ function AlienHandler(logger) {
 AlienHandler.prototype.execute = function(message, context) {
 	var msg = "ayy lmao";
 	
-	if(chance.bool({likelihood: 25});) {
+	if(chance.bool({likelihood: 25})) {
 		msg = "ayy lamo"
 	}
 	
