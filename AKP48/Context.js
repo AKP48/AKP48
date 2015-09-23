@@ -66,6 +66,9 @@ Context.prototype.initialize = function (nick, to, text, AKP48) {
     if(perms) {
         this.isBot = perms.isBot;
         this.isMcBot = perms.isMcBot;
+        if(perms.permissions && perms.permissions[this.channel]) {
+            this.userPowerLevel = perms.permissions[this.channel];
+        }
     }
 
     //if the message is from a Minecraft bot, figure out who the user should be.

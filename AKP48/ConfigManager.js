@@ -84,4 +84,31 @@ ConfigManager.prototype.getChannels = function () {
     return channels;
 };
 
+ConfigManager.prototype.getChannelPowerLevels = function (channel) {
+    var serverConfig = this.getServerConfig();
+    var globalConfig = this.getGlobalConfig();
+    var channelConfig = this.getChannelConfig();
+
+    if(channelConfig && channelConfig[channel] && channelConfig[channel].powerLevels) {
+        return channelConfig[channel].powerLevels;
+    }
+
+    if(serverConfig && serverConfig.powerLevels) {
+        return serverConfig.powerLevels;
+    }
+
+    if(globalConfig && globalConfig.powerLevels) {
+        return globalConfig.powerLevels;
+    }
+
+    return {
+        "root": 9001,
+        "serverMod": 9000,
+        "channelOp": 900,
+        "channelMod": 90,
+        "normal": 1,
+        "banned": -1
+    }
+};
+
 module.exports = ConfigManager;
