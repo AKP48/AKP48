@@ -37,6 +37,9 @@ function Alert() {
 
     //whether or not to only allow this command if it's in a private message.
     this.isPmOnly = false;
+
+    //The required power level for this command.
+    this.powerLevel = "root";
 }
 
 Alert.prototype.execute = function(context) {

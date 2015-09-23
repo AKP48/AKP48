@@ -20,7 +20,7 @@ var jsonfile = require('jsonfile');
 
 function ConfigManager(logger, configPath) {
     this.log = logger.child({module: "ConfigManager"});
-    this.configPath = configPath;
+    this.configPath = (configPath || "");
 }
 
 /**

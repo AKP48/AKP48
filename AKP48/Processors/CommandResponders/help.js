@@ -36,6 +36,7 @@ function Help(logger) {
 }
 
 Help.prototype.execute = function(context) {
+    var powerLevels = context.AKP48.configManager.getChannelPowerLevels(context.channel);
     var commandText = "";
     var sendTo = "";
     if(context.arguments.length) {
@@ -50,17 +51,19 @@ Help.prototype.execute = function(context) {
             //to tell us whether or not to send this message.
             var send = true;
 
-            //TODO: check permission on user
-            // if(command.powerLevel) {
-            //     if(config.getPerms().powerLevelFromContext(context) > command.powerLevel) {
-            //         send = false;
-            //     }
-            //
-            //     if(config.getPerms().powerLevel(context.getUser().getHostmask(),
-            //        "global", context.getClient().uuid) > command.powerLevel) {
-            //         send = true;
-            //     }
-            // }
+            //check permission on user
+            if(command.powerLevel) {
+                //if user doesn't have permission to see the command in this channel, don't send the command.
+                if((powerLevels[command.powerLevel]) && context.userPowerLevel < powerLevels[command.powerLevel]) {
+                    send = false;
+                }
+
+                //if the user has permission for the command globally, override previous statement.
+                if((powerLevels[command.powerLevel]) && context.AKP48.configManager.getPermissions(context.usermask).permissions["global"]
+                                                                                   >= powerLevels[command.powerLevel]) {
+                    send = true;
+                }
+            }
 
             if(send) {
                 markdown += "##" + command.name + "  \n";

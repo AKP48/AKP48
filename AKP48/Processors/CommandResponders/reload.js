@@ -36,6 +36,9 @@ function Reload(log) {
 
     //logger
     this.log = log;
+
+    //The required power level for this command.
+    this.powerLevel = "root";
 }
 
 Reload.prototype.execute = function(context) {

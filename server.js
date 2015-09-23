@@ -25,6 +25,7 @@ var bunyan = require('bunyan');
 var validator = require('validator');
 var config = require('./data/config/global');
 var InstanceManager = require('./InstanceManager');
+var GitProcessor = require('./AKP48/GitProcessor');
 
 if(!config.productionMode) {
     require('longjohn');
@@ -59,6 +60,9 @@ require('./polyfill.js')(log);
 
 //Initialize an InstanceManager.
 var instanceManager = new InstanceManager(log);
+
+//Initialize a GitProcessor.
+var gitProcessor = new GitProcessor(log, instanceManager);
 
 //create instances using the currently existing configuration folders.
 //TODO: If none exist, use default settings.
