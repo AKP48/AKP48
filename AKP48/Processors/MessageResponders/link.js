@@ -167,9 +167,11 @@ LinkHandler.prototype.YouTubeVideo = function(link, context) {
     var self = this;
     if(id != null) {
         context.AKP48.getAPI("Google").youtube_video_info(id[1], function(res){
-            var cacheExpire = (Date.now() / 1000 | 0) + 86400; //make cache expire in 1 day
-            context.AKP48.cache.addToCache(link.sha1(), res, cacheExpire);
-            context.AKP48.say(context.channel, res);
+            if(!res) {context.AKP48.say(context.channel, "I'm having trouble reaching YouTube at the moment. Please try again later.");} else {
+                var cacheExpire = (Date.now() / 1000 | 0) + 86400; //make cache expire in 1 day
+                context.AKP48.cache.addToCache(link.sha1(), res, cacheExpire);
+                context.AKP48.say(context.channel, res);
+            }
         });
     } else {
         this.log.debug({reason: "No YouTube video ID was found."}, "Ignoring link.");

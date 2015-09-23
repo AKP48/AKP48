@@ -32,6 +32,8 @@ function AKP48(options, logger) {
     this.ircClient = options.ircClient;
     this.cache = new (require("./Helpers/cache"))(logger);
     this.APIs = require("./APIs/")(logger, this.configManager.getGlobalConfig().api, this);
+
+    this.initialize();
 }
 
 /**
@@ -49,12 +51,11 @@ AKP48.prototype.initialize = function () {
              floodProtection: (config.floodProtection || true), floodProtectionDelay: (config.floodProtectionDelay || 250),
              autoRejoin: (config.autoRejoin || true), encoding: (config.encoding || "utf-8")});
     } else {
+        this.ircClient.removeAllListeners();
         //TODO: compare channels in ircClient to channels in config, make the two match.
     }
 
     var self = this;
-
-    this.ircClient.removeAllListeners();
 
     this.ircClient.on('registered', function (message) {
         self.handleRegister(message);
@@ -75,6 +76,8 @@ AKP48.prototype.initialize = function () {
     this.ircClient.on('invite', function (channel, from, message) {
         self.handleInvite(channel, from, message);
     });
+
+    this.ircClient.on('error', function(message){self.log.error(message)});
 };
 
 /**

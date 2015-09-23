@@ -65,8 +65,10 @@ Google.prototype.youtube_video_info = function(video_id, callback) {
     }
 
     this.log.info("Retrieving information about YouTube video "+video_id+" from Google.");
+    var self = this;
 
     this.youtube.videos.list(params, function(err, response){
+        if(err) {self.log.error(err.message); callback(null); return;}
         if(response.items[0]) {
             var video = response.items[0];
 
@@ -76,6 +78,7 @@ Google.prototype.youtube_video_info = function(video_id, callback) {
             }
 
             self.youtube.channels.list(params, function(err, response) {
+                if(err) {self.log.error(err.message); callback(null); return;}
                 var d = m.duration(video.contentDetails.duration);
                 var definition = video.contentDetails.definition;
                 var dimension = video.contentDetails.dimension;
@@ -160,6 +163,7 @@ Google.prototype.search = function(query, type, callback) {
             if(body.responseData.results[0]) {
                 var outputString = "Title: \"" + body.responseData.results[0].titleNoFormatting;
                 self.shorten_url(body.responseData.results[0].url, function(smallUrl) {
+                    if(!smallUrl){smallUrl = body.responseData.results[0].url;}
                     outputString += "\" · URL: " + smallUrl;
                     callback(outputString);
                 });
