@@ -15,15 +15,20 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-function AyyActionHandler(logger) {
+var chance = new (require("chance"))();
+
+function AlienHandler(logger) {
     //the name of the handler.
-    this.name = "Ayy Action Handler";
+    this.name = "Alien Handler";
 
     //whether or not to allow this handler in a private message.
     this.allowPm = true;
 
     //the regex used to match this handler
-    this.regex = /ayy/i;
+    this.regex = null;
+
+    //whether or not this handler runs on the only full message
+    this.fullMsgOnly = true;
 
     // the amount of times we should respond with this handler, 0 is no limit
     this.limit = 1;
@@ -32,8 +37,16 @@ function AyyActionHandler(logger) {
     this.log = logger;
 }
 
-AyyActionHandler.prototype.execute = function(word, context) {
-    context.getClient().getIRCClient().say(context.getChannel(), "ayy lmao");
+AlienHandler.prototype.execute = function(message, context) {
+	var msg = "ayy lmao";
+
+	if(chance.bool({likelihood: 25})) {
+		msg = "ayy lamo"
+	}
+
+    if(message.toLowerCase().includes("ayy")) {
+        context.AKP48.say(context.channel, msg);
+    }
 };
 
-module.exports = AyyActionHandler;
+module.exports = AlienHandler;

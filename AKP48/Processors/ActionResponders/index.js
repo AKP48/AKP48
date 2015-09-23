@@ -16,20 +16,20 @@
  */
 
 /**
- * Load all Action handlers.
- * @param  {Logger} logger The logger to pass to loaded action handlers.
- * @return {Object}        The action handlers.
+ * Load all ActionResponders.
+ * @param  {Logger} logger The logger to pass to loaded action responders.
+ * @return {Object}        The action responders.
  */
-var loadHandlers = function(logger) {
+var loadResponders = function(logger) {
     var handlers = {};
-    var _log = logger.child({module: "Action Handler Loader"});
+    var _log = logger.child({module: "ActionResponder Loader"});
     require('fs').readdirSync(__dirname + '/').each(function(file) {
         if (file.match(/.+\.js/g) !== null && file !== 'index.js') {
             _log.trace("Loading " + file);
             var name = file.replace('.js', '');
 
             //set up logger
-            var log = logger.child({module: "Actions/"+name});
+            var log = logger.child({module: "ActionResponders/"+name});
 
             var loadModule = require('./' + file);
             var tempModule = new loadModule(log);
@@ -40,4 +40,4 @@ var loadHandlers = function(logger) {
     return handlers;
 };
 
-module.exports = loadHandlers;
+module.exports = loadResponders;

@@ -16,8 +16,10 @@
  */
 
 function Context(nick, to, text, message, AKP48, logger) {
+    this.AKP48 = AKP48;
     this.nick = nick;
     this.to = to;
+    this.channel = to;
     this.text = text;
     this.fullText = text;
     this.message = message;
@@ -25,12 +27,16 @@ function Context(nick, to, text, message, AKP48, logger) {
     this.userPowerLevel = 1;
     this.command = "";
     this.arguments = [];
-    this.channel = to;
+    this.commandDelimiterUsed = ""
     this.isPm = false;
     this.isBot = false;
     this.isMcBot = false;
-    this.isCommand = false;
+    this.hasCommand = false;
+    this.isAction = this.message.isAction;
     this.isContext = false;
+
+    this.isProxied = false;
+    this.originalNick = this.nick;
 
     if(!this.initialize(nick, to, text, AKP48)) {
         this.isContext = false;
@@ -97,6 +103,7 @@ Context.prototype.initialize = function (nick, to, text, AKP48) {
     //for each possible command delimiter, check to see if we have a command, and if so, process the text accordingly.
     for (var i = 0; i < delimiters.length; i++) {
         if(this.text.substring(0, delimiters[i].length) === delimiters[i]) {
+            this.commandDelimiterUsed = delimiters[i];
             //attempt to find the command
             var end = this.text.indexOf(' ');
             this.command = this.text.substring(delimiters[i].length, end).toLowerCase();
@@ -120,8 +127,8 @@ Context.prototype.initialize = function (nick, to, text, AKP48) {
     }
 
     //if we have gotten a command, we need to set the field saying so.
-    if(this.command.length) {
-        this.isCommand = true;
+    if(this.command.length && !this.message.isAction) {
+        this.hasCommand = true;
     }
 
     //last thing to do: if we got here, the context has been successfully created.

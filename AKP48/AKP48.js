@@ -17,6 +17,7 @@
 
 var irc = require('irc');
 var Context = require('./Context');
+var ContextProcessor = require('./Processors/ContextProcessor');
 
 function AKP48(options, logger) {
     this.log = logger.child({module: "AKP48"});
@@ -68,8 +69,8 @@ AKP48.prototype.initialize = function () {
         self.handleMessage(nick, to, text, message);
     });
 
-    this.ircClient.on('action', function (nick, to, text) {
-        self.handleAction(nick, to, text);
+    this.ircClient.on('action', function (nick, to, text, message) {
+        self.handleAction(nick, to, text, message);
     });
 };
 
@@ -84,11 +85,18 @@ AKP48.prototype.handleKick = function (channel, nick, by, reason) {
 
 AKP48.prototype.handleMessage = function (nick, to, text, message) {
     var context = new Context(nick, to, text, message, this, this.log);
-    console.log(context);
+    var log = this.log;
+    //process the context.
+    return new ContextProcessor(context, log);
 };
 
-AKP48.prototype.handleAction = function (nick, to, text) {
-    console.log(nick, to, text);
+AKP48.prototype.handleAction = function (nick, to, text, message) {
+    message.isAction = true;
+    this.handleMessage(nick, to, text, message);
+};
+
+AKP48.prototype.say = function (channel, message) {
+    this.ircClient.say(channel, message);
 };
 
 module.exports = AKP48;

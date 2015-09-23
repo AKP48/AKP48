@@ -16,28 +16,32 @@
  */
 
 /**
- * Load all commands.
- * @param  {Logger}   logger The logger to pass to loaded commands.
- * @return {Object[]}        An array of commands.
+ * Load all MessageResponders.
+ * @param  {Logger}  logger  The logger to pass to loaded message responders.
+ * @param  {Boolean} fullMsg Whether or not this should return full message responders.
+ * @return {Object}          The message responders.
  */
-var loadCommands = function(logger) {
-    var commands = [];
-    var _log = logger.child({module: "Command Loader"});
+var loadResponders = function(logger, fullMsg) {
+    if(!fullMsg) {fullMsg = false;}
+    var handlers = {};
+    var _log = logger.child({module: "MessageResponder Loader"});
     require('fs').readdirSync(__dirname + '/').each(function(file) {
         if (file.match(/.+\.js/g) !== null && file !== 'index.js') {
             _log.trace("Loading " + file);
             var name = file.replace('.js', '');
 
             //set up logger
-            var log = logger.child({module: "Commands/"+name});
+            var log = logger.child({module: "MessageResponders/"+name});
 
             var loadModule = require('./' + file);
             var tempModule = new loadModule(log);
 
-            commands[name] = tempModule;
+            if((tempModule.fullMsgOnly == fullMsg) || (!tempModule.fullMsgOnly && !fullMsg)) {
+                handlers[name] = tempModule;
+            }
         }
     });
-    return commands;
+    return handlers;
 };
 
-module.exports = loadCommands;
+module.exports = loadResponders;

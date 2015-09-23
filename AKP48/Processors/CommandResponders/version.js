@@ -47,11 +47,11 @@ function Version(logger) {
 
 Version.prototype.execute = function(context) {
     //if the user is a global op, send them the version the files are on, which may not be the version the server is running.
-    if (config.getPerms().powerLevel(context.getUser().getHostmask(), "global", context.getClient().uuid) >= config.powerLevels[context.getClient().uuid]["root"]) {
-        context.getClient().getIRCClient().notice(context.getUser().getNick(), "Server: "+this.buildVersion());
-    }
+    // if (config.getPerms().powerLevel(context.getUser().getHostmask(), "global", context.getClient().uuid) >= config.powerLevels[context.getClient().uuid]["root"]) {
+    //     context.getClient().getIRCClient().notice(context.getUser().getNick(), "Server: "+this.buildVersion());
+    // }
 
-    context.getClient().say(context, "v"+this.version);
+    context.AKP48.say(context.channel, "v"+this.version);
     return true;
 };
 

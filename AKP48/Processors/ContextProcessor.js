@@ -15,6 +15,28 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-var re_mal = /http:\/\/myanimelist\.net\/anime\//i
+var CommandProcessor = require('./CommandProcessor');
+var ActionProcessor = require('./ActionProcessor');
+var MessageProcessor = require('./MessageProcessor');
 
-module.exports = re_mal;
+/**
+ * Processes Contexts, based on what needs to be done.
+ * @param {Context} context The context to process.
+ */
+function ContextProcessor(context, logger) {
+    this.process(context, logger);
+}
+
+ContextProcessor.prototype.process = function (context, logger) {
+    if(context.hasCommand) {
+        return new CommandProcessor(context, logger);
+    }
+
+    if(context.isAction) {
+        return new ActionProcessor(context, logger);
+    }
+
+    return new MessageProcessor(context, logger);
+};
+
+module.exports = ContextProcessor;

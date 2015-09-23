@@ -63,7 +63,7 @@ KittehActionHandler.prototype.execute = function(word, context) {
     var action = word.split(" ").slice(1).join(" ").toLowerCase().trim().slice(0,-1);
     if(action === "pets ^o^") {
         if(chance.integer({min:1, max:100}) < 42 && this.timer <= 1) {
-            context.getClient().getIRCClient().say(context.getChannel(),
+            context.AKP48.say(context.channel,
                 this.sadResponses.randomElement().replace(/<name>/i, context.getUser().getNick()));
             this.setPettingTimer();
         }
@@ -73,10 +73,10 @@ KittehActionHandler.prototype.execute = function(word, context) {
 
     if(action === "pets akp48" && this.timer <= 1) {
         if(randNumber <= 242) {
-            context.getClient().getIRCClient().say(context.getChannel(),
+            context.AKP48.say(context.channel,
                 this.happyResponses.randomElement().replace(/<name>/i, context.getUser().getNick()));
         } else if (randNumber > 642) {
-            context.getClient().getIRCClient().say(context.getChannel(),
+            context.AKP48.say(context.channel,
                 this.neutralResponses.randomElement().replace(/<name>/i, context.getUser().getNick()));
         }
     }

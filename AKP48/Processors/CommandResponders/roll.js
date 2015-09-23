@@ -61,10 +61,11 @@ Roll.prototype.execute = function(context) {
             //parse out each value
             var count = (parseInt(result[1]) != 0) ? parseInt(result[1]) : 1;
             if(isNaN(count)) {count = 1;}
-            if(count > 1000000) {count = 1000000; countLimited = true;}
+            if(count > 1000) {count = 1000; countLimited = true;}
 
             var maxValue = (parseInt(result[2]) != 0) ? parseInt(result[2]) : 1;
             if(isNaN(maxValue)) {maxValue = 1;}
+            if(maxValue > 300) {maxValue = 300, countLimited = true;}
 
             var multiplier = (parseInt(result[3]) != 0) ? parseInt(result[3]) : 1;
             if(isNaN(multiplier)) {multiplier = 1;}
@@ -109,10 +110,10 @@ Roll.prototype.execute = function(context) {
 
     outputString = outputString.substring(0, outputString.length-3);
 
-    if(countLimited) {outputString += " | (Dice counts limited to 1,000,000.)"}
+    if(countLimited) {outputString += " | (Dice counts limited to 1,000. Dice sides limited to 300)"}
 
     //output string to IRC
-    context.getClient().say(context, outputString);
+    context.AKP48.say(context.channel, outputString);
     return true;
 };
 

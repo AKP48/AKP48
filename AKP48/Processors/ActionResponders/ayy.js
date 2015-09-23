@@ -15,6 +15,25 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-var re_twitter = /(?:twitter\.com|t\.co)\//i
+function AyyActionHandler(logger) {
+    //the name of the handler.
+    this.name = "Ayy Action Handler";
 
-module.exports = re_twitter;
+    //whether or not to allow this handler in a private message.
+    this.allowPm = true;
+
+    //the regex used to match this handler
+    this.regex = /ayy/i;
+
+    // the amount of times we should respond with this handler, 0 is no limit
+    this.limit = 1;
+
+    //logger
+    this.log = logger;
+}
+
+AyyActionHandler.prototype.execute = function(word, context) {
+    context.AKP48.say(context.channel, "ayy lmao");
+};
+
+module.exports = AyyActionHandler;
