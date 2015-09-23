@@ -172,7 +172,7 @@ AKP48.prototype.getAlertChannels = function () {
     var channelConfig = this.configManager.getChannels();
     for (var key in channelConfig) {
         if (channelConfig.hasOwnProperty(key)) {
-            var chan = channels[key];
+            var chan = channelConfig[key];
             if(chan.alert) {
                 alert.push(key);
             }
