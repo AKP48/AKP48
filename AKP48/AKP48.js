@@ -32,37 +32,29 @@ function AKP48(options, logger) {
     this.ircClient = options.ircClient;
     this.cache = new (require("./Helpers/cache"))(logger);
     this.APIs = require("./APIs/")(logger, this.configManager.getGlobalConfig().api, this);
-
-    if(this.ircClient) {
-        this.syncToConfig();
-    } else {
-        this.initialize();
-    }
 }
 
-AKP48.prototype.syncToConfig = function () {
-    var config = this.configManager.getServerConfig();
-
-    this.ircClient.removeAllListeners();
-    this.ircClient.on('registered', this.handleRegister);
-    this.ircClient.on('kick', this.handleKick);
-    this.ircClient.on('message', this.handleMessage);
-    this.ircClient.on('action', this.handleAction);
-
-    //TODO: compare channels in ircClient to channels in config, make the two match.
-};
-
+/**
+ * Initialize this instance of AKP48 as a fresh instance. This gets everything going.
+ * It creates a new IRC client for use.
+ */
 AKP48.prototype.initialize = function () {
     var config = this.configManager.getServerConfig();
     var channels = this.configManager.getChannels();
-    //TODO: initialize the ircClient here, using the config as a base.
-    this.ircClient = new irc.Client(config.address, config.nick,
-        {userName: config.username, realName: config.realname, port: config.port,
-         channels: channels, password: (config.password.length ? config.password : null),
-         floodProtection: (config.floodProtection || true), floodProtectionDelay: (config.floodProtectionDelay || 250),
-         autoRejoin: (config.autoRejoin || true), encoding: (config.encoding || "utf-8")});
+
+    if(!this.ircClient) {
+        this.ircClient = new irc.Client(config.address, config.nick,
+            {userName: config.username, realName: config.realname, port: config.port,
+             channels: channels, password: (config.password.length ? config.password : null),
+             floodProtection: (config.floodProtection || true), floodProtectionDelay: (config.floodProtectionDelay || 250),
+             autoRejoin: (config.autoRejoin || true), encoding: (config.encoding || "utf-8")});
+    } else {
+        //TODO: compare channels in ircClient to channels in config, make the two match.
+    }
 
     var self = this;
+
+    this.ircClient.removeAllListeners();
 
     this.ircClient.on('registered', function (message) {
         self.handleRegister(message);
@@ -79,17 +71,39 @@ AKP48.prototype.initialize = function () {
     this.ircClient.on('action', function (nick, to, text, message) {
         self.handleAction(nick, to, text, message);
     });
+
+    this.ircClient.on('invite', function (channel, from, message) {
+        self.handleInvite(channel, from, message);
+    });
 };
 
+/**
+ * Handle an IRC register message.
+ * @param  {Object} message The full IRC message object.
+ */
 AKP48.prototype.handleRegister = function (message) {
     var config = this.configManager.getServerConfig();
     this.log.info("Connected to " + config.address + ":" + config.port + " with nick '" + this.ircClient.nick + "'");
 };
 
+/**
+ * Handle an IRC kick message.
+ * @param  {String} channel The channel someone was kicked from.
+ * @param  {String} nick    The kickee.
+ * @param  {String} by      The kicker.
+ * @param  {String} reason  The reason for kicking.
+ */
 AKP48.prototype.handleKick = function (channel, nick, by, reason) {
-    console.log(channel, nick, by, reason);
+    //TODO: This.
 };
 
+/**
+ * Handle a message.
+ * @param  {String} nick    Who sent the message.
+ * @param  {String} to      Where the message was seen.
+ * @param  {String} text    The text of the message.
+ * @param  {Object} message The full IRC message object.
+ */
 AKP48.prototype.handleMessage = function (nick, to, text, message) {
     var context = new Context(nick, to, text, message, this, this.log);
     var log = this.log;
@@ -97,9 +111,26 @@ AKP48.prototype.handleMessage = function (nick, to, text, message) {
     return new ContextProcessor(context, log);
 };
 
+/**
+ * Handle an ACTION.
+ * @param  {String} nick    Who performed the ACTION.
+ * @param  {String} to      Where the ACTION was seen.
+ * @param  {String} text    The text of the ACTION.
+ * @param  {Object} message The full IRC message object.
+ */
 AKP48.prototype.handleAction = function (nick, to, text, message) {
     message.isAction = true;
     this.handleMessage(nick, to, text, message);
+};
+
+/**
+ * Handle an IRC invite.
+ * @param  {String} channel Where we were invited to.
+ * @param  {String} from    Who invited us.
+ * @param  {Object} message The full IRC message object.
+ */
+AKP48.prototype.handleInvite = function (channel, from, message) {
+    //TODO: Also this.
 };
 
 /**

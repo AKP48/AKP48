@@ -98,7 +98,7 @@ Config.prototype.addChannel = function(context) {
     if(context.arguments.length < 2) {
         var oS = "Usage: "+context.AKP48.configManager.getChannelConfig()[context.channel].commandDelimiters[0];
         oS += "config "+context.arguments[0] + " <channel(s)...>";
-        context.getClient().getIRCClient().notice(context.nick, oS);
+        context.AKP48.ircClient.notice(context.nick, oS);
     }
 
     var channels = context.arguments.slice(1);
@@ -106,9 +106,9 @@ Config.prototype.addChannel = function(context) {
     channels.forEach(function(channel) {
         if(!config.isInChannel(channel, context.getClient().uuid) && channel.isChannel()) {
             config.addChannel(channel, context.getClient().uuid);
-            context.getClient().getIRCClient().join(channel, function(){
-                context.getClient().getIRCClient().say(channel, "Hi! I'm "+context.AKP48.ircClient.nick+", and I'm here to help! Speaking of help... say .help to get some!");
-                context.getClient().getIRCClient().notice(context.nick, "Joined "+channel+".");
+            context.AKP48.ircClient.join(channel, function(){
+                context.AKP48.ircClient.say(channel, "Hi! I'm "+context.AKP48.ircClient.nick+", and I'm here to help! Speaking of help... say .help to get some!");
+                context.AKP48.ircClient.notice(context.nick, "Joined "+channel+".");
             });
         }
     });
@@ -123,7 +123,7 @@ Config.prototype.removeChannel = function(context) {
     if(context.arguments.length < 2) {
         var oS = "Usage: "+context.AKP48.configManager.getChannelConfig()[context.channel].commandDelimiters[0];
         oS += "config "+context.arguments[0] + " <channel(s)...>";
-        context.getClient().getIRCClient().notice(context.nick, oS);
+        context.AKP48.ircClient.notice(context.nick, oS);
     }
 
     var channels = context.arguments.slice(1);
@@ -131,8 +131,8 @@ Config.prototype.removeChannel = function(context) {
     channels.forEach(function(channel) {
         if(config.isInChannel(channel, context.getClient().uuid) && channel.isChannel()) {
             config.removeChannel(channel, context.getClient().uuid);
-            context.getClient().getIRCClient().part(channel, function(){
-                context.getClient().getIRCClient().notice(context.nick, "Parted "+channel+".");
+            context.AKP48.ircClient.part(channel, function(){
+                context.AKP48.ircClient.notice(context.nick, "Parted "+channel+".");
             });
         }
     });
@@ -146,7 +146,7 @@ Config.prototype.addServer = function(context) {
 
     // If we don't have any parameters, send the user an appropriate message and exit.
     if(context.arguments.length < 2) {
-        context.getClient().getIRCClient().notice(context.nick, "Wrong command usage!"); //TODO: better message.
+        context.AKP48.ircClient.notice(context.nick, "Wrong command usage!"); //TODO: better message.
         return true;
     }
 

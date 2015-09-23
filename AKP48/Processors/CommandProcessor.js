@@ -77,7 +77,7 @@ CommandProcessor.prototype.process = function (context) {
         return;
     }
 
-    if(!(typeof this.aliasedCommands[context.command].execute === "function")) {
+    if(!this.aliasedCommands[context.command] || !(typeof this.aliasedCommands[context.command].execute === "function")) {
         this.log.trace("Dropping command, didn't get a valid command.");
         return;
     }

@@ -62,14 +62,14 @@ Proxy.prototype.execute = function(context) {
             //remove /me from arguments
             context.arguments.splice(0, 1);
             //send text as action
-            context.getClient().getIRCClient().action(channel, context.arguments.join(" "));
+            context.AKP48.ircClient.action(channel, context.arguments.join(" "));
             //NOTICE user a success message
-            context.getClient().getIRCClient().notice(context.nick, "Action successfully sent to "+channel+"!");
+            context.AKP48.ircClient.notice(context.nick, "Action successfully sent to "+channel+"!");
         } else {
             //just send message if no /me
             context.AKP48.ircClient.say(channel, context.arguments.join(" "));
             //NOTICE user a success message
-            context.getClient().getIRCClient().notice(context.nick, "Message successfully sent to "+channel+"!");
+            context.AKP48.ircClient.notice(context.nick, "Message successfully sent to "+channel+"!");
         }
     } else {
         context.AKP48.say(context.channel, "Could not send to channel "+channel+"!");

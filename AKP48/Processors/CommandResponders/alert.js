@@ -74,7 +74,7 @@ Alert.prototype.execute = function(context) {
 
     var nick = context.nick;
     if (context.arguments.length == 0) {
-        context.getClient().getIRCClient().notice(nick, "Currently alerting: " + (context.getClient().alert.join(", ") || "none"));
+        context.AKP48.ircClient.notice(nick, "Currently alerting: " + (context.getClient().alert.join(", ") || "none"));
     } else {
         context.arguments.each(function (arg) {
             if (arg.startsWith("-")) {
@@ -87,7 +87,7 @@ Alert.prototype.execute = function(context) {
             }
         });
         var message = results.join(", ");
-        context.getClient().getIRCClient().notice(nick, "Alert changes: " + (message || "none"));
+        context.AKP48.ircClient.notice(nick, "Alert changes: " + (message || "none"));
     }
     return true;
 };

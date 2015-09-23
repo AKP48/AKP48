@@ -74,7 +74,7 @@ Git.prototype.execute = function(context) {
             }
         default: return false;
     }
-    if (message) context.getClient().getIRCClient().notice(nick, message);
+    if (message) context.AKP48.ircClient.notice(nick, message);
 
     return true;
 };

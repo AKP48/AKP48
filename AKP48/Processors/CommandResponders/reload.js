@@ -44,7 +44,7 @@ Reload.prototype.execute = function(context) {
     }
 
     this.log.debug("Soft reload requested by " + context.nick);
-    context.getClient().getIRCClient().notice(context.nick, "Performing soft reload!");
+    context.AKP48.ircClient.notice(context.nick, "Performing soft reload!");
     context.getClient().getClientManager().softReload();
     return true;
 };

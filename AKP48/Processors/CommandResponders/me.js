@@ -36,7 +36,7 @@ function Me() {
 }
 
 Me.prototype.execute = function(context) {
-    var channel = context.getChannel();
+    var channel = context.channel;
 
     //if we don't have any arguments, return.
     if(!context.arguments.length) {return false;}
@@ -50,7 +50,7 @@ Me.prototype.execute = function(context) {
       return false;
     }
 
-    context.getClient().getIRCClient().action(channel, context.arguments.join(" "));
+    context.AKP48.ircClient.action(channel, context.arguments.join(" "));
 
     return true;
 };
