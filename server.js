@@ -15,9 +15,16 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
+/**
+ * This is the main entry point for AKP48. This module handles hot-reloading so that everything can be hot-reloaded.
+ */
+
+var fs = require('fs');
 var path = require('path');
 var bunyan = require('bunyan');
-var config = require('./data/config/config');
+var validator = require('validator');
+var config = require('./data/config/global');
+var InstanceManager = require('./InstanceManager');
 
 if(!config.productionMode) {
     require('longjohn');
@@ -47,19 +54,33 @@ var log = bunyan.createLogger({
     }
 });
 
-log.info("Starting server.");
-
-var ClientManager = require('./ClientManager');
-
 log.info("Initializing polyfill...");
 require('./polyfill.js')(log);
 
-log.info("Creating Client Manager.");
-var clientmanager = new ClientManager(log);
+//Initialize an InstanceManager.
+var instanceManager = new InstanceManager(log);
 
-GLOBAL.getClientManager = function() {
-    return clientmanager;
-}
+//create instances using the currently existing configuration folders.
+//TODO: If none exist, use default settings.
+fs.readdir(path.resolve("data/config"), function(err, files) {
+    //check for error, quit now if we have any.
+    if(err) {log.fatal(err); return;}
+
+    //loop through files in the config folder.
+    files.forEach(function(file) {
+        //stat each file
+        fs.stat(path.resolve("data/config", file), function(err, stat){
+            //if error, return
+            if(err) {log.fatal(err); return;}
+
+            //if the 'file' is actually a directory, and the name is a valid UUID,
+            //start an AKP48 instance using it.
+            if(stat.isDirectory() && validator.isUUID(file)) {
+                instanceManager.startInstance(file, path.resolve("data/config", file), log);
+            }
+        });
+    });
+});
 
 //todo: better exception handling plz
 if(config.productionMode) {

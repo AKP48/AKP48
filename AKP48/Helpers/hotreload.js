@@ -15,22 +15,24 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-/**
- * Load all server channel files.
- * @return {Object}        Server channel configurations.
- */
-var loadChannels = function(logger) {
-    var servers = [];
-    var _log = logger.child({module: "Channel Loader"});
-    require('fs').readdirSync(__dirname + '/').each(function(file) {
-        if (file.match(/.+\.json/g) !== null && !file.startsWith("example.")) {
-            _log.trace("Loading " + file);
-            var name = file.replace('.json', '');
+function HotReloadHelper(logger) {
+    this.log = logger.child({module: "HotReload"});
+}
 
-            servers[name] = require('./' + file);
+/**
+ * Clears the require cache.
+ */
+HotReloadHelper.prototype.clearCache = function () {
+    this.log.debug("Clearing require cache.");
+    //for each property in require.cache
+    for (var prop in require.cache) {
+        //if it's really a property of the cache
+        if(require.cache.hasOwnProperty(prop)){
+            //delete it and log that we've done so.
+            this.log.trace("Deleting " + prop + " from require cache.");
+            delete require.cache[prop];
         }
-    });
-    return servers;
+    }
 };
 
-module.exports = loadChannels;
+module.exports = HotReloadHelper;
