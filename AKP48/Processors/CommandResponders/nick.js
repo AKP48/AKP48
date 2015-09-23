@@ -45,11 +45,11 @@ Nick.prototype.execute = function(context) {
     }
 
     if(context.arguments[0]) {
-        context.client.getIRCClient().send("NICK", context.arguments[0]);
-        context.client.nick = context.arguments[0];
+        context.AKP48.ircClient.send("NICK", context.arguments[0]);
+        context.AKP48.nick = context.arguments[0];
     }
 
-    context.client.getIRCClient().send("NICK", context.arguments[0]);
+    context.AKP48.ircClient.send("NICK", context.arguments[0]);
     return true;
 };
 

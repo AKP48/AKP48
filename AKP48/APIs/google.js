@@ -39,7 +39,11 @@ function Google(logger, APIConfig) {
 Google.prototype.shorten_url = function(url, callback, thisArg) {
     this.log.info("Shortening URL using goo.gl.");
     this.urlshortener.url.insert({ resource: { longUrl: url } }, function (err, response) {
-      callback.call(thisArg, response.id);
+      if(response && response.id) {
+          callback.call(thisArg, response.id);
+      } else {
+          callback.call(thisArg, null);
+      }
     });
 };
 

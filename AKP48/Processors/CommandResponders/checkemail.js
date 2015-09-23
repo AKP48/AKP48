@@ -44,9 +44,9 @@ CheckEmail.prototype.execute = function(context) {
     if(!context.arguments.length){return false;}
 
     if(emailRegEx.test(context.arguments.join(" "))) {
-        context.getClient().say(context, context.arguments.join(" ") + " is a valid email address.");
+        context.AKP48.say(context.channel, context.arguments.join(" ") + " is a valid email address.");
     } else {
-        context.getClient().say(context, context.arguments.join(" ") + " is not a valid email address.");
+        context.AKP48.say(context.channel, context.arguments.join(" ") + " is not a valid email address.");
     }
     return true;
 };

@@ -87,7 +87,7 @@ Choose.prototype.execute = function(context) {
         min = 2;
     }
 
-    context.getClient().say(context,  _for + context.arguments.randomElement(min));
+    context.AKP48.say(context.channel,  _for + context.arguments.randomElement(min));
 
     return true;
 };

@@ -84,6 +84,9 @@ CommandProcessor.prototype.process = function (context) {
     //TODO: Check various permissions.
     //TODO: Flood protection.
 
+    //Add the commands object into the context, for easy access from within commands.
+    context.commands = this.commands;
+
     if(!this.aliasedCommands[context.command].execute(context)) {
         this.sendUsageMessage(context);
         this.log.debug("Command execution failed, user provided incorrect arguments.");

@@ -38,7 +38,7 @@ function Uptime() {
 }
 
 Uptime.prototype.execute = function(context) {
-    context.getClient().say(context, "I've been up for "+moment.duration(process.uptime(), "seconds").humanize());
+    context.AKP48.say(context.channel, "I've been up for "+moment.duration(process.uptime(), "seconds").humanize());
     return true;
 };
 

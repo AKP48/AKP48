@@ -42,7 +42,7 @@ Dinner.prototype.execute = function(context) {
     }
 
     context.getClient().context.AKP48.getAPI("Dinner").getDinner(veg, function(string) {
-        context.getClient().say(context, string);
+        context.AKP48.say(context.channel, string);
     })
 
     return true;

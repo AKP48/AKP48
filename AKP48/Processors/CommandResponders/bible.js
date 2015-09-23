@@ -47,7 +47,7 @@ Bible.prototype.execute = function(context) {
         if(cachedResponse.gist) {
             context.getClient().getCommandProcessor().aliasedCommands['googl'].shortenURL(context, cachedResponse.content);
         } else {
-            context.getClient().say(context, cachedResponse.content);
+            context.AKP48.say(context.channel, cachedResponse.content);
         }
         return true;
     }
@@ -100,9 +100,9 @@ Bible.prototype.sendResponse = function(verse, context) {
 
         var cacheExpire = (Date.now() / 1000 | 0) + 1576800000; //make cache expire in 50 years
         context.AKP48.cache.addToCache(("Bible"+context.arguments.join(" ")).sha1(), {content: oS, gist: false}, cacheExpire);
-        context.getClient().say(context, oS);
+        context.AKP48.say(context.channel, oS);
     } else {
-        context.getClient().say(context, "Sorry, I couldn't find that verse.");
+        context.AKP48.say(context.channel, "Sorry, I couldn't find that verse.");
     }
 };
 

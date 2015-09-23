@@ -50,10 +50,10 @@ MCNameHistory.prototype.execute = function(context) {
     //Example names to use: PlasmaPod, ezfe.
 
     context.apiClient.get("/users/profiles/minecraft/"+context.name, function(err, res, body) {
-        if(err || body.error == "Not Found") {context.getClient().say(context, "There is no player with the name "+context.name+"!"); return true;}
+        if(err || body.error == "Not Found") {context.AKP48.say(context.channel, "There is no player with the name "+context.name+"!"); return true;}
 
         context.apiClient.get("/user/profiles/"+body.id+"/names", function(error, response, bodyy) {
-            if(error || body.error == "Not Found" || body.length < 4) {context.getClient().say(context, "There was an error finding previous names for "+context.name+"!"); return true;}
+            if(error || body.error == "Not Found" || body.length < 4) {context.AKP48.say(context.channel, "There was an error finding previous names for "+context.name+"!"); return true;}
 
             var outputString = "Previous names found for "+context.name+": ";
             for (var i = bodyy.length - 1; i >= 0; i--) {
@@ -61,7 +61,7 @@ MCNameHistory.prototype.execute = function(context) {
             };
 
             outputString = outputString.substring(0, outputString.length - 3);
-            context.getClient().say(context, outputString);
+            context.AKP48.say(context.channel, outputString);
         });
     });
     return true;

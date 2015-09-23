@@ -40,33 +40,33 @@ Help.prototype.execute = function(context) {
     var sendTo = "";
     if(context.arguments.length) {
         commandText = context.arguments[0];
-        if(commandText.startsWith(config.getCommandDelimiter(context.getChannel(), context.getClient().uuid))) {
-            commandText = commandText.substring(config.getCommandDelimiter(context.getChannel(), context.getClient().uuid).length, commandText.length);
+        if(commandText.startsWith(context.AKP48.configManager.getChannelConfig()[context.channel].commandDelimiters[0])) {
+            commandText = commandText.substring(context.AKP48.configManager.getChannelConfig()[context.channel].commandDelimiters[0].length, commandText.length);
         }
     }
     var markdown = "";
     //for each command
-    context.getCommandProcessor().commands.each(function (command) {
+    context.commands.each(function (command) {
             //to tell us whether or not to send this message.
             var send = true;
 
-            //check permission on user
-            if(command.powerLevel) {
-                if(config.getPerms().powerLevelFromContext(context) > command.powerLevel) {
-                    send = false;
-                }
-
-                if(config.getPerms().powerLevel(context.getUser().getHostmask(),
-                   "global", context.getClient().uuid) > command.powerLevel) {
-                    send = true;
-                }
-            }
+            //TODO: check permission on user
+            // if(command.powerLevel) {
+            //     if(config.getPerms().powerLevelFromContext(context) > command.powerLevel) {
+            //         send = false;
+            //     }
+            //
+            //     if(config.getPerms().powerLevel(context.getUser().getHostmask(),
+            //        "global", context.getClient().uuid) > command.powerLevel) {
+            //         send = true;
+            //     }
+            // }
 
             if(send) {
                 markdown += "##" + command.name + "  \n";
                 markdown += "*" + command.helpText + "*  \n";
 
-                markdown += "**Usage:** " + config.getCommandDelimiter(context.getChannel(), context.getClient().uuid)
+                markdown += "**Usage:** " + context.AKP48.configManager.getChannelConfig()[context.channel].commandDelimiters[0]
                  + command.aliases[0] + " " + command.usageText.replace(/</, "&lt;")
                  .replace(/>/, "&gt;").replace(/\r?\n/, " | ") + "  \n";
 
@@ -93,17 +93,17 @@ Help.prototype.execute = function(context) {
     var self = this;
     var cachedResponse = context.AKP48.cache.getCached(("GistMarkdown"+markdown).sha1());
     if(cachedResponse) {
-        if(!context.getUser().isRealIRCUser) {
-            context.getClient().say(context, cachedResponse);
+        if(context.isBot) {
+            context.AKP48.say(context.channel, cachedResponse);
         } else {
-            context.client.getIRCClient().notice(context.getUser().getNick(), cachedResponse);
+            context.AKP48.ircClient.notice(context.nick, cachedResponse);
         }
         return true;
     }
 
     //create gist of response
     context.AKP48.getAPI("Gist").create({
-        description: "Help for " + context.getClient().getNick(),
+        description: "Help for " + context.AKP48.ircClient.nick,
         files: {
             "help.md": {
                 "content": markdown
@@ -114,13 +114,14 @@ Help.prototype.execute = function(context) {
         if(sendTo) {
             url += "#" + encodeURI(sendTo.toLowerCase().replace(/\s/g, "-"));
         }
-        context.AKP48.getAPI("Google").shorten_url(url, function(url) {
+        context.AKP48.getAPI("Google").shorten_url(url, function(uri) {
+            if(!uri) {uri = url};
             var cacheExpire = (Date.now() / 1000 | 0) + 1576800000; //make cache expire in 50 years
-            context.AKP48.cache.addToCache(("GistMarkdown"+markdown).sha1(), url, cacheExpire);
-            if(!context.getUser().isRealIRCUser) {
-                context.getClient().say(context, url);
+            context.AKP48.cache.addToCache(("GistMarkdown"+markdown).sha1(), uri, cacheExpire);
+            if(context.isBot) {
+                context.AKP48.say(context.channel, uri);
             } else {
-                context.client.getIRCClient().notice(context.getUser().getNick(), url);
+                context.AKP48.ircClient.notice(context.nick, uri);
             }
         });
     });

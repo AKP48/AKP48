@@ -40,13 +40,13 @@ GoogleImages.prototype.execute = function(context) {
     var self = this;
     var cachedResponse = context.AKP48.cache.getCached(("GoogleImages"+context.arguments.join(" ")).sha1());
     if(cachedResponse) {
-        context.getClient().say(context, cachedResponse);
+        context.AKP48.say(context.channel, cachedResponse);
         return true;
     }
     context.AKP48.getAPI("Google").search(context.arguments.join(" "), "images", function(msg) {
         var cacheExpire = (Date.now() / 1000 | 0) + 86400; //make cache expire in 1 day
         context.AKP48.cache.addToCache(("GoogleImages"+context.arguments.join(" ")).sha1(), msg, cacheExpire);
-        context.getClient().say(context, msg);
+        context.AKP48.say(context.channel, msg);
     });
     return true;
 };

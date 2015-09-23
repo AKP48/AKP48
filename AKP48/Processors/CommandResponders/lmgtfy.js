@@ -39,7 +39,7 @@ LMGTFY.prototype.execute = function(context) {
     var query = context.arguments.join(' ');
     query = encodeURIComponent(query);
     context.AKP48.getAPI("Google").shorten_url("http://lmgtfy.com/?q="+query, function(url) {
-        context.getClient().say(context, url);
+        context.AKP48.say(context.channel, url);
     });
     return true;
 };

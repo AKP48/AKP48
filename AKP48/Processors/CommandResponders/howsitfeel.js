@@ -39,7 +39,7 @@ function HowsItFeel() {
 }
 
 HowsItFeel.prototype.execute = function(context) {
-    context.getClient().say(context, "Feels bad, man.");
+    context.AKP48.say(context.channel, "Feels bad, man.");
     return true;
 };
 

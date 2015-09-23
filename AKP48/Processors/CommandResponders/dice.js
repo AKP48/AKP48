@@ -83,7 +83,7 @@ Dice.prototype.execute = function(context) {
         outputString = "ಠ_ಠ";
     }
 
-    context.getClient().say(context, outputString);
+    context.AKP48.say(context.channel, outputString);
     return true;
 };
 

@@ -67,12 +67,12 @@ Proxy.prototype.execute = function(context) {
             context.getClient().getIRCClient().notice(context.getUser().getNick(), "Action successfully sent to "+channel+"!");
         } else {
             //just send message if no /me
-            context.client.getIRCClient().say(channel, context.arguments.join(" "));
+            context.AKP48.ircClient.say(channel, context.arguments.join(" "));
             //NOTICE user a success message
             context.getClient().getIRCClient().notice(context.getUser().getNick(), "Message successfully sent to "+channel+"!");
         }
     } else {
-        context.getClient().say(context, "Could not send to channel "+channel+"!");
+        context.AKP48.say(context.channel, "Could not send to channel "+channel+"!");
     }
     return true;
 };

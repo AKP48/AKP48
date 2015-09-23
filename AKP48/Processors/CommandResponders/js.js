@@ -133,7 +133,7 @@ Js.prototype.runCode = function(code, context) {
             });
             return true;
         }
-        context.getClient().say(context, outputString);
+        context.AKP48.say(context.channel, outputString);
     });
 };
 

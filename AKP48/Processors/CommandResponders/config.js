@@ -96,7 +96,7 @@ Config.prototype.addChannel = function(context) {
     }
 
     if(context.arguments.length < 2) {
-        var oS = "Usage: "+config.getCommandDelimiter(context.getChannel(), context.getClient().uuid);
+        var oS = "Usage: "+context.AKP48.configManager.getChannelConfig()[context.channel].commandDelimiters[0];
         oS += "config "+context.arguments[0] + " <channel(s)...>";
         context.getClient().getIRCClient().notice(context.getUser().getNick(), oS);
     }
@@ -107,7 +107,7 @@ Config.prototype.addChannel = function(context) {
         if(!config.isInChannel(channel, context.getClient().uuid) && channel.isChannel()) {
             config.addChannel(channel, context.getClient().uuid);
             context.getClient().getIRCClient().join(channel, function(){
-                context.getClient().getIRCClient().say(channel, "Hi! I'm "+context.getClient().getNick()+", and I'm here to help! Speaking of help... say .help to get some!");
+                context.getClient().getIRCClient().say(channel, "Hi! I'm "+context.AKP48.ircClient.nick+", and I'm here to help! Speaking of help... say .help to get some!");
                 context.getClient().getIRCClient().notice(context.getUser().getNick(), "Joined "+channel+".");
             });
         }
@@ -121,7 +121,7 @@ Config.prototype.removeChannel = function(context) {
     }
 
     if(context.arguments.length < 2) {
-        var oS = "Usage: "+config.getCommandDelimiter(context.getChannel(), context.getClient().uuid);
+        var oS = "Usage: "+context.AKP48.configManager.getChannelConfig()[context.channel].commandDelimiters[0];
         oS += "config "+context.arguments[0] + " <channel(s)...>";
         context.getClient().getIRCClient().notice(context.getUser().getNick(), oS);
     }

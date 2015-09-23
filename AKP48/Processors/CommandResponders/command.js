@@ -87,9 +87,9 @@ Command.prototype.createCommand = function (context, global) {
     }
 
     if (!this.CCD.addCommand({name: name, msg: message, channel: channel, server: server})) {
-        context.getClient().say(context, "Could not add command! Ask AKP for help.");
+        context.AKP48.say(context.channel, "Could not add command! Ask AKP for help.");
     } else {
-        context.getClient().say(context, "Command added!");
+        context.AKP48.say(context.channel, "Command added!");
     }
     return true;
 };
@@ -106,9 +106,9 @@ Command.prototype.removeCommand = function (context, global) {
     }
 
     if (!this.CCD.removeCommand(server, channel, name)) {
-        context.getClient().say(context, "Could not remove command! Ask AKP for help.");
+        context.AKP48.say(context.channel, "Could not remove command! Ask AKP for help.");
     } else {
-        context.getClient().say(context, "Command removed!");
+        context.AKP48.say(context.channel, "Command removed!");
     }
     return true;
 };
@@ -117,10 +117,10 @@ Command.prototype.help = function (context) {
     var url = "https://gist.github.com/AKPWebDesign/cda34eb5e7b9b11f433a";
     //Simply return the (shortened) link to the help file.
     context.AKP48.getAPI("Google").shorten_url(url, function(url) {
-        if(!context.getUser().isRealIRCUser) {
-            context.getClient().say(context, url);
+        if(context.isBot) {
+            context.AKP48.say(context.channel, url);
         } else {
-            context.client.getIRCClient().notice(context.getUser().getNick(), url);
+            context.AKP48.ircClient.notice(context.nick, url);
         }
     });
 };

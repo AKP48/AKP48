@@ -40,7 +40,7 @@ Ping.prototype.execute = function(context) {
     if(context.arguments.length && context.arguments[0].toLowerCase() == "time") {
         oS += (Date.now() / 1000 | 0);
     }
-    context.getClient().say(context, oS);
+    context.AKP48.say(context.channel, oS);
     return true;
 };
 

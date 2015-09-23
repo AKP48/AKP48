@@ -43,7 +43,7 @@ MinecraftServerStatus.prototype.execute = function(context) {
     var self = this;
     var cachedResponse = context.AKP48.cache.getCached(("MinecraftServerStatus").sha1());
     if(cachedResponse) {
-        context.getClient().say(context, cachedResponse);
+        context.AKP48.say(context.channel, cachedResponse);
         return true;
     }
 
@@ -103,7 +103,7 @@ MinecraftServerStatus.prototype.execute = function(context) {
         var cacheExpire = (Date.now() / 1000 | 0) + 30; //make cache expire in 30 seconds
         context.AKP48.cache.addToCache(("MinecraftServerStatus").sha1(),outputString, cacheExpire);
 
-        context.getClient().say(context, outputString);
+        context.AKP48.say(context.channel, outputString);
     });
     return true;
 };

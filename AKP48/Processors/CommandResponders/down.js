@@ -50,7 +50,7 @@ Down.prototype.execute = function(context) {
     if((result = urlRegEx.exec(context.arguments[0])) !== null) {
         host = result[2];
         if(result[1] == "https://") {
-            context.getClient().say(context, "I can't do secure sites (https://), but I'll try to access the site normally for you.");
+            context.AKP48.say(context.channel, "I can't do secure sites (https://), but I'll try to access the site normally for you.");
         }
     }
 
@@ -65,7 +65,7 @@ Down.prototype.execute = function(context) {
     var http = require('http');
     var options = {method: 'HEAD', host: host, port: port, path: path};
     var req = http.request(options, function(res) {
-        context.getClient().say(context, host + " seems up to me.")
+        context.AKP48.say(context.channel, host + " seems up to me.")
       }
     );
 
@@ -83,19 +83,19 @@ Down.prototype.execute = function(context) {
         console.log(err);
         switch(err.code) {
             case 'ENOTFOUND':
-                context.getClient().say(context, "I couldn't find "+host+".");
+                context.AKP48.say(context.channel, "I couldn't find "+host+".");
                 break;
             case 'ECONNREFUSED':
-                context.getClient().say(context, host+" refused my connection.");
+                context.AKP48.say(context.channel, host+" refused my connection.");
                 break;
             case 'ETIMEDOUT':
-                context.getClient().say(context, "My connection to "+host+" timed out.");
+                context.AKP48.say(context.channel, "My connection to "+host+" timed out.");
                 break;
             case 'ECONNRESET':
-                context.getClient().say(context, "Either my connection to "+host+" was reset, or that site took too long to respond. I'd say it's probably down.");
+                context.AKP48.say(context.channel, "Either my connection to "+host+" was reset, or that site took too long to respond. I'd say it's probably down.");
                 break;
             default:
-                context.getClient().say(context, "I had trouble visiting "+host+", but I'm not sure why.");
+                context.AKP48.say(context.channel, "I had trouble visiting "+host+", but I'm not sure why.");
                 break;
         }
     });
