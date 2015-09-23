@@ -57,7 +57,7 @@ Git.prototype.execute = function(context) {
             }
             var branch = args.splice(0,1)[0];
             var nick = context.getUser().getNick();
-            if (getClientManager().getAPI("Git").checkout(branch)) {
+            if (context.AKP48.getAPI("Git").checkout(branch)) {
                 message = "Checked out ".append(branch);
             } else {
                 message = "Encountered an error while checking out ".append(branch);
@@ -67,7 +67,7 @@ Git.prototype.execute = function(context) {
             if (args.length) {
                 return false;
             }
-            if (getClientManager().getAPI("Git").fetch()) {
+            if (context.AKP48.getAPI("Git").fetch()) {
                 message = "Fetched head";
             } else {
                 message = "Error while fetching head";

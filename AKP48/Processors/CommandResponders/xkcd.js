@@ -37,15 +37,15 @@ function XKCD(logger) {
 
 XKCD.prototype.execute = function(context) {
     //if we got no arguments, get the latest XKCD.
-    if(!context.arguments.length) {getClientManager().getAPI("XKCD").getLatestComic(this.sendResponse, context);return true;}
+    if(!context.arguments.length) {context.AKP48.getAPI("XKCD").getLatestComic(this.sendResponse, context);return true;}
 
-    var cachedResponse = getClientManager().getCache().getCached(("XKCD"+context.arguments.join(" ")).sha1());
+    var cachedResponse = context.AKP48.cache.getCached(("XKCD"+context.arguments.join(" ")).sha1());
     if(cachedResponse) {
-        context.getClient().getIRCClient().say(context.getChannel(), cachedResponse);
+        context.AKP48.ircClient.say(context.channel, cachedResponse);
         return true;
     }
 
-    getClientManager().getAPI("XKCD").getComic(context.arguments[0], this.sendResponse, context);
+    context.AKP48.getAPI("XKCD").getComic(context.arguments[0], this.sendResponse, context);
     return true;
 };
 
@@ -53,9 +53,9 @@ XKCD.prototype.sendResponse = function(response, context, latest) {
     if(!latest) {
         response += " · http://xkcd.com/"+context.arguments[0];
         var cacheExpire = (Date.now() / 1000 | 0) + 1576800000; //make cache expire in 50 years
-        getClientManager().getCache().addToCache(("XKCD"+context.arguments.join(" ")).sha1(), response, cacheExpire);
+        context.AKP48.cache.addToCache(("XKCD"+context.arguments.join(" ")).sha1(), response, cacheExpire);
     }
-    context.getClient().getIRCClient().say(context.getChannel(), response);
+    context.AKP48.ircClient.say(context.channel, response);
 };
 
 module.exports = XKCD;

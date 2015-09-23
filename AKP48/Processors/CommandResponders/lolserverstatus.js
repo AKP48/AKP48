@@ -38,7 +38,7 @@ function LoLServerStatus(logger) {
 LoLServerStatus.prototype.execute = function(context) {
     var region = "na";
     if(context.arguments[0]) {region = context.arguments[0];}
-    getClientManager().getAPI("Riot").getServerStatus(region, function(msg) {
+    context.AKP48.getAPI("Riot").getServerStatus(region, function(msg) {
         context.getClient().say(context, msg);
     });
     return true;

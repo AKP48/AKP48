@@ -31,7 +31,7 @@ function AKP48(options, logger) {
     this.configManager = options.configManager;
     this.ircClient = options.ircClient;
     this.cache = new (require("./Helpers/cache"))(logger);
-    this.APIs = require("./APIs/")(logger);
+    this.APIs = require("./APIs/")(logger, this.configManager.getGlobalConfig().api);
 
     if(this.ircClient) {
         this.syncToConfig();

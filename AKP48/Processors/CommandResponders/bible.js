@@ -40,9 +40,9 @@ function Bible(logger) {
 
 Bible.prototype.execute = function(context) {
     //if we got no arguments, pick a random verse.
-    if(!context.arguments.length) {getClientManager().getAPI("Bible").getBibleVerses("random", context, this.sendResponse);return true;}
+    if(!context.arguments.length) {context.AKP48.getAPI("Bible").getBibleVerses("random", context, this.sendResponse);return true;}
 
-    var cachedResponse = getClientManager().getCache().getCached(("Bible"+context.arguments.join(" ")).sha1());
+    var cachedResponse = context.AKP48.cache.getCached(("Bible"+context.arguments.join(" ")).sha1());
     if(cachedResponse) {
         if(cachedResponse.gist) {
             context.getClient().getCommandProcessor().aliasedCommands['googl'].shortenURL(context, cachedResponse.content);
@@ -52,7 +52,7 @@ Bible.prototype.execute = function(context) {
         return true;
     }
 
-    getClientManager().getAPI("Bible").getBibleVerses(context.arguments.join(" "), context, this.sendResponse);
+    context.AKP48.getAPI("Bible").getBibleVerses(context.arguments.join(" "), context, this.sendResponse);
     return true;
 };
 
@@ -81,7 +81,7 @@ Bible.prototype.sendResponse = function(verse, context) {
             oS += "Obtained from NET (http://netbible.org/)"
 
             //upload Gist instead.
-            getClientManager().getAPI("Gist").create({
+            context.AKP48.getAPI("Gist").create({
                 description: "Bible verses for "+context.getUser().getNick(),
                 files: {
                     "verses.txt": {
@@ -91,7 +91,7 @@ Bible.prototype.sendResponse = function(verse, context) {
             }, function(url) {
                 if(!url){return;}
                 var cacheExpire = (Date.now() / 1000 | 0) + 1576800000; //make cache expire in 50 years
-                getClientManager().getCache().addToCache(("Bible"+context.arguments.join(" ")).sha1(), {content: url, gist: true}, cacheExpire);
+                context.AKP48.cache.addToCache(("Bible"+context.arguments.join(" ")).sha1(), {content: url, gist: true}, cacheExpire);
                 context.getClient().getCommandProcessor().aliasedCommands['googl'].shortenURL(context, url);
             });
             return true;
@@ -99,7 +99,7 @@ Bible.prototype.sendResponse = function(verse, context) {
 
 
         var cacheExpire = (Date.now() / 1000 | 0) + 1576800000; //make cache expire in 50 years
-        getClientManager().getCache().addToCache(("Bible"+context.arguments.join(" ")).sha1(), {content: oS, gist: false}, cacheExpire);
+        context.AKP48.cache.addToCache(("Bible"+context.arguments.join(" ")).sha1(), {content: oS, gist: false}, cacheExpire);
         context.getClient().say(context, oS);
     } else {
         context.getClient().say(context, "Sorry, I couldn't find that verse.");

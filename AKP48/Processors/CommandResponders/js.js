@@ -17,7 +17,7 @@
 
 var Sandbox = require("sandbox");
 var s = new Sandbox();
-var urlRegEx = require("../Regex/regex-weburl");
+var urlRegEx = require("../../Helpers/link-regex").weburl;
 var request = require('request');
 var Chance = require('chance');
 var path = require('path');
@@ -114,7 +114,7 @@ Js.prototype.runCode = function(code, context) {
         //if outputString is too long
         if(outputString.length > 350) {
             //upload Gist instead.
-            getClientManager().getAPI("Gist").create({
+            context.AKP48.getAPI("Gist").create({
                 description: "Output of JavaScript function for "+context.getUser().getNick(),
                 files: {
                     "_input.js": {

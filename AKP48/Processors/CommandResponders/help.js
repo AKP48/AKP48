@@ -91,7 +91,7 @@ Help.prototype.execute = function(context) {
     });
 
     var self = this;
-    var cachedResponse = getClientManager().getCache().getCached(("GistMarkdown"+markdown).sha1());
+    var cachedResponse = context.AKP48.cache.getCached(("GistMarkdown"+markdown).sha1());
     if(cachedResponse) {
         if(!context.getUser().isRealIRCUser) {
             context.getClient().say(context, cachedResponse);
@@ -102,7 +102,7 @@ Help.prototype.execute = function(context) {
     }
 
     //create gist of response
-    getClientManager().getAPI("Gist").create({
+    context.AKP48.getAPI("Gist").create({
         description: "Help for " + context.getClient().getNick(),
         files: {
             "help.md": {
@@ -114,9 +114,9 @@ Help.prototype.execute = function(context) {
         if(sendTo) {
             url += "#" + encodeURI(sendTo.toLowerCase().replace(/\s/g, "-"));
         }
-        getClientManager().getAPI("Google").shorten_url(url, function(url) {
+        context.AKP48.getAPI("Google").shorten_url(url, function(url) {
             var cacheExpire = (Date.now() / 1000 | 0) + 1576800000; //make cache expire in 50 years
-            getClientManager().getCache().addToCache(("GistMarkdown"+markdown).sha1(), url, cacheExpire);
+            context.AKP48.cache.addToCache(("GistMarkdown"+markdown).sha1(), url, cacheExpire);
             if(!context.getUser().isRealIRCUser) {
                 context.getClient().say(context, url);
             } else {

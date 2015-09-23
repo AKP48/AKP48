@@ -41,7 +41,7 @@ function MinecraftServerStatus(logger) {
 MinecraftServerStatus.prototype.execute = function(context) {
     var apiClient = request.newClient("https://status.mojang.com/");
     var self = this;
-    var cachedResponse = getClientManager().getCache().getCached(("MinecraftServerStatus").sha1());
+    var cachedResponse = context.AKP48.cache.getCached(("MinecraftServerStatus").sha1());
     if(cachedResponse) {
         context.getClient().say(context, cachedResponse);
         return true;
@@ -101,7 +101,7 @@ MinecraftServerStatus.prototype.execute = function(context) {
         }
 
         var cacheExpire = (Date.now() / 1000 | 0) + 30; //make cache expire in 30 seconds
-        getClientManager().getCache().addToCache(("MinecraftServerStatus").sha1(),outputString, cacheExpire);
+        context.AKP48.cache.addToCache(("MinecraftServerStatus").sha1(),outputString, cacheExpire);
 
         context.getClient().say(context, outputString);
     });

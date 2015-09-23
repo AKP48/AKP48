@@ -46,7 +46,7 @@ Formulize.prototype.execute = function(context) {
     var imageURL = "http://chart.googleapis.com/chart?cht=tx&chl=" + encodeURIComponent(context.arguments.join(" "));
 
     //upload the image to imgur
-    getClientManager().getAPI("Imgur").uploadImageFromURL(imageURL, function (url) {
+    context.AKP48.getAPI("Imgur").uploadImageFromURL(imageURL, function (url) {
         if(url) {
             context.getClient().getCommandProcessor().aliasedCommands['googl'].shortenURL(context, url);
         } else {

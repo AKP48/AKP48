@@ -55,7 +55,7 @@ Dinner.prototype.getDinner = function(vegetarian, callback) {
 Dinner.prototype.outputString = function(string, link, veg, callback) {
     var oS = string;
 
-    getClientManager().getAPI("Google").shorten_url(link, function(shortURL){
+    context.AKP48.getAPI("Google").shorten_url(link, function(shortURL){
         oS += " (" + shortURL + ")";
         callback(oS);
     });

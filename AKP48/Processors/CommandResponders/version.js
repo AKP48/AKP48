@@ -15,7 +15,7 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-var Git = require("../API/git");
+var Git = require("../../APIs/git");
 
 function Version(logger) {
     //the name of the command.
@@ -37,7 +37,7 @@ function Version(logger) {
     this.isPmOnly = false;
 
     // Base version
-    this.version_base = require('../package.json').version;
+    this.version_base = require('../../../package.json').version;
 
     //Git API
     this.git = new Git(logger);

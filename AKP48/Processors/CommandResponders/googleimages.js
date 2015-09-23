@@ -38,14 +38,14 @@ function GoogleImages(logger) {
 GoogleImages.prototype.execute = function(context) {
     if(!context.arguments.length) {return false;}
     var self = this;
-    var cachedResponse = getClientManager().getCache().getCached(("GoogleImages"+context.arguments.join(" ")).sha1());
+    var cachedResponse = context.AKP48.cache.getCached(("GoogleImages"+context.arguments.join(" ")).sha1());
     if(cachedResponse) {
         context.getClient().say(context, cachedResponse);
         return true;
     }
-    getClientManager().getAPI("Google").search(context.arguments.join(" "), "images", function(msg) {
+    context.AKP48.getAPI("Google").search(context.arguments.join(" "), "images", function(msg) {
         var cacheExpire = (Date.now() / 1000 | 0) + 86400; //make cache expire in 1 day
-        getClientManager().getCache().addToCache(("GoogleImages"+context.arguments.join(" ")).sha1(), msg, cacheExpire);
+        context.AKP48.cache.addToCache(("GoogleImages"+context.arguments.join(" ")).sha1(), msg, cacheExpire);
         context.getClient().say(context, msg);
     });
     return true;

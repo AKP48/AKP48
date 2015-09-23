@@ -116,7 +116,7 @@ Command.prototype.removeCommand = function (context, global) {
 Command.prototype.help = function (context) {
     var url = "https://gist.github.com/AKPWebDesign/cda34eb5e7b9b11f433a";
     //Simply return the (shortened) link to the help file.
-    getClientManager().getAPI("Google").shorten_url(url, function(url) {
+    context.AKP48.getAPI("Google").shorten_url(url, function(url) {
         if(!context.getUser().isRealIRCUser) {
             context.getClient().say(context, url);
         } else {

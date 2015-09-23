@@ -38,14 +38,14 @@ function Googl(logger) {
 Googl.prototype.execute = function(context) {
     if(!context.arguments.length) {return false;}
     var self = this;
-    var cachedResponse = getClientManager().getCache().getCached(("Googl"+context.arguments[0]).sha1());
+    var cachedResponse = context.AKP48.cache.getCached(("Googl"+context.arguments[0]).sha1());
     if(cachedResponse) {
         context.getClient().say(context, cachedResponse);
         return true;
     }
-    getClientManager().getAPI("Google").shorten_url(context.arguments[0], function(url) {
+    context.AKP48.getAPI("Google").shorten_url(context.arguments[0], function(url) {
         var cacheExpire = (Date.now() / 1000 | 0) + 1576800000; //make cache expire in 50 years
-        getClientManager().getCache().addToCache(("Googl"+context.arguments[0]).sha1(), url, cacheExpire);
+        context.AKP48.cache.addToCache(("Googl"+context.arguments[0]).sha1(), url, cacheExpire);
         context.getClient().say(context, url);
     });
     return true;
@@ -53,14 +53,14 @@ Googl.prototype.execute = function(context) {
 
 Googl.prototype.shortenURL = function(context, url) {
     var self = this;
-    var cachedResponse = getClientManager().getCache().getCached(("Googl"+url).sha1());
+    var cachedResponse = context.AKP48.cache.getCached(("Googl"+url).sha1());
     if(cachedResponse) {
         context.getClient().say(context, cachedResponse);
         return true;
     }
-    getClientManager().getAPI("Google").shorten_url(url, function(url) {
+    context.AKP48.getAPI("Google").shorten_url(url, function(url) {
         var cacheExpire = (Date.now() / 1000 | 0) + 1576800000; //make cache expire in 50 years
-        getClientManager().getCache().addToCache(("Googl"+url).sha1(), url, cacheExpire);
+        context.AKP48.cache.addToCache(("Googl"+url).sha1(), url, cacheExpire);
         context.getClient().say(context, url);
     });
 };
