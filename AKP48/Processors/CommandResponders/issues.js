@@ -39,7 +39,7 @@ function Issues() {
 }
 
 Issues.prototype.execute = function(context) {
-    context.getClient().getCommandProcessor().aliasedCommands['googl'].shortenURL(context, "https://github.com/AKPWebDesign/AKP48/issues");
+    context.commands['googl'].shortenURL(context, "https://github.com/AKPWebDesign/AKP48/issues");
     return true;
 };
 

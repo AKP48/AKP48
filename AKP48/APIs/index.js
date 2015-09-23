@@ -19,9 +19,10 @@
  * Load all APIs.
  * @param  {Logger} logger The logger to pass to loaded APIs.
  * @param  {Object} config The configuration for APIs.
+ * @param  {Object} AKP48  The running instance of AKP48.
  * @return {Object}        The APIs.
  */
-var loadAPIs = function(logger, config) {
+var loadAPIs = function(logger, config, AKP48) {
     var _log = logger.child({module: "API Loader"});
     var APIs = {};
 
@@ -37,7 +38,7 @@ var loadAPIs = function(logger, config) {
             //set up logger
             var log = logger.child({module: "APIs/"+name});
 
-            var tempModule = new loadModule(log, config);
+            var tempModule = new loadModule(log, config, AKP48);
 
             APIs[name] = tempModule;
         }

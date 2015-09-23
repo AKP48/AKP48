@@ -39,7 +39,7 @@ function Trello() {
 }
 
 Trello.prototype.execute = function(context) {
-    context.getClient().getCommandProcessor().aliasedCommands['googl'].shortenURL(context, "https://trello.com/b/VWTRPMKZ/akp48");
+    context.commands['googl'].shortenURL(context, "https://trello.com/b/VWTRPMKZ/akp48");
     return true;
 };
 

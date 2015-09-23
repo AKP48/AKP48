@@ -39,7 +39,7 @@ function PullRequests() {
 }
 
 PullRequests.prototype.execute = function(context) {
-    context.getClient().getCommandProcessor().aliasedCommands['googl'].shortenURL(context, "https://github.com/AKPWebDesign/AKP48/pulls");
+    context.commands['googl'].shortenURL(context, "https://github.com/AKPWebDesign/AKP48/pulls");
     return true;
 };
 

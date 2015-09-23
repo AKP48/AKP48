@@ -45,7 +45,7 @@ Bible.prototype.execute = function(context) {
     var cachedResponse = context.AKP48.cache.getCached(("Bible"+context.arguments.join(" ")).sha1());
     if(cachedResponse) {
         if(cachedResponse.gist) {
-            context.getClient().getCommandProcessor().aliasedCommands['googl'].shortenURL(context, cachedResponse.content);
+            context.commands['googl'].shortenURL(context, cachedResponse.content);
         } else {
             context.AKP48.say(context.channel, cachedResponse.content);
         }
@@ -82,7 +82,7 @@ Bible.prototype.sendResponse = function(verse, context) {
 
             //upload Gist instead.
             context.AKP48.getAPI("Gist").create({
-                description: "Bible verses for "+context.getUser().getNick(),
+                description: "Bible verses for "+context.nick,
                 files: {
                     "verses.txt": {
                         "content": oS.decodeHTML()
@@ -92,7 +92,7 @@ Bible.prototype.sendResponse = function(verse, context) {
                 if(!url){return;}
                 var cacheExpire = (Date.now() / 1000 | 0) + 1576800000; //make cache expire in 50 years
                 context.AKP48.cache.addToCache(("Bible"+context.arguments.join(" ")).sha1(), {content: url, gist: true}, cacheExpire);
-                context.getClient().getCommandProcessor().aliasedCommands['googl'].shortenURL(context, url);
+                context.commands['googl'].shortenURL(context, url);
             });
             return true;
         }

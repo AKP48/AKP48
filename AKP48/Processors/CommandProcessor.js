@@ -19,21 +19,23 @@
  * Processes Command Contexts.
  * @param {Command} context The context to process.
  * @param {Logger}  logger  The logger.
+ * @param  {Object}   AKP48  The running instance of AKP48.
  */
-function CommandProcessor(context, logger) {
+function CommandProcessor(context, logger, AKP48) {
     this.log = logger.child({module: "CommandProcessor"});
     this.commands = {};
     this.aliasedCommands = {};
-    this.initialize();
+    this.initialize(AKP48);
     this.process(context);
 }
 
 /**
  * Initializes the CommandProcessor with everything needed to process commands.
+ * @param  {Object}   AKP48  The running instance of AKP48.
  */
-CommandProcessor.prototype.initialize = function () {
+CommandProcessor.prototype.initialize = function (AKP48) {
     this.log.debug("Loading commands...");
-    this.commands = require('./CommandResponders')(this.log);
+    this.commands = require('./CommandResponders')(this.log, AKP48);
 
     this.log.debug("Initializing command aliases...");
     // This first loop is simply to remove any modules with missing dependencies,

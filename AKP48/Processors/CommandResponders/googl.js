@@ -44,9 +44,13 @@ Googl.prototype.execute = function(context) {
         return true;
     }
     context.AKP48.getAPI("Google").shorten_url(context.arguments[0], function(url) {
-        var cacheExpire = (Date.now() / 1000 | 0) + 1576800000; //make cache expire in 50 years
-        context.AKP48.cache.addToCache(("Googl"+context.arguments[0]).sha1(), url, cacheExpire);
-        context.AKP48.say(context.channel, url);
+        if(url) {
+            var cacheExpire = (Date.now() / 1000 | 0) + 1576800000; //make cache expire in 50 years
+            context.AKP48.cache.addToCache(("Googl"+context.arguments[0]).sha1(), url, cacheExpire);
+            context.AKP48.say(context.channel, url);
+        } else {
+            context.AKP48.say(context.channel, "Something went wrong! Please try again later.")
+        }
     });
     return true;
 };
@@ -58,10 +62,14 @@ Googl.prototype.shortenURL = function(context, url) {
         context.AKP48.say(context.channel, cachedResponse);
         return true;
     }
-    context.AKP48.getAPI("Google").shorten_url(url, function(url) {
-        var cacheExpire = (Date.now() / 1000 | 0) + 1576800000; //make cache expire in 50 years
-        context.AKP48.cache.addToCache(("Googl"+url).sha1(), url, cacheExpire);
-        context.AKP48.say(context.channel, url);
+    context.AKP48.getAPI("Google").shorten_url(url, function(uri) {
+        if(uri) {
+            var cacheExpire = (Date.now() / 1000 | 0) + 1576800000; //make cache expire in 50 years
+            context.AKP48.cache.addToCache(("Googl"+uri).sha1(), uri, cacheExpire);
+            context.AKP48.say(context.channel, uri);
+        } else {
+            context.AKP48.say(context.channel, url);
+        }
     });
 };
 

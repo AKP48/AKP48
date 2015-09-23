@@ -18,9 +18,10 @@
 /**
  * Load all command responders.
  * @param  {Logger}   logger The logger to pass to loaded command responders.
+ * @param  {Object}   AKP48  The running instance of AKP48.
  * @return {Object[]}        An array of command responders.
  */
-var loadResponders = function(logger) {
+var loadResponders = function(logger, AKP48) {
     var commands = [];
     var _log = logger.child({module: "CommandResponder Loader"});
     require('fs').readdirSync(__dirname + '/').each(function(file) {
@@ -32,7 +33,7 @@ var loadResponders = function(logger) {
             var log = logger.child({module: "CommandResponders/"+name});
 
             var loadModule = require('./' + file);
-            var tempModule = new loadModule(log);
+            var tempModule = new loadModule(log, AKP48);
 
             commands[name] = tempModule;
         }

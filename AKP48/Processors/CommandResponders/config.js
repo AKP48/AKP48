@@ -98,7 +98,7 @@ Config.prototype.addChannel = function(context) {
     if(context.arguments.length < 2) {
         var oS = "Usage: "+context.AKP48.configManager.getChannelConfig()[context.channel].commandDelimiters[0];
         oS += "config "+context.arguments[0] + " <channel(s)...>";
-        context.getClient().getIRCClient().notice(context.getUser().getNick(), oS);
+        context.getClient().getIRCClient().notice(context.nick, oS);
     }
 
     var channels = context.arguments.slice(1);
@@ -108,7 +108,7 @@ Config.prototype.addChannel = function(context) {
             config.addChannel(channel, context.getClient().uuid);
             context.getClient().getIRCClient().join(channel, function(){
                 context.getClient().getIRCClient().say(channel, "Hi! I'm "+context.AKP48.ircClient.nick+", and I'm here to help! Speaking of help... say .help to get some!");
-                context.getClient().getIRCClient().notice(context.getUser().getNick(), "Joined "+channel+".");
+                context.getClient().getIRCClient().notice(context.nick, "Joined "+channel+".");
             });
         }
     });
@@ -123,7 +123,7 @@ Config.prototype.removeChannel = function(context) {
     if(context.arguments.length < 2) {
         var oS = "Usage: "+context.AKP48.configManager.getChannelConfig()[context.channel].commandDelimiters[0];
         oS += "config "+context.arguments[0] + " <channel(s)...>";
-        context.getClient().getIRCClient().notice(context.getUser().getNick(), oS);
+        context.getClient().getIRCClient().notice(context.nick, oS);
     }
 
     var channels = context.arguments.slice(1);
@@ -132,7 +132,7 @@ Config.prototype.removeChannel = function(context) {
         if(config.isInChannel(channel, context.getClient().uuid) && channel.isChannel()) {
             config.removeChannel(channel, context.getClient().uuid);
             context.getClient().getIRCClient().part(channel, function(){
-                context.getClient().getIRCClient().notice(context.getUser().getNick(), "Parted "+channel+".");
+                context.getClient().getIRCClient().notice(context.nick, "Parted "+channel+".");
             });
         }
     });
@@ -146,7 +146,7 @@ Config.prototype.addServer = function(context) {
 
     // If we don't have any parameters, send the user an appropriate message and exit.
     if(context.arguments.length < 2) {
-        context.getClient().getIRCClient().notice(context.getUser().getNick(), "Wrong command usage!"); //TODO: better message.
+        context.getClient().getIRCClient().notice(context.nick, "Wrong command usage!"); //TODO: better message.
         return true;
     }
 

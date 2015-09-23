@@ -39,7 +39,7 @@ function Contributors() {
 }
 
 Contributors.prototype.execute = function(context) {
-    context.getClient().getCommandProcessor().aliasedCommands['googl'].shortenURL(context, "https://github.com/AKPWebDesign/AKP48/graphs/contributors");
+    context.commands['googl'].shortenURL(context, "https://github.com/AKPWebDesign/AKP48/graphs/contributors");
     return true;
 };
 

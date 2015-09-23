@@ -75,7 +75,7 @@ Command.prototype.createCommand = function (context, global) {
     args.splice(0, 1);
     var message = args.join(" ");
 
-    var nick = context.getUser().getNick();
+    var nick = context.nick;
 
     message = message.replace(/\[setByNick\]/g, nick);
 

@@ -44,7 +44,7 @@ Git.prototype.execute = function(context) {
         return true;
     }
 
-    var args = context.getArguments();
+    var args = context.arguments;
     if (args.length < 1) {
         return false;
     }
@@ -56,7 +56,7 @@ Git.prototype.execute = function(context) {
                 return false;
             }
             var branch = args.splice(0,1)[0];
-            var nick = context.getUser().getNick();
+            var nick = context.nick;
             if (context.AKP48.getAPI("Git").checkout(branch)) {
                 message = "Checked out ".append(branch);
             } else {

@@ -19,17 +19,19 @@
  * Processes Message Contexts.
  * @param {Context} context The context to process.
  * @param {Logger}  logger  The logger.
+ * @param  {Object}   AKP48  The running instance of AKP48.
  */
-function MessageProcessor(context, logger) {
-    this.initialize(logger);
+function MessageProcessor(context, logger, AKP48) {
+    this.initialize(logger, AKP48);
     this.process(context);
 }
 
 /**
  * Initialize this MessageProcessor.
  * @param  {logger} logger The logger to use.
+ * @param  {Object}   AKP48  The running instance of AKP48.
  */
-MessageProcessor.prototype.initialize = function (logger) {
+MessageProcessor.prototype.initialize = function (logger, AKP48) {
     this.handlers = require('./MessageResponders')(logger, false);
     this.fullMsgHandlers = require('./MessageResponders')(logger, true);
 };

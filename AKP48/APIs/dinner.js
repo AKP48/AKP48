@@ -23,9 +23,12 @@
  };
 var c = require('irc-colors');
 
-function Dinner(logger) {
+function Dinner(logger, config, AKP48) {
     // Logger.
     this.log = logger.child({module: "Dinner API"});
+
+    // The running instance of AKP48.
+    this.AKP48 = AKP48;
 }
 
 Dinner.prototype.getDinner = function(vegetarian, callback) {
@@ -55,7 +58,8 @@ Dinner.prototype.getDinner = function(vegetarian, callback) {
 Dinner.prototype.outputString = function(string, link, veg, callback) {
     var oS = string;
 
-    context.AKP48.getAPI("Google").shorten_url(link, function(shortURL){
+    this.AKP48.getAPI("Google").shorten_url(link, function(shortURL){
+        if(!shortURL) {shortURL = link;}
         oS += " (" + shortURL + ")";
         callback(oS);
     });

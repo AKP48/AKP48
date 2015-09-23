@@ -36,10 +36,10 @@ function Daft() {
 }
 
 Daft.prototype.execute = function(context) {
-    if(context.getArguments()[0] !== undefined) {
-        context.AKP48.ircClient.say(context.channel, context.getArguments().join(" ") + ", are you daft?");
+    if(context.arguments[0] !== undefined) {
+        context.AKP48.ircClient.say(context.channel, context.arguments.join(" ") + ", are you daft?");
     } else {
-        context.AKP48.ircClient.say(context.channel, context.getUser().getNick() + ", are you daft?");
+        context.AKP48.ircClient.say(context.channel, context.nick + ", are you daft?");
     }
     return true;
 };

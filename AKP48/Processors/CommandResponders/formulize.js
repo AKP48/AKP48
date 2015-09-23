@@ -48,9 +48,9 @@ Formulize.prototype.execute = function(context) {
     //upload the image to imgur
     context.AKP48.getAPI("Imgur").uploadImageFromURL(imageURL, function (url) {
         if(url) {
-            context.getClient().getCommandProcessor().aliasedCommands['googl'].shortenURL(context, url);
+            context.commands['googl'].shortenURL(context, url);
         } else {
-            context.getClient().getCommandProcessor().aliasedCommands['googl'].shortenURL(context, imageURL);
+            context.commands['googl'].shortenURL(context, imageURL);
         }
     });
 

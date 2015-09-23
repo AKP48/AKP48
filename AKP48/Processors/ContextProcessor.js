@@ -22,21 +22,23 @@ var MessageProcessor = require('./MessageProcessor');
 /**
  * Processes Contexts, based on what needs to be done.
  * @param {Context} context The context to process.
+ * @param {Logger}  logger  The logger.
+ * @param  {Object}   AKP48  The running instance of AKP48.
  */
-function ContextProcessor(context, logger) {
-    this.process(context, logger);
+function ContextProcessor(context, logger, AKP48) {
+    this.process(context, logger, AKP48);
 }
 
-ContextProcessor.prototype.process = function (context, logger) {
+ContextProcessor.prototype.process = function (context, logger, AKP48) {
     if(context.hasCommand) {
-        return new CommandProcessor(context, logger);
+        return new CommandProcessor(context, logger, AKP48);
     }
 
     if(context.isAction) {
-        return new ActionProcessor(context, logger);
+        return new ActionProcessor(context, logger, AKP48);
     }
 
-    return new MessageProcessor(context, logger);
+    return new MessageProcessor(context, logger, AKP48);
 };
 
 module.exports = ContextProcessor;

@@ -101,7 +101,7 @@ Choose.prototype.attack = function(context) {
     var person = context.arguments.randomElement(1);
 
     //say the result.
-    context.AKP48.ircClient.say(context.channel, context.getUser().getNick() + " attacks " + person + ": " + atk + ".");
+    context.AKP48.ircClient.say(context.channel, context.nick + " attacks " + person + ": " + atk + ".");
     return true;
 };
 
@@ -121,7 +121,7 @@ Choose.prototype.feel = function(context) {
     }
 
     //build the string. (oS stands for outputString. I'm lazy.)
-    var oS = context.getUser().getNick() + " ";
+    var oS = context.nick + " ";
 
     //if we have a person, add 'thinks <person>' to the string.
     if(person !== "") {

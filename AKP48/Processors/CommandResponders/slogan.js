@@ -42,7 +42,7 @@ function Slogan() {
 }
 
 Slogan.prototype.execute = function(context) {
-    var object = context.getUser().getNick();
+    var object = context.nick;
 
     if(context.arguments[0] !== undefined) {
         object = context.arguments.join(" ");

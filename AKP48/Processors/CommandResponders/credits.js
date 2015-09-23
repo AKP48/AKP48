@@ -39,7 +39,7 @@ function Credits() {
 }
 
 Credits.prototype.execute = function(context) {
-    context.getClient().getCommandProcessor().aliasedCommands['googl'].shortenURL(context, "https://github.com/AKPWebDesign/AKP48/blob/master/CREDITS.md");
+    context.commands['googl'].shortenURL(context, "https://github.com/AKPWebDesign/AKP48/blob/master/CREDITS.md");
     return true;
 };
 

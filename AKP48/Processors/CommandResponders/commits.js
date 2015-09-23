@@ -39,7 +39,7 @@ function Commits() {
 }
 
 Commits.prototype.execute = function(context) {
-    context.getClient().getCommandProcessor().aliasedCommands['googl'].shortenURL(context, "https://github.com/AKPWebDesign/AKP48/commits");
+    context.commands['googl'].shortenURL(context, "https://github.com/AKPWebDesign/AKP48/commits");
     return true;
 };
 

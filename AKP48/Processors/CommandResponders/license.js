@@ -39,7 +39,7 @@ function License() {
 }
 
 License.prototype.execute = function(context) {
-    context.getClient().getCommandProcessor().aliasedCommands['googl'].shortenURL(context, "https://github.com/AKPWebDesign/AKP48/blob/master/LICENSE");
+    context.commands['googl'].shortenURL(context, "https://github.com/AKPWebDesign/AKP48/blob/master/LICENSE");
     return true;
 };
 

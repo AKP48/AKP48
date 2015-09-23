@@ -72,11 +72,11 @@ Alert.prototype.execute = function(context) {
         return -1;
     }
 
-    var nick = context.getUser().getNick();
-    if (context.getArguments().length == 0) {
+    var nick = context.nick;
+    if (context.arguments.length == 0) {
         context.getClient().getIRCClient().notice(nick, "Currently alerting: " + (context.getClient().alert.join(", ") || "none"));
     } else {
-        context.getArguments().each(function (arg) {
+        context.arguments.each(function (arg) {
             if (arg.startsWith("-")) {
                 _remove(arg.substring(1));
             } else {

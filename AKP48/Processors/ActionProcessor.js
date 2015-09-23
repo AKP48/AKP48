@@ -19,14 +19,20 @@
  * Processes Action Contexts.
  * @param {Action} context The context to process.
  * @param {Logger}  logger  The logger.
+ * @param  {Object}   AKP48  The running instance of AKP48.
  */
-function ActionProcessor(context, logger) {
+function ActionProcessor(context, logger, AKP48) {
     this.initialize(logger);
     this.process(context);
 }
 
-ActionProcessor.prototype.initialize = function (logger) {
-    this.handlers = require('./ActionResponders')(logger);
+/**
+ * Initialize this ActionProcessor.
+ * @param  {logger} logger The logger to use.
+ * @param  {Object}   AKP48  The running instance of AKP48.
+ */
+ActionProcessor.prototype.initialize = function (logger, AKP48) {
+    this.handlers = require('./ActionResponders')(logger, AKP48);
 };
 
 /**

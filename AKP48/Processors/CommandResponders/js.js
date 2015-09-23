@@ -115,7 +115,7 @@ Js.prototype.runCode = function(code, context) {
         if(outputString.length > 350) {
             //upload Gist instead.
             context.AKP48.getAPI("Gist").create({
-                description: "Output of JavaScript function for "+context.getUser().getNick(),
+                description: "Output of JavaScript function for "+context.nick,
                 files: {
                     "_input.js": {
                         "content": code
@@ -129,7 +129,7 @@ Js.prototype.runCode = function(code, context) {
                 }
             }, function(url) {
                 if(!url){return;}
-                context.getClient().getCommandProcessor().aliasedCommands['googl'].shortenURL(context, url);
+                context.commands['googl'].shortenURL(context, url);
             });
             return true;
         }

@@ -19,9 +19,10 @@
  * Load all MessageResponders.
  * @param  {Logger}  logger  The logger to pass to loaded message responders.
  * @param  {Boolean} fullMsg Whether or not this should return full message responders.
+ * @param  {Object}  AKP48   The running instance of AKP48.
  * @return {Object}          The message responders.
  */
-var loadResponders = function(logger, fullMsg) {
+var loadResponders = function(logger, fullMsg, AKP48) {
     if(!fullMsg) {fullMsg = false;}
     var handlers = {};
     var _log = logger.child({module: "MessageResponder Loader"});
@@ -34,7 +35,7 @@ var loadResponders = function(logger, fullMsg) {
             var log = logger.child({module: "MessageResponders/"+name});
 
             var loadModule = require('./' + file);
-            var tempModule = new loadModule(log);
+            var tempModule = new loadModule(log, AKP48);
 
             if((tempModule.fullMsgOnly == fullMsg) || (!tempModule.fullMsgOnly && !fullMsg)) {
                 handlers[name] = tempModule;

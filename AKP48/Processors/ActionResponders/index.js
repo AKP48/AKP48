@@ -18,9 +18,10 @@
 /**
  * Load all ActionResponders.
  * @param  {Logger} logger The logger to pass to loaded action responders.
+ * @param  {Object} AKP48  The running instance of AKP48.
  * @return {Object}        The action responders.
  */
-var loadResponders = function(logger) {
+var loadResponders = function(logger, AKP48) {
     var handlers = {};
     var _log = logger.child({module: "ActionResponder Loader"});
     require('fs').readdirSync(__dirname + '/').each(function(file) {
@@ -32,7 +33,7 @@ var loadResponders = function(logger) {
             var log = logger.child({module: "ActionResponders/"+name});
 
             var loadModule = require('./' + file);
-            var tempModule = new loadModule(log);
+            var tempModule = new loadModule(log, AKP48);
 
             handlers[name] = tempModule;
         }
