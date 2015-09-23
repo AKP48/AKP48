@@ -20,8 +20,8 @@ require('shelljs/global');
 
 var GitHooks = require("githubhook");
 var path = require('path');
-var Git = require("./APIs/git");
-var Google = require("./APIs/google");
+var Git = require("./AKP48/APIs/git");
+var Google = require("./AKP48/APIs/google");
 
 var c = require("irc-colors");
 
@@ -144,7 +144,7 @@ GitProcessor.prototype.startListening = function() {
  */
 GitProcessor.prototype.handle = function (branch, data) {
     this.log.info({branch: branch}, "Handling Webhook.");
-    var manager = this.manager;
+    var manager = this.instanceManager;
     // Alert channels of update
     var commits_string = " commit".pluralize(data.commits.length).prepend(data.commits.length);
     this.googleAPI.shorten_url(data.compare, function(url) {
@@ -162,10 +162,10 @@ GitProcessor.prototype.handle = function (branch, data) {
 
         this.log.info({message: message}, "Alerting clients of Git changes.");
 
-        manager.clients.each(function (client) {
-            client.alert.each(function (channel) {
-                if(GLOBAL.config.isInChannel(channel, client.uuid)) {
-                    client.getIRCClient().say(channel, message);
+        manager.instances.each(function (instance) {
+            instance.getAlertChannels().each(function(channel){
+                if(instance.isInChannel(channel)) {
+                    instance.ircClient.say(channel, message);
                 }
             });
         });
@@ -183,7 +183,7 @@ GitProcessor.prototype.handle = function (branch, data) {
 
         var shutdown = changing_branch;
         var npm = changing_branch;
-        var hot_files = ['server.js', 'GitProcessor.js', 'ClientManager.js'];
+        var hot_files = ['server.js', 'GitProcessor.js', 'InstanceManager.js'];
 
         if (!shutdown) {
             data.commits.some(function (commit) {
@@ -212,9 +212,9 @@ GitProcessor.prototype.handle = function (branch, data) {
         }
 
         if (shutdown) {
-            manager.shutdown("I'm updating! :3");
+            manager.shutdownAll("I'm updating! :3");
         } else {
-            manager.softReload();
+            manager.reloadAll();
         }
     }, this);
 };

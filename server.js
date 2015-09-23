@@ -25,7 +25,7 @@ var bunyan = require('bunyan');
 var validator = require('validator');
 var config = require('./data/config/global');
 var InstanceManager = require('./InstanceManager');
-var GitProcessor = require('./AKP48/GitProcessor');
+var GitProcessor = require('./GitProcessor');
 
 if(!config.productionMode) {
     require('longjohn');

@@ -25,6 +25,13 @@ function InstanceManager(logger) {
     this.instances = [];
 }
 
+/**
+ * Start an instance of AKP48.
+ * @param  {UUID}   uuid         The UUID of the instance.
+ * @param  {String} configFolder The configuration folder.
+ * @param  {Logger} logger       The logger.
+ * @param  {Object} ircClient    The IRC client to use.
+ */
 InstanceManager.prototype.startInstance = function (uuid, configFolder, logger, ircClient) {
     if(!uuid || uuid==null) {
         uuid = uuid.v4();
@@ -58,6 +65,21 @@ InstanceManager.prototype.stopInstance = function (uuid) {
  */
 InstanceManager.prototype.reloadInstance = function (uuid) {
     this.log.info({uuid:uuid}, "Reloading instance.");
+};
+
+/**
+ * Shutdown all instances.
+ * @param  {String} The message to use.
+ */
+InstanceManager.prototype.shutdownAll = function (message) {
+    //TODO: Make this happen.
+};
+
+/**
+ * Reload all instances, storing their IRC clients.
+ */
+InstanceManager.prototype.reloadAll = function () {
+    //TODO: Make this happen.
 };
 
 module.exports = InstanceManager;

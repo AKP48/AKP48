@@ -154,4 +154,32 @@ AKP48.prototype.getAPI = function (api_name) {
     return (this.APIs[api_name] || {});
 };
 
+/**
+ * Whether or not AKP48 is in a channel.
+ * @param  {String}  channel The channel to check.
+ * @return {Boolean}         If AKP48 is in it or not.
+ */
+AKP48.prototype.isInChannel = function (channel) {
+    return this.ircClient.chans.indexOf(channel) > -1;
+};
+
+/**
+ * Get the channels that are to be alerted of bot updates.
+ * @return {String[]} The channels to be alerted.
+ */
+AKP48.prototype.getAlertChannels = function () {
+    var alert = [];
+    var channelConfig = this.configManager.getChannels();
+    for (var key in channelConfig) {
+        if (channelConfig.hasOwnProperty(key)) {
+            var chan = channels[key];
+            if(chan.alert) {
+                alert.push(key);
+            }
+        }
+    }
+
+    return alert;
+};
+
 module.exports = AKP48;
