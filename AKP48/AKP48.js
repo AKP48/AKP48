@@ -19,12 +19,19 @@ var irc = require('irc');
 var Context = require('./Context');
 var ContextProcessor = require('./Processors/ContextProcessor');
 
+/**
+ * AKP48. The main module.
+ * @param {Object} options Options to use for this instance.
+ * @param {logger} logger  The logger to use.
+ */
 function AKP48(options, logger) {
     this.log = logger.child({module: "AKP48"});
     this.instanceManager = options.instanceManager;
     this.uuid = options.uuid;
     this.configManager = options.configManager;
     this.ircClient = options.ircClient;
+    this.cache = new (require("./Helpers/cache"))(logger);
+    this.APIs = require("./APIs/")(logger);
 
     if(this.ircClient) {
         this.syncToConfig();
@@ -95,8 +102,22 @@ AKP48.prototype.handleAction = function (nick, to, text, message) {
     this.handleMessage(nick, to, text, message);
 };
 
+/**
+ * Send a message to a channel.
+ * @param  {String} channel The channel.
+ * @param  {String} message The message.
+ */
 AKP48.prototype.say = function (channel, message) {
     this.ircClient.say(channel, message);
+};
+
+/**
+ * Get an API instance.
+ * @param  {String} api_name The API to retrieve.
+ * @return {Object}          The API.
+ */
+AKP48.prototype.getAPI = function (api_name) {
+    return (this.APIs[api_name] || {});
 };
 
 module.exports = AKP48;

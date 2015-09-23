@@ -34,7 +34,7 @@ var loadAPIs = function(logger) {
             var name = loadModule.apiName;
 
             //set up logger
-            var log = logger.child({module: "AutoResponses/"+name});
+            var log = logger.child({module: "APIs/"+name});
 
             var tempModule = new loadModule(log, config.getAPIConfig());
 

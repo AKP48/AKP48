@@ -23,8 +23,8 @@ module.exports.steam = {
 };
 module.exports.twitter = /(?:twitter\.com|t\.co)\//i;
 module.exports.xkcd = {
-    all: /(?:xkcd.com\/)/i,
-    comic: /(?:xkcd.com\/)([0-9]+)/i,
+    all: /(?:xkcd.com\/?)/i,
+    comic: /(?:xkcd.com\/?)([0-9]+)/i,
     homepage: /(?:xkcd.com\/?)$/i
 };
 module.exports.youtube = /(?:https?:\/\/)?(?:[0-9A-Z-]+\.)?(?:youtu\.be\/|youtube(?:-nocookie)?\.com\S*[^\w\s-])([\w-]{11})(?=[^\w-]|$)(?![?=&+%\w.-]*(?:['"][^<>]*>|<\/a>))[?=&+%\w.-]*/i;

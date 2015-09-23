@@ -61,7 +61,7 @@ LinkHandler.prototype.execute = function(word, context) {
     }
 
     this.log.debug({url: word}, "Routing link.");
-    var cachedResponse = getClientManager().getCache().getCached(word.sha1());
+    var cachedResponse = context.AKP48.cache.getCached(word.sha1());
     if(cachedResponse) {
         this.log.debug({url: word, response: cachedResponse}, "Sending response from cache.");
         context.AKP48.say(context.channel, cachedResponse);
@@ -146,7 +146,7 @@ LinkHandler.prototype.handleLink = function(link, cached, context) {
                 }
                 oS += $("title").text().replace(/\r?\n/gm, "").trim().replace(/\s{2,}/g, ' ').append("\"");
                 var cacheExpire = (Date.now() / 1000 | 0) + 600; //make cache expire in 10 minutes
-                getClientManager().getCache().addToCache(link.sha1(), oS, cacheExpire);
+                context.AKP48.cache.addToCache(link.sha1(), oS, cacheExpire);
                 context.AKP48.say(context.channel, oS);
             } else {
                 self.log.error({res: response}, "Title unavailable for " + self.link);
@@ -166,9 +166,9 @@ LinkHandler.prototype.YouTubeVideo = function(link, context) {
     var id = this.youTubeRegex.exec(link);
     var self = this;
     if(id != null) {
-        getClientManager().getAPI("Google").youtube_video_info(id[1], function(res){
+        context.AKP48.getAPI("Google").youtube_video_info(id[1], function(res){
             var cacheExpire = (Date.now() / 1000 | 0) + 86400; //make cache expire in 1 day
-            getClientManager().getCache().addToCache(link.sha1(), res, cacheExpire);
+            context.AKP48.cache.addToCache(link.sha1(), res, cacheExpire);
             context.AKP48.say(context.channel, res);
         });
     } else {
@@ -183,9 +183,9 @@ LinkHandler.prototype.SteamPackage = function(link, context) {
     var allstores = /allstores/i.exec(link);
     var self = this;
     if(id != null) {
-        getClientManager().getAPI("Steam").getPkg(id[1], function(res) {
+        context.AKP48.getAPI("Steam").getPkg(id[1], function(res) {
             var cacheExpire = (Date.now() / 1000 | 0) + 86400; //make cache expire in 1 day
-            getClientManager().getCache().addToCache(link.sha1(), res, cacheExpire);
+            context.AKP48.cache.addToCache(link.sha1(), res, cacheExpire);
             context.AKP48.say(context.channel, res);
         }, nohist, allstores);
     } else {
@@ -200,9 +200,9 @@ LinkHandler.prototype.SteamApp = function(link, context) {
     var allstores = /allstores/i.exec(link);
     var self = this;
     if(id != null) {
-        getClientManager().getAPI("Steam").getGame(id[1], function(res) {
+        context.AKP48.getAPI("Steam").getGame(id[1], function(res) {
             var cacheExpire = (Date.now() / 1000 | 0) + 86400; //make cache expire in 1 day
-            getClientManager().getCache().addToCache(link.sha1(), res, cacheExpire);
+            context.AKP48.cache.addToCache(link.sha1(), res, cacheExpire);
             context.AKP48.say(context.channel, res);
         }, nohist, allstores);
     } else {
@@ -224,9 +224,9 @@ LinkHandler.prototype.ImgurLink = function(link, context) {
         //id[1] == direct image.
         if(id[1]) {
             this.log.debug("Handling as direct image.");
-            getClientManager().getAPI("Imgur").getImageInfo(id[1], function(image) {
+            context.AKP48.getAPI("Imgur").getImageInfo(id[1], function(image) {
                 if(image) {
-                    getClientManager().getCache().addToCache(link.sha1(), self.constructImgurString(image), cacheExpire);
+                    context.AKP48.cache.addToCache(link.sha1(), self.constructImgurString(image), cacheExpire);
                     context.AKP48.say(context.channel, self.constructImgurString(image));
                 }
             });
@@ -239,9 +239,9 @@ LinkHandler.prototype.ImgurLink = function(link, context) {
                     //gallery image
                     this.log.debug("Handling as gallery image.");
                     if(info[0] == "gallery") {
-                        getClientManager().getAPI("Imgur").getGalleryInfo(info[1], function(image) {
+                        context.AKP48.getAPI("Imgur").getGalleryInfo(info[1], function(image) {
                             if(image) {
-                                getClientManager().getCache().addToCache(link.sha1(), self.constructImgurString(image), cacheExpire);
+                                context.AKP48.cache.addToCache(link.sha1(), self.constructImgurString(image), cacheExpire);
                                 context.AKP48.say(context.channel, self.constructImgurString(image));
                             }
                         });
@@ -249,9 +249,9 @@ LinkHandler.prototype.ImgurLink = function(link, context) {
 
                     if(info[0] == "a") {
                         this.log.debug("Handling as album.");
-                        getClientManager().getAPI("Imgur").getAlbumInfo(info[1], function(image) {
+                        context.AKP48.getAPI("Imgur").getAlbumInfo(info[1], function(image) {
                             if(image) {
-                                getClientManager().getCache().addToCache(link.sha1(), self.constructImgurString(image), cacheExpire);
+                                context.AKP48.cache.addToCache(link.sha1(), self.constructImgurString(image), cacheExpire);
                                 context.AKP48.say(context.channel, self.constructImgurString(image));
                             }
                         });
@@ -259,9 +259,9 @@ LinkHandler.prototype.ImgurLink = function(link, context) {
 
                     if(info[0] == "r") {
                         this.log.debug("Handling as subreddit image.");
-                        getClientManager().getAPI("Imgur").getSubredditInfo(info[2], info[1], function(image) {
+                        context.AKP48.getAPI("Imgur").getSubredditInfo(info[2], info[1], function(image) {
                             if(image) {
-                                getClientManager().getCache().addToCache(link.sha1(), self.constructImgurString(image), cacheExpire);
+                                context.AKP48.cache.addToCache(link.sha1(), self.constructImgurString(image), cacheExpire);
                                 context.AKP48.say(context.channel, self.constructImgurString(image));
                             }
                         });
@@ -269,9 +269,9 @@ LinkHandler.prototype.ImgurLink = function(link, context) {
                 } else {
                     //if info is only one part, we know it has to be a direct image.
                     this.log.debug("Handling as direct image.");
-                    getClientManager().getAPI("Imgur").getImageInfo(info[0], function(image) {
+                    context.AKP48.getAPI("Imgur").getImageInfo(info[0], function(image) {
                         if(image) {
-                            getClientManager().getCache().addToCache(link.sha1(), self.constructImgurString(image), cacheExpire);
+                            context.AKP48.cache.addToCache(link.sha1(), self.constructImgurString(image), cacheExpire);
                             context.AKP48.say(context.channel, self.constructImgurString(image));
                         }
                     });
@@ -323,19 +323,19 @@ LinkHandler.prototype.XKCDLink = function(link, context) {
     var id = this.XKCDRegex.comic.exec(link);
     var self = this;
     if(id != null) {
-        getClientManager().getAPI("XKCD").getComic(id[1], function(res){
+        context.AKP48.getAPI("XKCD").getComic(id[1], function(res){
             if(res){
                 var cacheExpire = (Date.now() / 1000 | 0) + 1576800000; //make cache expire in 50 years
-                getClientManager().getCache().addToCache(link.sha1(), res, cacheExpire);
+                context.AKP48.cache.addToCache(link.sha1(), res, cacheExpire);
                 context.AKP48.say(context.channel, res);
             }
         });
     } else {
         if(this.XKCDRegex.homepage.exec(link) != null) {
-            getClientManager().getAPI("XKCD").getLatestComic(function(res){
+            context.AKP48.getAPI("XKCD").getLatestComic(function(res){
                 if(res) {
                     var cacheExpire = (Date.now() / 1000 | 0) + 21600; //make cache expire in 6 hours
-                    getClientManager().getCache().addToCache(link.sha1(), res, cacheExpire);
+                    context.AKP48.cache.addToCache(link.sha1(), res, cacheExpire);
                     context.AKP48.say(context.channel, res);
                 }
             });
@@ -345,9 +345,9 @@ LinkHandler.prototype.XKCDLink = function(link, context) {
 
 LinkHandler.prototype.MALLink = function(link, context) {
     var self = this;
-    getClientManager().getAPI("MAL").getInfo(link, function(res){
+    context.AKP48.getAPI("MAL").getInfo(link, function(res){
         var cacheExpire = (Date.now() / 1000 | 0) + 21600; //make cache expire in 6 hours
-        getClientManager().getCache().addToCache(link.sha1(), res, cacheExpire);
+        context.AKP48.cache.addToCache(link.sha1(), res, cacheExpire);
         context.AKP48.say(context.channel, res);
     });
 }
