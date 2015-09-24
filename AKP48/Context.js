@@ -98,10 +98,17 @@ Context.prototype.initialize = function (nick, to, text, AKP48) {
         this.text = this.text.substring(this.text.indexOf(')')+2);
     }
 
+    //safe default for delimiters.
+    var delimiters = ['.'];
+
     //get the channel configuration
     var channelConfig = AKP48.configManager.getChannelConfig();
-    //grab the command delimiter list from there.
-    var delimiters = channelConfig[this.channel].commandDelimiters;
+
+    //if we have a config for this channel...
+    if(channelconfig[this.channel]) {
+        //grab the command delimiter list from there.
+        delimiters = channelConfig[this.channel].commandDelimiters;
+    }
 
     //for each possible command delimiter, check to see if we have a command, and if so, process the text accordingly.
     for (var i = 0; i < delimiters.length; i++) {
