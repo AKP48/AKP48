@@ -16,6 +16,7 @@
  */
 
 var uuid = require('node-uuid');
+var path = require('path');
 var irc = require('irc');
 var AKP48 = require('./AKP48/AKP48');
 var ConfigManager = require('./AKP48/ConfigManager');
@@ -65,6 +66,10 @@ InstanceManager.prototype.stopInstance = function (uuid) {
  */
 InstanceManager.prototype.reloadInstance = function (uuid) {
     this.log.info({uuid:uuid}, "Reloading instance.");
+    new (require('./AKP48/Helpers/hotreload'))(this.log).clearCache();
+    var client = this.instances[uuid].reload();
+    delete this.instances[uuid];
+    this.startInstance(uuid, path.resolve("data/config", uuid), this.log, client);
 };
 
 /**
@@ -72,14 +77,18 @@ InstanceManager.prototype.reloadInstance = function (uuid) {
  * @param  {String} The message to use.
  */
 InstanceManager.prototype.shutdownAll = function (message) {
-    //TODO: Make this happen.
+    this.instances.each(function(instance){
+        this.stopInstance(instance.uuid);
+    });
 };
 
 /**
  * Reload all instances, storing their IRC clients.
  */
 InstanceManager.prototype.reloadAll = function () {
-    //TODO: Make this happen.
+    this.instances.each(function(instance){
+        this.reloadInstance(instance.uuid);
+    });
 };
 
 module.exports = InstanceManager;

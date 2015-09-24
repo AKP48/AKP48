@@ -190,4 +190,23 @@ AKP48.prototype.getAlertChannels = function () {
     return alert;
 };
 
+/**
+ * Stop the instance.
+ * @param  {String} message The message to send when we quit.
+ */
+AKP48.prototype.stop = function (message) {
+  //TODO: Stop the instance.
+};
+
+/**
+ * Reload the instance.
+ * @return {Object} This instance's ircClient.
+ */
+AKP48.prototype.reload = function () {
+  var client = this.ircClient;
+  this.ircClient = null;
+  delete this.ircClient;
+  return client;
+};
+
 module.exports = AKP48;

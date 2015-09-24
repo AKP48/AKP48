@@ -42,13 +42,9 @@ function Reload(log) {
 }
 
 Reload.prototype.execute = function(context) {
-    if(config.getPerms().powerLevelFromContext(context) < config.powerLevels[context.getClient().uuid]["root"]) {
-        return true;
-    }
-
     this.log.debug("Soft reload requested by " + context.nick);
     context.AKP48.ircClient.notice(context.nick, "Performing soft reload!");
-    context.getClient().getClientManager().softReload();
+    context.AKP48.instanceManager.reloadInstance(context.AKP48.uuid);
     return true;
 };
 
