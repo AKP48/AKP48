@@ -79,7 +79,7 @@ fs.readdir(path.resolve("data/config"), function(err, files) {
 
             //if the 'file' is actually a directory, and the name is a valid UUID,
             //start an AKP48 instance using it.
-            if(stat.isDirectory() && validator.isUUID(file)) {
+            if(stat.isDirectory() && validator.isUUID(file) && file !== "00000000-0e6c-41f4-a322-29bd4d336ecc") {
                 instanceManager.startInstance(file, path.resolve("data/config", file), log);
             }
         });
