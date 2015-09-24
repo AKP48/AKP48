@@ -105,7 +105,7 @@ Context.prototype.initialize = function (nick, to, text, AKP48) {
     var channelConfig = AKP48.configManager.getChannelConfig();
 
     //if we have a config for this channel...
-    if(channelconfig[this.channel]) {
+    if(channelConfig[this.channel]) {
         //grab the command delimiter list from there.
         delimiters = channelConfig[this.channel].commandDelimiters;
     }
