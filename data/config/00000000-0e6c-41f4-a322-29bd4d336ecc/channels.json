@@ -1,0 +1,16 @@
+{ // This file is a JSON object containing channel parameters.
+    "#botplace": {
+        "commandDelimiters": [ // An array of command delimiters for this channel.
+            "."
+        ],
+        "disabled": false, // Whether or not the channel is disabled
+        "alert": true // Whether or not GitHub Webhooks updates should be sent in this channel
+    },
+    "#AKP": {
+        "commandDelimiters": [
+            "."
+        ],
+        "disabled": false,
+        "alert": true
+    }
+}

@@ -1,0 +1,11 @@
+{ // This is a JSON file containing user information.
+    "nick!user@example.com": {
+        "isBot": false, // Whether or not this user is a bot that should be ignored.
+        "isMcBot": false, // Whether or not this user is a Minecraft bot.
+        "permissions": { // The user's permission. Each key is a channel, each value is their power level in that channel.
+            "#AKP": 1,
+            "#botplace": 1,
+            "global": 9001 // Global power level will override individual power levels.
+        }
+    }
+}
