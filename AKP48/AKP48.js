@@ -163,7 +163,7 @@ AKP48.prototype.isInChannel = function (channel) {
     var inChannel = false;
     for (var key in this.ircClient.chans) {
         if (this.ircClient.chans.hasOwnProperty(key)) {
-            if(key == channel) {
+            if(key.toLowerCase() == channel.toLowerCase()) {
                 inChannel = true;
             }
         }
