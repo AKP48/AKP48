@@ -1,0 +1,37 @@
+{
+    "productionMode": true, // If productionMode is true, AKP48 cannot crash completely.
+    "log": {
+        "logToFile": true, // Whether or not to save logs to a file.
+        "level": "trace" // Level to log at. Can be "trace", "debug", "info", "error", "fatal".
+    },
+    "git": { // GitHub Webhooks settings. This is for automatic updating from GitHub.
+        "autoUpdate": true, // Do we even want to update automatically?
+        "listenForChanges": true, // Do we want to listen for changes? (If this is true, but autoUpdate is false, AKP48 will not update, but will still announce changes in specified channels.)
+        "port": 9001, // The port we want to listen on.
+        "repository": "AKP48", // The name of the repo we want to listen to.
+        "branch": "master", // The branch we want to update to. "*" for all, "!branch" for everything except that branch.
+        "secret": "", // The Webhook secret.
+        "path": "/github/callback" // The path to use for the Webhook listener.
+    },
+    "api": {
+        "google": {
+            "apiKey": "Insert Google API key here.",
+            "safe": "off" //off, medium, high. Google SafeSearch value.
+        },
+        "riot": {
+            "apiKey": "Insert Riot Games API key here."
+        },
+        "imgur": {
+            "clientID": "Insert Imgur client ID here.",
+            "clientSecret": "Insert Imgur client secret here."
+        }
+    },
+    "powerLevels": { // Which numbers correspond to which roles for power levels.
+        "root": 9001,
+        "serverMod": 9000,
+        "channelOp": 900,
+        "channelMod": 90,
+        "normal": 1,
+        "banned": -1
+    }
+}

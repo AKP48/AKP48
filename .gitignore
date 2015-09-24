@@ -47,19 +47,8 @@ sftp-config.json
 # AKP48 config files
 !data/config/
 data/config/*
-!data/config/example.*
-!data/config/perm/
-data/config/perm/*
-!data/config/perm/example.*
-!data/config/perm/index.js
-!data/config/channels/
-data/config/channels/*
-!data/config/channels/example.*
-!data/config/channels/index.js
-!data/config/servers/
-data/config/servers/*
-!data/config/servers/example.*
-!data/config/servers/index.js
+!data/config/global.example.json
+!data/config/00000000-0e6c-41f4-a322-29bd4d336ecc
 
 # Custom modules
 custom-*
