@@ -57,6 +57,7 @@ InstanceManager.prototype.stopInstance = function (uuid, message) {
     if(this.instances[uuid]) {
         this.log.info({uuid:uuid}, "Stopping instance.");
         this.instances[uuid].stop(message);
+        delete(this.instances[uuid]);
     }
 };
 
