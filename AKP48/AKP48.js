@@ -160,7 +160,15 @@ AKP48.prototype.getAPI = function (api_name) {
  * @return {Boolean}         If AKP48 is in it or not.
  */
 AKP48.prototype.isInChannel = function (channel) {
-    return this.ircClient.chans.indexOf(channel) > -1;
+    var inChannel = false;
+    for (var key in this.ircClient.chans) {
+        if (this.ircClient.chans.hasOwnProperty(key)) {
+            if(key == channel) {
+                inChannel = true;
+            }
+        }
+    }
+    return inChannel;
 };
 
 /**
