@@ -37,7 +37,7 @@ function Google(logger, APIConfig) {
  * @param  {Object}   thisArg  Optional. Value to use as this when executing callback.
  */
 Google.prototype.shorten_url = function(url, callback, thisArg) {
-    this.log.info("Shortening URL using goo.gl.");
+    this.log.info("Attempting to shorten URL using goo.gl.");
     this.urlshortener.url.insert({ resource: { longUrl: url } }, function (err, response) {
       if(response && response.id) {
           callback.call(thisArg, response.id);

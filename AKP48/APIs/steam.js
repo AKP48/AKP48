@@ -31,6 +31,7 @@ Steam.prototype.getGame = function(appId, callback, nohist, allStores) {
     self.callback = callback;
     self.enhancedSteamAPI = this.enhancedSteamAPI;
     self.nohist = nohist;
+    self.log = this.log;
 
     self.storeString = "&stores=steam";
 
@@ -41,9 +42,9 @@ Steam.prototype.getGame = function(appId, callback, nohist, allStores) {
     this.log.info("Getting Steam info for game "+appId+".");
 
     this.client.get("/api/appdetails?filters=basic,price_overview,genres&appids="+appId, function(err, res, body) {
-        if(err) {this.log.error(err); return;}
+        if(err) {self.log.error(err); return;}
 
-        if(!body[self.appId].success){this.log.error("Something went wrong retrieving data for Steam game "+self.appId+"."); return;}
+        if(!body[self.appId].success){self.log.error("Something went wrong retrieving data for Steam game "+self.appId+"."); return;}
 
         var name = body[self.appId].data.name;
         var isFree = body[self.appId].data.is_free;
@@ -153,9 +154,9 @@ Steam.prototype.getPkg = function(appId, callback, nohist, allStores) {
     this.log.info("Getting Steam info for package "+appId+".");
 
     this.client.get("/api/packagedetails?packageids="+appId, function(err, res, body) {
-        if(err) {this.log.error(err); return;}
+        if(err) {self.log.error(err); return;}
 
-        if(!body[self.appId].success){this.log.error("Something went wrong retrieving data for Steam package "+self.appId+"."); return;}
+        if(!body[self.appId].success){self.log.error("Something went wrong retrieving data for Steam package "+self.appId+"."); return;}
 
         var name = body[self.appId].data.name;
         var currency = body[self.appId].data.price.currency;
