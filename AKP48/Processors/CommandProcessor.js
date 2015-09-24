@@ -82,14 +82,25 @@ CommandProcessor.prototype.process = function (context) {
         return;
     }
 
-    //TODO: Check ban list.
-    //TODO: Check various permissions.
+    if(context.AKP48.configManager.isBanned(context.usermask, context.channel)) {
+        this.log.trace("Dropping command, user is banned.");
+        return;
+    }
+
+    var cmd = this.aliasedCommands[context.command];
+
+    //if the user doesn't have permission for this command...
+    if(!context.AKP48.configManager.hasPermission(context, (cmd.powerLevel || "normal"))) {
+        this.log.trace("Dropping command, user doesn't have permission.");
+        return;
+    }
+
     //TODO: Flood protection.
 
     //Add the commands object into the context, for easy access from within commands.
     context.commands = this.commands;
 
-    if(!this.aliasedCommands[context.command].execute(context)) {
+    if(!cmd.execute(context)) {
         this.sendUsageMessage(context);
         this.log.debug("Command execution failed, user provided incorrect arguments.");
         return false;

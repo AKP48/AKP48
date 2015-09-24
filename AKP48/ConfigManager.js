@@ -73,6 +73,10 @@ ConfigManager.prototype.getPermissions = function (usermask) {
     }
 };
 
+/**
+ * Gets the channels that we should be in.
+ * @return {String[]} The channels we should be in.
+ */
 ConfigManager.prototype.getChannels = function () {
     var channelConfig = this.getChannelConfig();
     var channels = [];
@@ -84,6 +88,11 @@ ConfigManager.prototype.getChannels = function () {
     return channels;
 };
 
+/**
+ * Gets the power level scheme for a channel.
+ * @param  {String} channel The channel to get power levels for.
+ * @return {Object}         An object describing the power level scheme.
+ */
 ConfigManager.prototype.getChannelPowerLevels = function (channel) {
     var serverConfig = this.getServerConfig();
     var globalConfig = this.getGlobalConfig();
@@ -109,6 +118,66 @@ ConfigManager.prototype.getChannelPowerLevels = function (channel) {
         "normal": 1,
         "banned": -1
     }
+};
+
+/**
+ * Whether or not the user has permission.
+ * @param  {Context} context        The context to check for.
+ * @param  {String}  minPowerLevel  The minimum power level.
+ * @return {Boolean}                Whether or not the user has permission.
+ */
+ConfigManager.prototype.hasPermission = function (context, minPowerLevel) {
+    var usermask = context.usermask;
+    var channel = context.channel;
+
+    var perms = this.getPermissions(usermask);
+
+    //if we didn't get any permissions, the user is "normal".
+    if(!perms || !perms.permissions) { return this.getChannelPowerLevels(channel).normal >= this.getChannelPowerLevels(channel)[minPowerLevel]}
+
+    //get user's levels of each type.
+    var channelPowerLevel = this.getPermissions(usermask).permissions[channel];
+    var globalPowerLevel = this.getPermissions(usermask).permissions["global"];
+
+    //if we didn't succeed in getting one of them, it should be "normal".
+    if(!channelPowerLevel) {channelPowerLevel = this.getChannelPowerLevels(channel).normal;}
+    if(!globalPowerLevel) {globalPowerLevel = this.getChannelPowerLevels("global").normal;}
+
+    //compare user's levels to channel levels.
+    var hasChannelLevel = (channelPowerLevel >= this.getChannelPowerLevels(channel)[minPowerLevel]);
+    var hasGlobalLevel = (globalPowerLevel >= this.getChannelPowerLevels("global")[minPowerLevel]);
+
+    console.log("usermask:", usermask, "globalPowerLevel:", globalPowerLevel,
+    "hasGlobalLevel:", hasGlobalLevel, "channelPowerLevel:", channelPowerLevel,
+    "hasChannelLevel:", hasChannelLevel);
+
+    //return proper value based on type of permission needed.
+    if(minPowerLevel === "root" || minPowerLevel === "serverMod") {
+        return (hasGlobalLevel || hasChannelLevel);
+    } else {
+        return hasChannelLevel;
+    }
+};
+
+/**
+ * Whether or not a user is banned in a channel.
+ * @param  {String}  user    The usermask of the user.
+ * @param  {String}  channel The channel.
+ * @return {Boolean}         Whether or not the user is banned.
+ */
+ConfigManager.prototype.isBanned = function (user, channel) {
+    var perms = this.getPermissions(user);
+    // if the user doesn't have a permissions object, they are not banned.
+    // if the user doesn't have a config for this channel, they are not banned.
+    if(!perms) {return false;}
+    if(!perms[channel]) {return false;}
+    var channelBanned = (perms[channel] <= this.getChannelPowerLevels(channel).banned);
+    var globalBanned = false;
+
+    if(perms["global"]) {globalBanned = (perms["global"] <= this.getChannelPowerLevels("global").banned);}
+
+    // return whether or not the user is banned.
+    return (globalBanned || channelBanned);
 };
 
 module.exports = ConfigManager;

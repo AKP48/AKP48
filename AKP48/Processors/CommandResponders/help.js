@@ -36,7 +36,6 @@ function Help(logger) {
 }
 
 Help.prototype.execute = function(context) {
-    var powerLevels = context.AKP48.configManager.getChannelPowerLevels(context.channel);
     var commandText = "";
     var sendTo = "";
     if(context.arguments.length) {
@@ -51,17 +50,11 @@ Help.prototype.execute = function(context) {
             //to tell us whether or not to send this message.
             var send = true;
 
-            //check permission on user
+            //if we need to check the power level...
             if(command.powerLevel) {
-                //if user doesn't have permission to see the command in this channel, don't send the command.
-                if((powerLevels[command.powerLevel]) && context.userPowerLevel < powerLevels[command.powerLevel]) {
+                //if user doesn't have permission to see the command, don't send the command.
+                if(!context.AKP48.configManager.hasPermission(context, command.powerLevel)) {
                     send = false;
-                }
-
-                //if the user has permission for the command globally, override previous statement.
-                if((powerLevels[command.powerLevel]) && context.AKP48.configManager.getPermissions(context.usermask).permissions["global"]
-                                                                                   >= powerLevels[command.powerLevel]) {
-                    send = true;
                 }
             }
 
