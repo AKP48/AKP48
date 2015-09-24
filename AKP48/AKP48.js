@@ -211,7 +211,7 @@ AKP48.prototype.stop = function (message) {
  */
 AKP48.prototype.destroy = function () {
     this.log.debug({uuid:this.uuid}, "Destroying instance!");
-    delete self.ircClient;
+    delete this.ircClient;
 };
 
 module.exports = AKP48;
