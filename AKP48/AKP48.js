@@ -51,8 +51,17 @@ AKP48.prototype.initialize = function () {
              floodProtection: (config.floodProtection || true), floodProtectionDelay: (config.floodProtectionDelay || 250),
              autoRejoin: (config.autoRejoin || true), encoding: (config.encoding || "utf-8")});
     } else {
-        this.ircClient.removeAllListeners();
-        //TODO: compare channels in ircClient to channels in config, make the two match.
+        // We can't blindly remove all listeners, because we'll remove the raw message listener that
+        // the ircClient uses internally, which means we won't get any more messages... ever.
+        //this.ircClient.removeAllListeners();
+        this.ircClient.removeAllListeners('registered');
+        this.ircClient.removeAllListeners('kick');
+        this.ircClient.removeAllListeners('message');
+        this.ircClient.removeAllListeners('action');
+        this.ircClient.removeAllListeners('invite');
+        this.ircClient.removeAllListeners('error');
+        
+        // TODO: compare channels in ircClient to channels in config, make the two match.
     }
 
     var self = this;
