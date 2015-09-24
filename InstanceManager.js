@@ -88,8 +88,9 @@ InstanceManager.prototype.shutdownAll = function (message) {
  * Reload all instances, storing their IRC clients.
  */
 InstanceManager.prototype.reloadAll = function () {
+    var self = this;
     this.instances.each(function(instance){
-        this.reloadInstance(instance.uuid);
+        self.reloadInstance(instance.uuid);
     });
 };
 
