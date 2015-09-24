@@ -169,7 +169,7 @@ AKP48.prototype.isInChannel = function (channel) {
  */
 AKP48.prototype.getAlertChannels = function () {
     var alert = [];
-    var channelConfig = this.configManager.getChannels();
+    var channelConfig = this.configManager.getChannelConfig();
     for (var key in channelConfig) {
         if (channelConfig.hasOwnProperty(key)) {
             var chan = channelConfig[key];
