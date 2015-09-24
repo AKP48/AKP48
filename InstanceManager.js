@@ -53,10 +53,10 @@ InstanceManager.prototype.startInstance = function (uuid, configFolder, logger, 
  * Stop an instance.
  * @param  {UUID} uuid The instance to stop.
  */
-InstanceManager.prototype.stopInstance = function (uuid) {
+InstanceManager.prototype.stopInstance = function (uuid, message) {
     if(this.instances[uuid]) {
         this.log.info({uuid:uuid}, "Stopping instance.");
-        this.instances[uuid].stop();
+        this.instances[uuid].stop(message);
     }
 };
 
@@ -80,7 +80,7 @@ InstanceManager.prototype.reloadInstance = function (uuid) {
 InstanceManager.prototype.shutdownAll = function (message) {
     var self = this;
     this.instances.each(function(instance){
-        self.stopInstance(instance.uuid);
+        self.stopInstance(instance.uuid, message);
     });
 };
 
