@@ -78,8 +78,9 @@ InstanceManager.prototype.reloadInstance = function (uuid) {
  * @param  {String} The message to use.
  */
 InstanceManager.prototype.shutdownAll = function (message) {
+    var self = this;
     this.instances.each(function(instance){
-        this.stopInstance(instance.uuid);
+        self.stopInstance(instance.uuid);
     });
 };
 
