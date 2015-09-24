@@ -28,28 +28,18 @@ function Shutdown() {
     //ways to call this command.
     this.aliases = ['shutdown', 'restart', 'rs'];
 
-    //whether or not to allow this command in a private message.
-    this.allowPm = true;
-
-    //whether or not to only allow this command if it's in a private message.
-    this.isPmOnly = true;
-
     //The required power level for this command.
     this.powerLevel = "root";
 }
 
 Shutdown.prototype.execute = function(context) {
-    if(config.getPerms().powerLevelFromContext(context) < config.powerLevels[context.getClient().uuid]["root"]) {
-        return true;
-    }
-
     var msg = "Goodbye.";
 
     if(context.arguments[0]) {
         msg = context.arguments.join(" ");
     }
 
-    context.client.clientManager.shutdown(msg);
+    context.AKP48.instanceManager.stopInstance(context.AKP48.uuid, msg);
     return true;
 };
 

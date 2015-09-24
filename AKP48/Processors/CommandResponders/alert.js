@@ -32,41 +32,31 @@ function Alert() {
     // depend on git, will only enable if git is enabled
     this.dependencies = ['git'];
 
-    //whether or not to allow this command in a private message.
-    this.allowPm = true;
-
-    //whether or not to only allow this command if it's in a private message.
-    this.isPmOnly = false;
-
     //The required power level for this command.
     this.powerLevel = "root";
 }
 
 Alert.prototype.execute = function(context) {
-    if(config.getPerms().powerLevelFromContext(context) < config.powerLevels[context.getClient().uuid]["root"]) {
-        return true;
-    }
-
     var results = [];
 
     function _add(channel) {
-        channel = channel || context.getChannel().name;
+        channel = channel;
         var index = _index(channel);
         if (index === -1) {
-            context.getClient().alert.push(channel);
+            context.AKP48.alert.push(channel);
             results.push("+"+channel);
         }
     }
     function _remove(channel) {
-        channel = channel || context.getChannel().name;
+        channel = channel;
         var index = _index(channel);
         if (index !== -1) {
-            context.getClient().alert.splice(index, 1);
+            context.AKP48.alert.splice(index, 1);
             results.push("-"+channel);
         }
     }
     function _index(channel) {
-        var alert = context.getClient().alert;
+        var alert = context.AKP48.alert;
         for (i = 0; i < alert.length; i++) {
             if (alert[i] == channel) {
                 return i;
@@ -77,7 +67,7 @@ Alert.prototype.execute = function(context) {
 
     var nick = context.nick;
     if (context.arguments.length == 0) {
-        context.AKP48.ircClient.notice(nick, "Currently alerting: " + (context.getClient().alert.join(", ") || "none"));
+        context.AKP48.ircClient.notice(nick, "Currently alerting: " + (context.AKP48.alert.join(", ") || "none"));
     } else {
         context.arguments.each(function (arg) {
             if (arg.startsWith("-")) {

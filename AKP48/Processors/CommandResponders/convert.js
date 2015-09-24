@@ -29,12 +29,6 @@ function Convert() {
 
     //ways to call this command.
     this.aliases = ['convert'];
-
-    //whether or not to allow this command in a private message.
-    this.allowPm = true;
-
-    //whether or not to only allow this command if it's in a private message.
-    this.isPmOnly = false;
 }
 
 Convert.prototype.execute = function(context) {

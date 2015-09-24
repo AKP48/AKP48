@@ -30,12 +30,6 @@ function Version(logger) {
     //ways to call this command.
     this.aliases = ['version', 'ver', 'v'];
 
-    //whether or not to allow this command in a private message.
-    this.allowPm = true;
-
-    //whether or not to only allow this command if it's in a private message.
-    this.isPmOnly = false;
-
     // Base version
     this.version_base = require('../../../package.json').version;
 

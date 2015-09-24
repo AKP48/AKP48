@@ -20,7 +20,7 @@ var path = require('path');
 
 function InstanceManager(logger) {
     this.log = logger.child({module: "InstanceManager"});
-    this.instances = [];
+    this.instances = {};
 }
 
 /**
@@ -58,6 +58,14 @@ InstanceManager.prototype.stopInstance = function (uuid, message) {
         this.log.info({uuid:uuid}, "Stopping instance.");
         this.instances[uuid].stop(message);
         delete(this.instances[uuid]);
+    }
+
+    if(!Object.keys(this.instances).length) {
+        var self = this;
+        setTimeout(function(){
+            self.log.info("Last instance stopped, shutting down.");
+            process.exit(0);
+        }, 500);
     }
 };
 

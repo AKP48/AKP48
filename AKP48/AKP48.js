@@ -87,6 +87,8 @@ AKP48.prototype.initialize = function () {
     });
 
     this.ircClient.on('error', function(message){self.log.error(message)});
+
+    this.alert = this.getAlertChannels();
 };
 
 /**
@@ -208,10 +210,9 @@ AKP48.prototype.stop = function (message) {
   var self = this;
   setTimeout(function(){
       self.ircClient.disconnect(message);
-      self.ircClient.removeAllListeners();
       setTimeout(function(){
           delete self.ircClient;
-      }, 50);
+      }, 250);
   }, 50);
 };
 

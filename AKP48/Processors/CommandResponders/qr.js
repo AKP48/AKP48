@@ -30,12 +30,6 @@ function QR(logger) {
 
     //dependencies that this module has.
     this.dependencies = ['googl'];
-
-    //whether or not to allow this command in a private message.
-    this.allowPm = true;
-
-    //whether or not to only allow this command if it's in a private message.
-    this.isPmOnly = false;
 }
 
 QR.prototype.execute = function(context) {

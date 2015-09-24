@@ -31,12 +31,6 @@ function Command(logger) {
     //dependencies that this module has.
     this.dependencies = [];
 
-    //whether or not to allow this command in a private message.
-    this.allowPm = true;
-
-    //whether or not to only allow this command if it's in a private message.
-    this.isPmOnly = false;
-
     //The required power level for this command.
     this.powerLevel = "root";
 
@@ -45,9 +39,8 @@ function Command(logger) {
 }
 
 Command.prototype.execute = function(context) {
-    if(config.getPerms().powerLevelFromContext(context) < config.powerLevels[context.getClient().uuid]["root"]) {
-        return true;
-    }
+    //TODO: Make this command work again.
+    return true;
 
     var global = (context.arguments[0] == "--global");
 

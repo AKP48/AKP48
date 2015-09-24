@@ -28,23 +28,13 @@ function Proxy() {
     //ways to call this command.
     this.aliases = ['proxy'];
 
-    //dependencies that this module has.
-    //this.dependencies = [''];
-
-    //whether or not to allow this command in a private message.
-    this.allowPm = true;
-
-    //whether or not to only allow this command if it's in a private message.
-    this.isPmOnly = false;
-
     //The required power level for this command.
     this.powerLevel = "root";
 }
 
 Proxy.prototype.execute = function(context) {
-    if(config.getPerms().powerLevelFromContext(context) < config.powerLevels[context.getClient().uuid]["root"]) {
-        return true;
-    }
+    //TODO: Rewrite this entirely, using the new Context system.
+    return true;
 
     if(!(context.arguments.length >= 2)) {return false;}
     var channel = context.arguments[0];

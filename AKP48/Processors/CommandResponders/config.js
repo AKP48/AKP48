@@ -28,12 +28,6 @@ function Config() {
     //ways to call this command.
     this.aliases = ['config', 'conf'];
 
-    //whether or not to allow this command in a private message.
-    this.allowPm = true;
-
-    //whether or not to only allow this command if it's in a private message.
-    this.isPmOnly = false;
-
     //The required power level for this command. TODO: Change this once config is ready.
     this.powerLevel = "root";
 
@@ -43,18 +37,8 @@ function Config() {
 
 Config.prototype.execute = function(context) {
 
-    //populate permissions object.
-    this.perms = {
-        userGlobalRoot: (config.getPerms().powerLevel(context.getUser().getHostmask(), "global", context.getClient().uuid) >= config.powerLevels[context.getClient().uuid]["root"]),
-        userChannelOp: (config.getPerms().powerLevelFromContext(context) >= config.powerLevels[context.getClient().uuid]["channelOp"]),
-        userChannelMod: (config.getPerms().powerLevelFromContext(context) >= config.powerLevels[context.getClient().uuid]["channelMod"]),
-        userServerOp: (config.getPerms().powerLevel(context.getUser().getHostmask(), "global", context.getClient().uuid) >= config.powerLevels[context.getClient().uuid]["serverOp"])
-    };
-
-    // If we don't have any permissions, quit. We can check permissions better at the next level (subcommands).
-    if(!this.perms.userGlobalRoot && !this.perms.userChannelMod && !this.perms.userChannelOp && !this.perms.userServerOp) {
-        return true;
-    }
+    //TODO: Make this command work again.
+    return true;
 
     if(!context.arguments.length) {
         this.help(context);
