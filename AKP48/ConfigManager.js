@@ -147,10 +147,6 @@ ConfigManager.prototype.hasPermission = function (context, minPowerLevel) {
     var hasChannelLevel = (channelPowerLevel >= this.getChannelPowerLevels(channel)[minPowerLevel]);
     var hasGlobalLevel = (globalPowerLevel >= this.getChannelPowerLevels("global")[minPowerLevel]);
 
-    console.log("usermask:", usermask, "globalPowerLevel:", globalPowerLevel,
-    "hasGlobalLevel:", hasGlobalLevel, "channelPowerLevel:", channelPowerLevel,
-    "hasChannelLevel:", hasChannelLevel);
-
     //return proper value based on type of permission needed.
     if(minPowerLevel === "root" || minPowerLevel === "serverMod") {
         return (hasGlobalLevel || hasChannelLevel);
