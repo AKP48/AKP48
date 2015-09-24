@@ -75,7 +75,6 @@ AKP48.prototype.initialize = function () {
     });
 
     this.ircClient.on('message', function (nick, to, text, message) {
-        console.log("Testing Git Change.");
         self.handleMessage(nick, to, text, message);
     });
 
