@@ -60,7 +60,7 @@ AKP48.prototype.initialize = function () {
         this.ircClient.removeAllListeners('action');
         this.ircClient.removeAllListeners('invite');
         this.ircClient.removeAllListeners('error');
-        
+
         // TODO: compare channels in ircClient to channels in config, make the two match.
     }
 

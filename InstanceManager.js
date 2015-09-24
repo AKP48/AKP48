@@ -17,9 +17,6 @@
 
 var uuid = require('node-uuid');
 var path = require('path');
-var irc = require('irc');
-var AKP48 = require('./AKP48/AKP48');
-var ConfigManager = require('./AKP48/ConfigManager');
 
 function InstanceManager(logger) {
     this.log = logger.child({module: "InstanceManager"});
@@ -34,6 +31,9 @@ function InstanceManager(logger) {
  * @param  {Object} ircClient    The IRC client to use.
  */
 InstanceManager.prototype.startInstance = function (uuid, configFolder, logger, ircClient) {
+    var AKP48 = require('./AKP48/AKP48');
+    var ConfigManager = require('./AKP48/ConfigManager');
+
     if(!uuid || uuid==null) {
         uuid = uuid.v4();
     }
