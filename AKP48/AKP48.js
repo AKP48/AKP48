@@ -195,18 +195,23 @@ AKP48.prototype.getAlertChannels = function () {
  * @param  {String} message The message to send when we quit.
  */
 AKP48.prototype.stop = function (message) {
-  //TODO: Stop the instance.
+  this.log.debug({uuid: this.uuid}, "Shutting down!");
+  var self = this;
+  setTimeout(function(){
+      self.ircClient.disconnect(message);
+      self.ircClient.removeAllListeners();
+      setTimeout(function(){
+          delete self.ircClient;
+      }, 50);
+  }, 50);
 };
 
 /**
- * Reload the instance.
- * @return {Object} This instance's ircClient.
+ * Destroy the instance without disconnecting from IRC.
  */
-AKP48.prototype.reload = function () {
-  var client = this.ircClient;
-  this.ircClient = null;
-  delete this.ircClient;
-  return client;
+AKP48.prototype.destroy = function () {
+    this.log.debug({uuid:this.uuid}, "Destroying instance!");
+    delete self.ircClient;
 };
 
 module.exports = AKP48;

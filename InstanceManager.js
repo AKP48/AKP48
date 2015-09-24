@@ -67,9 +67,10 @@ InstanceManager.prototype.stopInstance = function (uuid) {
 InstanceManager.prototype.reloadInstance = function (uuid) {
     this.log.info({uuid:uuid}, "Reloading instance.");
     new (require('./AKP48/Helpers/hotreload'))(this.log).clearCache();
-    var client = this.instances[uuid].reload();
+    var tempIRCClient = this.instances[uuid].ircClient;
+    this.instances[uuid].destroy();
     delete this.instances[uuid];
-    this.startInstance(uuid, path.resolve("data/config", uuid), this.log, client);
+    this.startInstance(uuid, path.resolve("data/config", uuid), this.log, tempIRCClient);
 };
 
 /**
