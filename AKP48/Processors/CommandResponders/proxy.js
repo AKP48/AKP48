@@ -75,6 +75,8 @@ Proxy.prototype.execute = function(context) {
                 context.AKP48.ircClient.notice(context.nick, "Message successfully sent to "+channel+"!");
             }
         }
+    } else {
+        context.AKP48.ircClient.notice(context.nick, "Could not send message to "+channel+"!");
     }
     return true;
 };
