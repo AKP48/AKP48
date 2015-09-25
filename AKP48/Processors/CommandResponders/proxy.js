@@ -45,8 +45,8 @@ Proxy.prototype.execute = function(context) {
     //remove channel from arguments
     context.arguments.splice(0, 1);
 
-    //Check to see if we're in the channel.
-    if(context.AKP48.configManager.isInChannel(channel, context.AKP48)) {
+    //Check to see if we're in the channel, or if the channel might be a person.
+    if(!channel.isChannel() || context.AKP48.configManager.isInChannel(channel, context.AKP48)) {
         //Check to see if we want an action
         if(context.arguments[0] == "/me") {
             //if so, send an action
@@ -68,9 +68,9 @@ Proxy.prototype.execute = function(context) {
 
             //if the context is a command, process it, otherwise, send the message to the proper channel.
             if(context.hasCommand && context.isContext) {
-                return new ContextProcessor(context, log);
+                return new ContextProcessor(context, this.logger);
             } else {
-                context.AKP48.ircClient.say(channel, context.arguments.join(" "));
+                context.AKP48.say(channel, context.text);
                 //tell the user we were successful.
                 context.AKP48.ircClient.notice(context.nick, "Message successfully sent to "+channel+"!");
             }
