@@ -15,7 +15,10 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-function Proxy() {
+var Context = require('../../Context');
+var ContextProcessor = require('../ContextProcessor');
+
+function Proxy(logger) {
     //the name of the command.
     this.name = "Proxy";
 
@@ -30,42 +33,48 @@ function Proxy() {
 
     //The required power level for this command.
     this.powerLevel = "root";
+
+    //logger for proxy contexts.
+    this.logger = logger;
 }
 
 Proxy.prototype.execute = function(context) {
-    //TODO: Rewrite this entirely, using the new Context system.
-    return true;
-
     if(!(context.arguments.length >= 2)) {return false;}
+
     var channel = context.arguments[0];
     //remove channel from arguments
     context.arguments.splice(0, 1);
 
-    var inChannel = true;
-    var chan = config.getChannel(context.getClient().uuid, context.getChannel());
-
-    if(!chan || chan.disabled) {
-        var inChannel = false;
-    }
-
-    //if we're in the channel that was asked for, or we're (hopefully) sending a PM
-    if(!channel.isChannel() || inChannel) {
-        //check for /me
+    //Check to see if we're in the channel.
+    if(context.AKP48.configManager.isInChannel(channel, context.AKP48)) {
+        //Check to see if we want an action
         if(context.arguments[0] == "/me") {
-            //remove /me from arguments
+            //if so, send an action
             context.arguments.splice(0, 1);
-            //send text as action
             context.AKP48.ircClient.action(channel, context.arguments.join(" "));
-            //NOTICE user a success message
+            //tell the user we were successful.
             context.AKP48.ircClient.notice(context.nick, "Action successfully sent to "+channel+"!");
         } else {
-            //just send message if no /me
-            context.AKP48.ircClient.say(channel, context.arguments.join(" "));
-            //NOTICE user a success message
-            context.AKP48.ircClient.notice(context.nick, "Message successfully sent to "+channel+"!");
+            var ircMessage = {
+                prefix: context.message.prefix,
+                isAction: false,
+                user: context.message.user,
+                host: context.message.host,
+                isProxied: true
+            }
+
+            //if not, create context from message.
+            var context = new Context(context.nick, channel, context.arguments.join(" "), ircMessage, context.AKP48, this.logger);
+
+            //if the context is a command, process it, otherwise, send the message to the proper channel.
+            if(context.hasCommand && context.isContext) {
+                return new ContextProcessor(context, log);
+            } else {
+                context.AKP48.ircClient.say(channel, context.arguments.join(" "));
+                //tell the user we were successful.
+                context.AKP48.ircClient.notice(context.nick, "Message successfully sent to "+channel+"!");
+            }
         }
-    } else {
-        context.AKP48.say(context.channel, "Could not send to channel "+channel+"!");
     }
     return true;
 };
