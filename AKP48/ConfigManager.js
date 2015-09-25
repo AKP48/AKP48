@@ -183,7 +183,7 @@ ConfigManager.prototype.isBanned = function (user, channel) {
  * @return {Boolean}         Whether or not we're in the channel.
  */
 ConfigManager.prototype.isInChannel = function (channel, AKP48) {
-    if(AKP48.ircClient.chans && AKP48.ircClient.chans[channel]){
+    if(AKP48.ircClient.chans && AKP48.ircClient.chans[channel.toLowerCase()]){
         return true;
     }
     return false;
