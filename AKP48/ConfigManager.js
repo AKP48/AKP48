@@ -176,4 +176,17 @@ ConfigManager.prototype.isBanned = function (user, channel) {
     return (globalBanned || channelBanned);
 };
 
+/**
+ * Whether or not we're in a channel.
+ * @param  {String}  channel The channel to check for.
+ * @param  {AKP48}   AKP48   The instance of AKP48 to check.
+ * @return {Boolean}         Whether or not we're in the channel.
+ */
+ConfigManager.prototype.isInChannel = function (channel, AKP48) {
+    if(AKP48.ircClient.chans && AKP48.ircClient.chans[channel.toLowerCase()]){
+        return true;
+    }
+    return false;
+};
+
 module.exports = ConfigManager;

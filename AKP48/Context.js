@@ -35,8 +35,8 @@ function Context(nick, to, text, message, AKP48, logger) {
     this.isAction = this.message.isAction;
     this.isContext = false;
 
-    this.isProxied = false;
-    this.originalNick = this.nick;
+    this.isProxied = this.message.isProxied;
+    this.originalNick = this.message.originalNick;
 
     if(!this.initialize(nick, to, text, AKP48)) {
         this.isContext = false;
