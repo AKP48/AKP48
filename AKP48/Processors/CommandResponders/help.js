@@ -56,6 +56,10 @@ Help.prototype.execute = function(context) {
                 markdown += "##" + command.name + "  \n";
                 markdown += "*" + command.helpText + "*  \n";
 
+                var chanConfig = context.AKP48.configManager.getChannelConfig();
+                var commandDelimiter = ((chanConfig[context.channel] && chanConfig[context.channel].commandDelimiters) ?
+                                                            chanConfig[context.channel].commandDelimiters[0] : ".");
+
                 markdown += "**Usage:** " + context.AKP48.configManager.getChannelConfig()[context.channel].commandDelimiters[0]
                  + command.aliases[0] + " " + command.usageText.replace(/</, "&lt;")
                  .replace(/>/, "&gt;").replace(/\r?\n/, " | ") + "  \n";
