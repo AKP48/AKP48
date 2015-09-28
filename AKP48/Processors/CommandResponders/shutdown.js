@@ -39,7 +39,7 @@ Shutdown.prototype.execute = function(context) {
         msg = context.arguments.join(" ");
     }
 
-    context.AKP48.instanceManager.stopInstance(context.AKP48.uuid, msg);
+    context.AKP48.instanceManager.shutdownAll(msg);
     return true;
 };
 

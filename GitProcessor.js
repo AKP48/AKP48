@@ -165,7 +165,7 @@ GitProcessor.prototype.handle = function (branch, data) {
         manager.instances.each(function (instance) {
             instance.getAlertChannels().each(function(channel){
                 if(instance.isInChannel(channel)) {
-                    instance.ircClient.say(channel, message);
+                    instance.client.say(channel, message);
                 }
             });
         });
