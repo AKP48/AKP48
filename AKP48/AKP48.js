@@ -32,6 +32,7 @@ function AKP48(options, logger) {
     this.configManager = options.configManager;
     this.cache = new (require("./Helpers/cache"))(logger);
     this.APIs = require("./APIs/")(logger, this.configManager.getGlobalConfig().api, this);
+    this.clientType = "";
 
     this.initialize(options.client);
 }
@@ -42,9 +43,9 @@ function AKP48(options, logger) {
  * @param {Object} client  The pre-existing client to use.
  */
 AKP48.prototype.initialize = function (client) {
-    var clientType = (this.configManager.getServerConfig().clientType || "irc");
+    this.clientType = (this.configManager.getServerConfig().clientType || "irc");
 
-    this.client = new this.Clients[clientType](this.log, this, client);
+    this.client = new this.Clients[this.clientType](this.log, this, client);
 
     this.alert = this.getAlertChannels();
 };
