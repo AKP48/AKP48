@@ -60,7 +60,7 @@ Help.prototype.execute = function(context) {
                 var commandDelimiter = ((chanConfig[context.channel] && chanConfig[context.channel].commandDelimiters) ?
                                                             chanConfig[context.channel].commandDelimiters[0] : ".");
 
-                markdown += "**Usage:** " + context.AKP48.configManager.getChannelConfig()[context.channel].commandDelimiters[0]
+                markdown += "**Usage:** " + commandDelimiter;
                  + command.aliases[0] + " " + command.usageText.replace(/</, "&lt;")
                  .replace(/>/, "&gt;").replace(/\r?\n/, " | ") + "  \n";
 
