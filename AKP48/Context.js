@@ -15,15 +15,21 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-function Context(nick, to, text, message, AKP48, logger) {
+/**
+ * A message context.
+ * @param {Object} message The message object.
+ * @param {Object} AKP48   The AKP48 instance.
+ * @param {Logger} logger  The logger.
+ */
+function Context(message, AKP48, logger) {
     this.AKP48 = AKP48;
-    this.nick = nick;
-    this.to = to;
-    this.channel = to;
-    this.text = text;
-    this.fullText = text;
     this.message = message;
-    this.usermask = this.message.prefix;
+    this.nick = message.nick;
+    this.to = message.to;
+    this.channel = message.to;
+    this.text = message.text;
+    this.fullText = message.text;
+    this.usermask = message.prefix;
     this.userPowerLevel = 1;
     this.command = "";
     this.arguments = [];
@@ -32,13 +38,13 @@ function Context(nick, to, text, message, AKP48, logger) {
     this.isBot = false;
     this.isMcBot = false;
     this.hasCommand = false;
-    this.isAction = this.message.isAction;
+    this.isAction = message.isAction;
     this.isContext = false;
 
-    this.isProxied = this.message.isProxied;
-    this.originalNick = this.message.originalNick;
+    this.isProxied = message.isProxied;
+    this.originalNick = message.originalNick;
 
-    if(!this.initialize(nick, to, text, AKP48)) {
+    if(!this.initialize(this.nick, this.to, this.text, AKP48)) {
         this.isContext = false;
     }
 }
@@ -46,7 +52,7 @@ function Context(nick, to, text, message, AKP48, logger) {
 Context.prototype.initialize = function (nick, to, text, AKP48) {
     //Before we do anything else, check to see if we sent this message.
     //We can safely toss this out if we are the sender.
-    if(nick === AKP48.ircClient.nick){
+    if(nick === AKP48.client.nick){
         this.log.debug({
             reason: "Captured message was sent from self."
         }, "Context failed to build.");
@@ -54,7 +60,7 @@ Context.prototype.initialize = function (nick, to, text, AKP48) {
     }
 
     //if the channel name is the same as our nickname, it's a PRIVMSG.
-    if(to === AKP48.ircClient.nick) {
+    if(to === AKP48.client.nick) {
         //set private message and channel fields.
         this.isPM = true;
         this.channel = nick;
