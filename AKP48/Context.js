@@ -22,6 +22,7 @@
  * @param {Logger} logger  The logger.
  */
 function Context(message, AKP48, logger) {
+    this.log = logger.child({module: "Context"});
     this.AKP48 = AKP48;
     this.message = message;
     this.nick = message.nick;

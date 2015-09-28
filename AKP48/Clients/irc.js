@@ -173,7 +173,7 @@ IRCClient.prototype.action = function (channel, msg) {
  * @param  {String} msg  The message to send.
  */
 IRCClient.prototype.privmsg = function (user, msg) {
-    this.say(msg, user);
+    this.say(user, msg); //technically the only difference between a private message and a normal one is the recipient.
 };
 
 /**
