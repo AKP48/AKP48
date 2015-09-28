@@ -74,12 +74,17 @@ InstanceManager.prototype.stopInstance = function (uuid, message) {
  * @param  {UUID} uuid The instance to reload.
  */
 InstanceManager.prototype.reloadInstance = function (uuid) {
-    this.log.info({uuid:uuid}, "Reloading instance.");
-    new (require('./AKP48/Helpers/hotreload'))(this.log).clearCache();
-    var tempClient = this.instances[uuid].client;
-    this.instances[uuid].destroy();
-    delete this.instances[uuid];
-    this.startInstance(uuid, path.resolve("data/config", uuid), this.log, tempClient);
+    if(this.instances[uuid].clientType == "discord") {
+        this.stopInstance(uuid, "");
+        this.startInstance(uuid, path.resolve("data/config", uuid), this.log);
+    } else {
+        this.log.info({uuid:uuid}, "Reloading instance.");
+        new (require('./AKP48/Helpers/hotreload'))(this.log).clearCache();
+        var tempClient = this.instances[uuid].client;
+        this.instances[uuid].destroy();
+        delete this.instances[uuid];
+        this.startInstance(uuid, path.resolve("data/config", uuid), this.log, tempClient);
+    }
 };
 
 /**
