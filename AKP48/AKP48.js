@@ -28,7 +28,7 @@ function AKP48(options, logger) {
     this.log = logger.child({module: "AKP48"});
     this.instanceManager = options.instanceManager;
     this.uuid = options.uuid;
-    this.client = null;
+    this.client = options.client;
     this.configManager = options.configManager;
     this.cache = new (require("./Helpers/cache"))(logger);
     this.APIs = require("./APIs/")(logger, this.configManager.getGlobalConfig().api, this);

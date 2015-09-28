@@ -149,5 +149,13 @@ DiscordClient.prototype.changeNick = function (nick) {
     this.client.setUsername(nick);
 };
 
+/**
+ * Get the raw client we are using.
+ * @return {Object} The raw client.
+ */
+DiscordClient.prototype.getRawClient = function () {
+    return this.client;
+};
+
 module.exports = DiscordClient;
 module.exports.clientType = "discord";
