@@ -84,16 +84,16 @@ Help.prototype.execute = function(context) {
     var cachedResponse = context.AKP48.cache.getCached(("GistMarkdown"+markdown).sha1());
     if(cachedResponse) {
         if(context.isBot) {
-            context.AKP48.say(context.channel, cachedResponse);
+            context.AKP48.client.say(context.channel, cachedResponse);
         } else {
-            context.AKP48.ircClient.notice(context.nick, cachedResponse);
+            context.AKP48.client.notice(context.nick, cachedResponse);
         }
         return true;
     }
 
     //create gist of response
     context.AKP48.getAPI("Gist").create({
-        description: "Help for " + context.AKP48.ircClient.nick,
+        description: "Help for " + context.AKP48.client.nick,
         files: {
             "help.md": {
                 "content": markdown
@@ -109,9 +109,9 @@ Help.prototype.execute = function(context) {
             var cacheExpire = (Date.now() / 1000 | 0) + 1576800000; //make cache expire in 50 years
             context.AKP48.cache.addToCache(("GistMarkdown"+markdown).sha1(), uri, cacheExpire);
             if(context.isBot) {
-                context.AKP48.say(context.channel, uri);
+                context.AKP48.client.say(context.channel, uri);
             } else {
-                context.AKP48.ircClient.notice(context.nick, uri);
+                context.AKP48.client.notice(context.nick, uri);
             }
         });
     });

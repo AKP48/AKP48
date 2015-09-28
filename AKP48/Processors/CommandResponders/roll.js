@@ -107,7 +107,7 @@ Roll.prototype.execute = function(context) {
     if(countLimited) {outputString += " | (Dice counts limited to 1,000. Dice sides limited to 300)"}
 
     //output string to IRC
-    context.AKP48.say(context.channel, outputString);
+    context.AKP48.client.say(context.channel, outputString);
     return true;
 };
 

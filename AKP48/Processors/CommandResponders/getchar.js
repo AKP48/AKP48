@@ -35,7 +35,7 @@ GetChar.prototype.execute = function(context) {
     for (var i = 0; i < context.arguments.length; i++) {
         output += String.fromCharCode(context.arguments[i]);
     };
-    context.AKP48.say(context.channel, output);
+    context.AKP48.client.say(context.channel, output);
     return true;
 };
 

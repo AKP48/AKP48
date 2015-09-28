@@ -44,8 +44,8 @@ Stock.prototype.execute = function(context) {
     self.symbol = symbol;
 
     query.exec(function(err, data) {
-        if(err) { context.AKP48.say(context.channel, "There was an error getting information for "+self.symbol+"."); return true;}
-        if(data.query.results === null) {context.AKP48.say(context.channel, "There was an error getting information for "+self.symbol+"."); return true;}
+        if(err) { context.AKP48.client.say(context.channel, "There was an error getting information for "+self.symbol+"."); return true;}
+        if(data.query.results === null) {context.AKP48.client.say(context.channel, "There was an error getting information for "+self.symbol+"."); return true;}
 
         var quote = data.query.results.quote;
         var change = parseFloat(quote.Change);
@@ -53,7 +53,7 @@ Stock.prototype.execute = function(context) {
         var price = parseFloat(quote.LastTradePriceOnly);
 
         if(isNaN(change) || isNaN(price)) {
-            context.AKP48.say(context.channel, "There was an error getting information for "+self.symbol+".");
+            context.AKP48.client.say(context.channel, "There was an error getting information for "+self.symbol+".");
             return;
         }
 
@@ -75,7 +75,7 @@ Stock.prototype.execute = function(context) {
             outputString += change+" "+"("+percent+")";
         }
 
-        context.AKP48.say(context.channel, outputString);
+        context.AKP48.client.say(context.channel, outputString);
     });
     return true;
 };

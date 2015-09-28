@@ -124,9 +124,9 @@ CommandProcessor.prototype.sendUsageMessage = function(context) {
     var message = context.commandDelimiterUsed + context.command + " " + this.aliasedCommands[context.command].usageText;
 
     if(!context.isMcBot) {
-        context.AKP48.ircClient.notice(nick, message);
+        context.AKP48.client.notice(nick, message);
     } else {
-        context.AKP48.say(context.channel, message);
+        context.AKP48.client.say(context.channel, message);
     }
 };
 

@@ -16,6 +16,7 @@
  */
 
 var Context = require('../../Context');
+var Message = require('../../Message');
 var ContextProcessor = require('../ContextProcessor');
 
 function Proxy(logger) {
@@ -51,32 +52,27 @@ Proxy.prototype.execute = function(context) {
         if(context.arguments[0] == "/me") {
             //if so, send an action
             context.arguments.splice(0, 1);
-            context.AKP48.ircClient.action(channel, context.arguments.join(" "));
+            context.AKP48.client.action(channel, context.arguments.join(" "));
             //tell the user we were successful.
-            context.AKP48.ircClient.notice(context.nick, "Action successfully sent to "+channel+"!");
+            context.AKP48.client.notice(context.nick, "Action successfully sent to "+channel+"!");
         } else {
-            var ircMessage = {
-                prefix: context.message.prefix,
-                isAction: false,
-                user: context.message.user,
-                host: context.message.host,
-                isProxied: true
-            }
 
             //if not, create context from message.
-            var context = new Context(context.nick, channel, context.arguments.join(" "), ircMessage, context.AKP48, this.logger);
+            var message = new Message(context.nick, context.to, context.arguments.join(" "), context.message.user,
+                                      context.message.host, context.message.prefix, false, true);
+            var context = new Context(message, context.AKP48, this.logger);
 
             //if the context is a command, process it, otherwise, send the message to the proper channel.
             if(context.hasCommand && context.isContext) {
                 return new ContextProcessor(context, this.logger);
             } else {
-                context.AKP48.say(channel, context.text);
+                context.AKP48.client.say(channel, context.text);
                 //tell the user we were successful.
-                context.AKP48.ircClient.notice(context.nick, "Message successfully sent to "+channel+"!");
+                context.AKP48.client.notice(context.nick, "Message successfully sent to "+channel+"!");
             }
         }
     } else {
-        context.AKP48.ircClient.notice(context.nick, "Could not send message to "+channel+"!");
+        context.AKP48.client.notice(context.nick, "Could not send message to "+channel+"!");
     }
     return true;
 };

@@ -15,27 +15,31 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-function Daft() {
-    //the name of the command.
-    this.name = "Daft";
+/**
+ * Load all Clients.
+ * @param  {Logger} logger The logger.
+ * @return {Object}        The Clients.
+ */
+var loadClients = function(logger) {
+    var _log = logger.child({module: "Client Loader"});
+    var clients = {};
 
-    //help text to show for this command.
-    this.helpText = "Asks a user if they are daft.";
+    require('fs').readdirSync(__dirname + '/').each(function(file) {
+        if (file.match(/.+\.js/g) !== null && file !== 'index.js') {
+            _log.trace("Loading " + file);
 
-    //usage message. only include the parameters. the command name will be automatically added.
-    this.usageText = "";
+            var loadModule = require('./' + file);
 
-    //ways to call this command.
-    this.aliases = ['daft'];
-}
+            //get name from module
+            var name = loadModule.clientType;
 
-Daft.prototype.execute = function(context) {
-    if(context.arguments[0] !== undefined) {
-        context.AKP48.client.say(context.channel, context.arguments.join(" ") + ", are you daft?");
-    } else {
-        context.AKP48.client.say(context.channel, context.nick + ", are you daft?");
-    }
-    return true;
+            var tempModule = loadModule;
+
+            clients[name] = tempModule;
+        }
+    });
+
+    return clients;
 };
 
-module.exports = Daft;
+module.exports = loadClients;
