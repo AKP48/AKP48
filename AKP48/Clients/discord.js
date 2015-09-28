@@ -130,7 +130,7 @@ DiscordClient.prototype.privmsg = function (user, msg) {
  * @param  {String} message The disconnect message to use.
  */
 DiscordClient.prototype.disconnect = function (message) {
-    this.ircClient.disconnect(message);
+    this.client.logout();
 };
 
 /**
