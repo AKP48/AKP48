@@ -200,5 +200,13 @@ IRCClient.prototype.changeNick = function (nick) {
     this.ircClient.send("NICK", nick);
 };
 
+/**
+ * Get the raw client we are using.
+ * @return {Object} The raw client we are using.
+ */
+IRCClient.prototype.getRawClient = function () {
+    return this.ircClient;
+};
+
 module.exports = IRCClient;
 module.exports.clientType = "irc";

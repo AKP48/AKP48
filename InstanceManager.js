@@ -28,9 +28,9 @@ function InstanceManager(logger) {
  * @param  {UUID}   uuid         The UUID of the instance.
  * @param  {String} configFolder The configuration folder.
  * @param  {Logger} logger       The logger.
- * @param  {Object} ircClient    The IRC client to use.
+ * @param  {Object} client       The client to use.
  */
-InstanceManager.prototype.startInstance = function (uuid, configFolder, logger, ircClient) {
+InstanceManager.prototype.startInstance = function (uuid, configFolder, logger, client) {
     var AKP48 = require('./AKP48/AKP48');
     var ConfigManager = require('./AKP48/ConfigManager');
 
@@ -43,7 +43,7 @@ InstanceManager.prototype.startInstance = function (uuid, configFolder, logger, 
         instanceManager: this,
         uuid: uuid,
         configManager: new ConfigManager(logger, configFolder),
-        ircClient: (ircClient || null)
+        client: (client || null)
     }
 
     this.instances[uuid] = new AKP48(options, logger);
@@ -74,13 +74,13 @@ InstanceManager.prototype.stopInstance = function (uuid, message) {
  * @param  {UUID} uuid The instance to reload.
  */
 InstanceManager.prototype.reloadInstance = function (uuid) {
-    if(this.instances[uuid].clientType == "discord") {
+    if(this.instances[uuid].clientType === "discord") {
         this.stopInstance(uuid, "");
         this.startInstance(uuid, path.resolve("data/config", uuid), this.log);
     } else {
         this.log.info({uuid:uuid}, "Reloading instance.");
         new (require('./AKP48/Helpers/hotreload'))(this.log).clearCache();
-        var tempClient = this.instances[uuid].client;
+        var tempClient = this.instances[uuid].client.getRawClient();
         this.instances[uuid].destroy();
         delete this.instances[uuid];
         this.startInstance(uuid, path.resolve("data/config", uuid), this.log, tempClient);
