@@ -30,7 +30,7 @@ function DOTAFreeHeroes() {
 }
 
 DOTAFreeHeroes.prototype.execute = function(context) {
-    context.AKP48.say(context.channel, "All of them.");
+    context.AKP48.client.say(context.channel, "All of them.");
     return true;
 };
 

@@ -28,6 +28,7 @@ function IRCClient(logger, AKP48, client) {
     this.log = logger.child({module: "IRCClient"});
     this.AKP48 = AKP48;
     this.ircClient = (client || null);
+    this.nick = "";
 
     this.initialize();
 }
@@ -79,8 +80,6 @@ IRCClient.prototype.initialize = function () {
     });
 
     this.ircClient.on('error', function(message){self.log.error(message)});
-
-    this.nick = this.ircClient.nick;
 };
 
 /**
@@ -88,6 +87,7 @@ IRCClient.prototype.initialize = function () {
  */
 IRCClient.prototype.handleRegister = function () {
     var config = this.AKP48.configManager.getServerConfig();
+    this.nick = this.ircClient.nick;
     this.log.info("Connected to " + config.address + ":" + config.port + " with nick '" + this.ircClient.nick + "'");
 };
 
@@ -123,7 +123,7 @@ IRCClient.prototype.handleKick = function (channel, nick, by, reason) {
  */
 IRCClient.prototype.handleMessage = function (nick, to, text, message) {
     var message = new Message(nick, to, text, message.user, message.host, message.prefix,
-                              message.isAction, message.isProxied, message.originalNick);
+                              message.isAction, message.isProxied);
     this.AKP48.handleMessage(message);
 };
 
@@ -137,7 +137,13 @@ IRCClient.prototype.handleInvite = function (channel, from, message) {
     //TODO: Also this.
 };
 
-IRCClient.prototype.say = function (msg, channel, directedAt) {
+/**
+ * Send a message to a channel.
+ * @param  {String} channel    The channel to send to.
+ * @param  {String} msg        The message to send.
+ * @param  {String} directedAt Who this message should be directed at.
+ */
+IRCClient.prototype.say = function (channel, msg, directedAt) {
     var message = (directedAt ? (directedAt + ": ") : "");
     message += msg;
     this.ircClient.say(channel, message);
@@ -145,19 +151,28 @@ IRCClient.prototype.say = function (msg, channel, directedAt) {
 
 /**
  * Send a NOTICE to a user.
- * @param  {String} msg  The message to send.
  * @param  {String} user The user to send to.
+ * @param  {String} msg  The message to send.
  */
-IRCClient.prototype.notice = function (msg, user) {
+IRCClient.prototype.notice = function (user, msg) {
     this.ircClient.notice(user, msg);
 };
 
 /**
- * Send a private message to a user.
- * @param  {String} msg  The message to send.
- * @param  {String} user The user to send to.
+ * Send an ACTION to a channel.
+ * @param  {String} channel The channel to send to.
+ * @param  {String} msg     The message to send.
  */
-IRCClient.prototype.privmsg = function (msg, user) {
+IRCClient.prototype.action = function (channel, msg) {
+    this.ircClient.action(channel, msg);
+};
+
+/**
+ * Send a private message to a user.
+ * @param  {String} user The user to send to.
+ * @param  {String} msg  The message to send.
+ */
+IRCClient.prototype.privmsg = function (user, msg) {
     this.say(msg, user);
 };
 
@@ -174,7 +189,15 @@ IRCClient.prototype.disconnect = function (message) {
  * @return {Array} An array of channel names.
  */
 IRCClient.prototype.getChannels = function () {
-    return Object.keys(this.ircClient.chans).map(key => key);
+    return Object.keys(this.ircClient.chans).map(key => key.toLowerCase());
+};
+
+/**
+ * Change the nick of this client.
+ * @param  {String} nick The nick to change to.
+ */
+IRCClient.prototype.changeNick = function (nick) {
+    this.ircClient.send("NICK", nick);
 };
 
 module.exports = IRCClient;

@@ -15,7 +15,7 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-function Message(nick, to, text, user, host, prefix, isAction, isProxied, originalNick) {
+function Message(nick, to, text, user, host, prefix, isAction, isProxied) {
     this.nick = (nick || "");
     this.to = (to || "");
     this.text = (text || "");
@@ -24,7 +24,6 @@ function Message(nick, to, text, user, host, prefix, isAction, isProxied, origin
     this.prefix = (prefix || "");
     this.isAction = (isAction || false);
     this.isProxied = (isProxied || false);
-    this.originalNick = (originalNick || "");
 }
 
 module.exports = Message;

@@ -45,11 +45,11 @@ Lart.prototype.execute = function(context) {
             if(err) {console.error(err);}
             self.larts = data.toString().split("\n");
             var item = self.larts[Math.floor(Math.random()*self.larts.length)];
-            context.AKP48.ircClient.say(context.channel, context.nick + " " + item.replace(/\{user\}/g, object));
+            context.AKP48.client.say(context.channel, context.nick + " " + item.replace(/\{user\}/g, object));
         });
     } else {
         var item = this.larts[Math.floor(Math.random()*this.larts.length)];
-        context.AKP48.ircClient.say(context.channel, context.nick + " " + item.replace(/\{user\}/g, object));
+        context.AKP48.client.say(context.channel, context.nick + " " + item.replace(/\{user\}/g, object));
     }
     return true;
 };

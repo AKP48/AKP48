@@ -42,7 +42,7 @@ Bin2Hex.prototype.execute = function(context) {
         for (k = 0; k < 4; k += 1) {
             if (part[k] !== '0' && part[k] !== '1') {
                 // invalid character
-                context.AKP48.say(context.channel, "Cannot convert "+context.arguments.join(" ")+" to hex!");
+                context.AKP48.client.say(context.channel, "Cannot convert "+context.arguments.join(" ")+" to hex!");
                 return true;
             }
             // compute the length 4 substring
@@ -62,7 +62,7 @@ Bin2Hex.prototype.execute = function(context) {
         // convert from front
         for (k = 0; k <= i; k += 1) {
             if (s[k] !== '0' && s[k] !== '1') {
-                context.AKP48.say(context.channel, "Cannot convert "+context.arguments.join(" ")+" to hex!");
+                context.AKP48.client.say(context.channel, "Cannot convert "+context.arguments.join(" ")+" to hex!");
                 return true;
             }
             accum = accum * 2 + parseInt(s[k], 10);
@@ -70,7 +70,7 @@ Bin2Hex.prototype.execute = function(context) {
         // 3 bits, value cannot exceed 2^3 - 1 = 7, just convert
         ret = String(accum) + ret;
     }
-    context.AKP48.say(context.channel, context.arguments.join(" ")+" to hex: "+ret);
+    context.AKP48.client.say(context.channel, context.arguments.join(" ")+" to hex: "+ret);
     return true;
 };
 

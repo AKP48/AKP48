@@ -43,24 +43,24 @@ Convert.prototype.execute = function(context) {
 
     if(unit.toLowerCase() === "c") {
         try {
-            context.AKP48.say(context.channel, temp+"°C is "+n((temp*9/5) + 32).format("0[.]"+places)+"°F.");
+            context.AKP48.client.say(context.channel, temp+"°C is "+n((temp*9/5) + 32).format("0[.]"+places)+"°F.");
         } catch(e) {
-            context.AKP48.say(context.channel, "Could not convert "+temp+"°C to Fahrenheit!");
+            context.AKP48.client.say(context.channel, "Could not convert "+temp+"°C to Fahrenheit!");
         }
         return true;
     }
 
     if(unit.toLowerCase() === "f") {
         try {
-            context.AKP48.say(context.channel, temp+"°F is "+n((temp - 32)*5/9).format("0[.]"+places)+"°C.");
+            context.AKP48.client.say(context.channel, temp+"°F is "+n((temp - 32)*5/9).format("0[.]"+places)+"°C.");
         } catch(e) {
-            context.AKP48.say(context.channel, "Could not convert "+temp+"°F to Fahrenheit!");
+            context.AKP48.client.say(context.channel, "Could not convert "+temp+"°F to Fahrenheit!");
         }
         return true;
     }
 
     if(unit.toLowerCase() === "k") {
-        context.AKP48.say(context.channel, "I'm a Korean Pop group, not a scientist.");
+        context.AKP48.client.say(context.channel, "I'm a Korean Pop group, not a scientist.");
     }
     return true;
 };

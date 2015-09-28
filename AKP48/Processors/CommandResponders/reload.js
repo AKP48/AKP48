@@ -37,7 +37,7 @@ function Reload(log) {
 
 Reload.prototype.execute = function(context) {
     this.log.debug("Soft reload requested by " + context.nick);
-    context.AKP48.ircClient.notice(context.nick, "Performing soft reload!");
+    context.AKP48.client.notice(context.nick, "Performing soft reload!");
     context.AKP48.instanceManager.reloadInstance(context.AKP48.uuid);
     return true;
 };

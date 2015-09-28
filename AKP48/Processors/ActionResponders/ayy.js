@@ -33,7 +33,7 @@ function AyyActionHandler(logger) {
 }
 
 AyyActionHandler.prototype.execute = function(word, context) {
-    context.AKP48.say(context.channel, "ayy lmao");
+    context.AKP48.client.say(context.channel, "ayy lmao");
 };
 
 module.exports = AyyActionHandler;

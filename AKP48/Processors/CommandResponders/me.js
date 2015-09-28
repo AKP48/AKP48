@@ -44,7 +44,7 @@ Me.prototype.execute = function(context) {
       return false;
     }
 
-    context.AKP48.ircClient.action(channel, context.arguments.join(" "));
+    context.AKP48.client.action(channel, context.arguments.join(" "));
 
     return true;
 };
