@@ -38,7 +38,7 @@ Nick.prototype.execute = function(context) {
     }
 
     if(context.arguments[0]) {
-        context.AKP48.ircClient.send("NICK", context.arguments[0]);
+        context.AKP48.client.changeNick(context.arguments[0]);
         context.AKP48.nick = context.arguments[0];
     } else {
         return false;

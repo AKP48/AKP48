@@ -127,7 +127,7 @@ Js.prototype.runCode = function(code, context) {
             });
             return true;
         }
-        context.AKP48.say(context.channel, outputString);
+        context.AKP48.client.say(context.channel, outputString);
     });
 };
 

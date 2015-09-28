@@ -81,7 +81,7 @@ Choose.prototype.execute = function(context) {
         min = 2;
     }
 
-    context.AKP48.say(context.channel,  _for + context.arguments.randomElement(min));
+    context.AKP48.client.say(context.channel,  _for + context.arguments.randomElement(min));
 
     return true;
 };
@@ -95,7 +95,7 @@ Choose.prototype.attack = function(context) {
     var person = context.arguments.randomElement(1);
 
     //say the result.
-    context.AKP48.ircClient.say(context.channel, context.nick + " attacks " + person + ": " + atk + ".");
+    context.AKP48.client.say(context.channel, context.nick + " attacks " + person + ": " + atk + ".");
     return true;
 };
 
@@ -126,7 +126,7 @@ Choose.prototype.feel = function(context) {
     oS += "should feel " + feel + ".";
 
     //say the result.
-    context.AKP48.ircClient.say(context.channel, oS);
+    context.AKP48.client.say(context.channel, oS);
     return true;
 };
 

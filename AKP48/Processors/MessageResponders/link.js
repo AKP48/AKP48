@@ -64,7 +64,7 @@ LinkHandler.prototype.execute = function(word, context) {
     var cachedResponse = context.AKP48.cache.getCached(word.sha1());
     if(cachedResponse) {
         this.log.debug({url: word, response: cachedResponse}, "Sending response from cache.");
-        context.AKP48.say(context.channel, cachedResponse);
+        context.AKP48.client.say(context.channel, cachedResponse);
         return true;
     }
 
@@ -147,7 +147,7 @@ LinkHandler.prototype.handleLink = function(link, cached, context) {
                 oS += $("title").text().replace(/\r?\n/gm, "").trim().replace(/\s{2,}/g, ' ').append("\"");
                 var cacheExpire = (Date.now() / 1000 | 0) + 600; //make cache expire in 10 minutes
                 context.AKP48.cache.addToCache(link.sha1(), oS, cacheExpire);
-                context.AKP48.say(context.channel, oS);
+                context.AKP48.client.say(context.channel, oS);
             } else {
                 self.log.error({res: response}, "Title unavailable for " + self.link);
             }
@@ -167,10 +167,10 @@ LinkHandler.prototype.YouTubeVideo = function(link, context) {
     var self = this;
     if(id != null) {
         context.AKP48.getAPI("Google").youtube_video_info(id[1], function(res){
-            if(!res) {context.AKP48.say(context.channel, "I'm having trouble reaching YouTube at the moment. Please try again later.");} else {
+            if(!res) {context.AKP48.client.say(context.channel, "I'm having trouble reaching YouTube at the moment. Please try again later.");} else {
                 var cacheExpire = (Date.now() / 1000 | 0) + 86400; //make cache expire in 1 day
                 context.AKP48.cache.addToCache(link.sha1(), res, cacheExpire);
-                context.AKP48.say(context.channel, res);
+                context.AKP48.client.say(context.channel, res);
             }
         });
     } else {
@@ -188,7 +188,7 @@ LinkHandler.prototype.SteamPackage = function(link, context) {
         context.AKP48.getAPI("Steam").getPkg(id[1], function(res) {
             var cacheExpire = (Date.now() / 1000 | 0) + 86400; //make cache expire in 1 day
             context.AKP48.cache.addToCache(link.sha1(), res, cacheExpire);
-            context.AKP48.say(context.channel, res);
+            context.AKP48.client.say(context.channel, res);
         }, nohist, allstores);
     } else {
         this.log.debug({reason: "No Steam package ID was found."}, "Ignoring link.");
@@ -205,7 +205,7 @@ LinkHandler.prototype.SteamApp = function(link, context) {
         context.AKP48.getAPI("Steam").getGame(id[1], function(res) {
             var cacheExpire = (Date.now() / 1000 | 0) + 86400; //make cache expire in 1 day
             context.AKP48.cache.addToCache(link.sha1(), res, cacheExpire);
-            context.AKP48.say(context.channel, res);
+            context.AKP48.client.say(context.channel, res);
         }, nohist, allstores);
     } else {
         this.log.debug({reason: "No Steam app ID was found."}, "Ignoring link.");
@@ -229,7 +229,7 @@ LinkHandler.prototype.ImgurLink = function(link, context) {
             context.AKP48.getAPI("Imgur").getImageInfo(id[1], function(image) {
                 if(image) {
                     context.AKP48.cache.addToCache(link.sha1(), self.constructImgurString(image), cacheExpire);
-                    context.AKP48.say(context.channel, self.constructImgurString(image));
+                    context.AKP48.client.say(context.channel, self.constructImgurString(image));
                 }
             });
         } else {
@@ -244,7 +244,7 @@ LinkHandler.prototype.ImgurLink = function(link, context) {
                         context.AKP48.getAPI("Imgur").getGalleryInfo(info[1], function(image) {
                             if(image) {
                                 context.AKP48.cache.addToCache(link.sha1(), self.constructImgurString(image), cacheExpire);
-                                context.AKP48.say(context.channel, self.constructImgurString(image));
+                                context.AKP48.client.say(context.channel, self.constructImgurString(image));
                             }
                         });
                     }
@@ -254,7 +254,7 @@ LinkHandler.prototype.ImgurLink = function(link, context) {
                         context.AKP48.getAPI("Imgur").getAlbumInfo(info[1], function(image) {
                             if(image) {
                                 context.AKP48.cache.addToCache(link.sha1(), self.constructImgurString(image), cacheExpire);
-                                context.AKP48.say(context.channel, self.constructImgurString(image));
+                                context.AKP48.client.say(context.channel, self.constructImgurString(image));
                             }
                         });
                     }
@@ -264,7 +264,7 @@ LinkHandler.prototype.ImgurLink = function(link, context) {
                         context.AKP48.getAPI("Imgur").getSubredditInfo(info[2], info[1], function(image) {
                             if(image) {
                                 context.AKP48.cache.addToCache(link.sha1(), self.constructImgurString(image), cacheExpire);
-                                context.AKP48.say(context.channel, self.constructImgurString(image));
+                                context.AKP48.client.say(context.channel, self.constructImgurString(image));
                             }
                         });
                     }
@@ -274,7 +274,7 @@ LinkHandler.prototype.ImgurLink = function(link, context) {
                     context.AKP48.getAPI("Imgur").getImageInfo(info[0], function(image) {
                         if(image) {
                             context.AKP48.cache.addToCache(link.sha1(), self.constructImgurString(image), cacheExpire);
-                            context.AKP48.say(context.channel, self.constructImgurString(image));
+                            context.AKP48.client.say(context.channel, self.constructImgurString(image));
                         }
                     });
                 }
@@ -329,7 +329,7 @@ LinkHandler.prototype.XKCDLink = function(link, context) {
             if(res){
                 var cacheExpire = (Date.now() / 1000 | 0) + 1576800000; //make cache expire in 50 years
                 context.AKP48.cache.addToCache(link.sha1(), res, cacheExpire);
-                context.AKP48.say(context.channel, res);
+                context.AKP48.client.say(context.channel, res);
             }
         });
     } else {
@@ -338,7 +338,7 @@ LinkHandler.prototype.XKCDLink = function(link, context) {
                 if(res) {
                     var cacheExpire = (Date.now() / 1000 | 0) + 21600; //make cache expire in 6 hours
                     context.AKP48.cache.addToCache(link.sha1(), res, cacheExpire);
-                    context.AKP48.say(context.channel, res);
+                    context.AKP48.client.say(context.channel, res);
                 }
             });
         }
@@ -350,7 +350,7 @@ LinkHandler.prototype.MALLink = function(link, context) {
     context.AKP48.getAPI("MAL").getInfo(link, function(res){
         var cacheExpire = (Date.now() / 1000 | 0) + 21600; //make cache expire in 6 hours
         context.AKP48.cache.addToCache(link.sha1(), res, cacheExpire);
-        context.AKP48.say(context.channel, res);
+        context.AKP48.client.say(context.channel, res);
     });
 }
 

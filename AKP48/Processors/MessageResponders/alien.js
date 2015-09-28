@@ -45,7 +45,7 @@ AlienHandler.prototype.execute = function(message, context) {
 	}
 
     if(message.toLowerCase().includes("ayy")) {
-        context.AKP48.say(context.channel, msg);
+        context.AKP48.client.say(context.channel, msg);
     }
 };
 

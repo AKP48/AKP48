@@ -42,10 +42,10 @@ function Version(logger) {
 Version.prototype.execute = function(context) {
     //if the user is a global op, send them the version the files are on, which may not be the version the server is running.
     if (context.AKP48.configManager.hasPermission(context, "root")) {
-        context.AKP48.ircClient.notice(context.nick, "Server: "+this.buildVersion());
+        context.AKP48.client.notice(context.nick, "Server: "+this.buildVersion());
     }
 
-    context.AKP48.say(context.channel, "v"+this.version);
+    context.AKP48.client.say(context.channel, "v"+this.version);
     return true;
 };
 

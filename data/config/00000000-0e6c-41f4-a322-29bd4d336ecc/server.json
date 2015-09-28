@@ -4,5 +4,6 @@
     "nick": "AKP48-Clone",
     "username": "AKP48-Clone",
     "realname": "AKP48-Clone: The fake man's bot.",
-    "password": ""
+    "password": "",
+    "clientType": "irc"
 }

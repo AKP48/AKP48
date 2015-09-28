@@ -34,7 +34,7 @@ function Rainbow() {
 Rainbow.prototype.execute = function(context) {
     if(context.arguments.length) {
         var msg = context.arguments.join(' ');
-        context.AKP48.ircClient.say(context.channel, c.rainbow(msg));
+        context.AKP48.client.say(context.channel, c.rainbow(msg));
     }
     return true;
 };
