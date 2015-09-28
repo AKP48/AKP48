@@ -138,7 +138,8 @@ DiscordClient.prototype.disconnect = function (message) {
  * @return {Array} An array of channel names.
  */
 DiscordClient.prototype.getChannels = function () {
-    return this.client.channels;
+    var c = this.client.channels;
+    return Object.keys(c).map(k => c[k].name);
 };
 
 /**
