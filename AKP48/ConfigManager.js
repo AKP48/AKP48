@@ -48,7 +48,7 @@ ConfigManager.prototype.getServerConfig = function () {
  */
 ConfigManager.prototype.setServerConfig = function (serverConfig) {
     var filePath = path.resolve(this.configPath, "server.json");
-    jsonfile.writeFile(filePath, this.serverConfig);
+    jsonfile.writeFileSync(filePath, this.serverConfig);
 };
 
 /**
@@ -66,7 +66,7 @@ ConfigManager.prototype.getChannelConfig = function () {
  */
 ConfigManager.prototype.setChannelConfig = function (channelConfig) {
     var filePath = path.resolve(this.configPath, "channels.json");
-    jsonfile.writeFile(filePath, this.channelConfig);
+    jsonfile.writeFileSync(filePath, this.channelConfig);
 };
 
 /**
@@ -84,7 +84,7 @@ ConfigManager.prototype.getPermissionsConfig = function () {
  */
 ConfigManager.prototype.setPermissionsConfig = function (permissionsConfig) {
     var filePath = path.resolve(this.configPath, "permissions.json");
-    jsonfile.writeFile(filePath, this.permissionsConfig);
+    jsonfile.writeFileSync(filePath, this.permissionsConfig);
 };
 
 /**
@@ -102,7 +102,7 @@ ConfigManager.prototype.getGlobalConfig = function () {
  */
 ConfigManager.prototype.setGlobalConfig = function (globalConfig) {
     var filePath = path.resolve(this.configPath, "../global.json");
-    jsonfile.writeFile(filePath, this.globalConfig);
+    jsonfile.writeFileSync(filePath, this.globalConfig);
 };
 
 /**

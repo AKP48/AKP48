@@ -196,6 +196,24 @@ IRCClient.prototype.disconnect = function (message) {
 };
 
 /**
+ * Join an IRC channel.
+ * @param  {String}   channel  The channel to join.
+ * @param  {Function} callback Callback to call when finished.
+ */
+IRCClient.prototype.join = function (channel, callback) {
+    this.ircClient.join(channel, callback);
+};
+
+/**
+ * Leave an IRC channel.
+ * @param  {String}   channel  The channel to leave.
+ * @param  {Function} callback Callback to call when finished.
+ */
+IRCClient.prototype.part = function (channel, callback) {
+    this.ircClient.part(channel, callback);
+};
+
+/**
  * Get the channels this client is connected to.
  * @return {Array} An array of channel names.
  */
