@@ -86,8 +86,8 @@ Config.prototype.addChannel = function(context) {
             context.AKP48.configManager.addChannel(channel);
             context.AKP48.client.join(channel, function(){
                 context.AKP48.client.say(channel, "Hi! I'm "+context.AKP48.client.nick+", and I'm here to help! Speaking of help... say .help to get some!");
-                joined.push(channel);
             });
+            joined.push(channel);
         }
     }
 
@@ -118,9 +118,8 @@ Config.prototype.removeChannel = function(context) {
         var channel = channels[i];
         if(context.AKP48.configManager.isInChannel(channel, context.AKP48)) {
             context.AKP48.configManager.removeChannel(channel);
-            context.AKP48.client.part(channel, function(){
-                parted.push(channel);
-            });
+            context.AKP48.client.part(channel);
+            parted.push(channel);
         }
     }
 
