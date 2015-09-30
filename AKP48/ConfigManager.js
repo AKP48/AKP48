@@ -17,10 +17,20 @@
 
 var path = require('path');
 var jsonfile = require('jsonfile');
+jsonfile.spaces = 4;
 
+/**
+ * Manages configuration files for AKP48 instances.
+ * @param {Logger} logger     The logger.
+ * @param {String} configPath Where to look for configuration files.
+ */
 function ConfigManager(logger, configPath) {
     this.log = logger.child({module: "ConfigManager"});
     this.configPath = (configPath || "");
+    this.serverConfig = this.getServerConfig();
+    this.channelConfig = this.getChannelConfig();
+    this.permissionsConfig = this.getPermissionsConfig();
+    this.globalConfig = this.getGlobalConfig();
 }
 
 /**
@@ -33,12 +43,30 @@ ConfigManager.prototype.getServerConfig = function () {
 };
 
 /**
+ * Saves the server config to disk.
+ * @param {Object} serverConfig The server config.
+ */
+ConfigManager.prototype.setServerConfig = function (serverConfig) {
+    var filePath = path.resolve(this.configPath, "server.json");
+    jsonfile.writeFile(filePath, this.serverConfig);
+};
+
+/**
  * Gets the channel config.
  * @return {Object} The channel config.
  */
 ConfigManager.prototype.getChannelConfig = function () {
     var filePath = path.resolve(this.configPath, "channels.json");
     return jsonfile.readFileSync(filePath);
+};
+
+/**
+ * Saves the channel config to disk.
+ * @param {Object} channelConfig The channel config.
+ */
+ConfigManager.prototype.setChannelConfig = function (channelConfig) {
+    var filePath = path.resolve(this.configPath, "channels.json");
+    jsonfile.writeFile(filePath, this.channelConfig);
 };
 
 /**
@@ -51,12 +79,30 @@ ConfigManager.prototype.getPermissionsConfig = function () {
 };
 
 /**
+ * Saves the permissions config to disk.
+ * @param {Object} permissionsConfig The permissions config.
+ */
+ConfigManager.prototype.setPermissionsConfig = function (permissionsConfig) {
+    var filePath = path.resolve(this.configPath, "permissions.json");
+    jsonfile.writeFile(filePath, this.permissionsConfig);
+};
+
+/**
  * Gets the global config.
  * @return {Object} The global config.
  */
 ConfigManager.prototype.getGlobalConfig = function () {
     var filePath = path.resolve(this.configPath, "../global.json");
     return jsonfile.readFileSync(filePath);
+};
+
+/**
+ * Saves the global config to disk.
+ * @param {Object} globalConfig The global config.
+ */
+ConfigManager.prototype.setGlobalConfig = function (globalConfig) {
+    var filePath = path.resolve(this.configPath, "../global.json");
+    jsonfile.writeFile(filePath, this.globalConfig);
 };
 
 /**
@@ -187,6 +233,43 @@ ConfigManager.prototype.isInChannel = function (channel, AKP48) {
         return true;
     }
     return false;
+};
+
+/**
+ * Add a channel to the config.
+ * @param {String} channel The channel to add.
+ */
+ConfigManager.prototype.addChannel = function (channel) {
+    var config = {
+        "commandDelimiters": ["."],
+        "disabled": false,
+        "alert": false
+    };
+
+    this.channelConfig[channel] = config;
+    this.saveConfigFiles();
+};
+
+/**
+ * Remove a channel from the config.
+ * @param  {String} channel The channel to remove.
+ */
+ConfigManager.prototype.removeChannel = function (channel) {
+    if(this.channelConfig[channel]) {
+        this.channelConfig[channel] = null;
+        delete this.channelConfig[channel];
+        this.saveConfigFiles();
+    }
+};
+
+/**
+ * Saves all configurations to disk.
+ */
+ConfigManager.prototype.saveConfigFiles = function () {
+    this.setServerConfig(this.serverConfig);
+    this.setChannelConfig(this.channelConfig);
+    this.setPermissionsConfig(this.permissionsConfig);
+    this.setGlobalConfig(this.globalConfig);
 };
 
 module.exports = ConfigManager;
