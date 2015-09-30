@@ -81,11 +81,12 @@ Config.prototype.addChannel = function(context) {
     var joined = [];
 
     for (var i = 0; i < channels.length; i++) {
-        if(!context.AKP48.configManager.isInChannel(channels[i], context.AKP48) && channels[i].isChannel()) {
-            context.AKP48.configManager.addChannel(channels[i]);
-            context.AKP48.client.join(channels[i], function(){
-                context.AKP48.client.say(channels[i], "Hi! I'm "+context.AKP48.client.nick+", and I'm here to help! Speaking of help... say .help to get some!");
-                joined.push(channels[i]);
+        var channel = channels[i];
+        if(!context.AKP48.configManager.isInChannel(channel, context.AKP48)) {
+            context.AKP48.configManager.addChannel(channel);
+            context.AKP48.client.join(channel, function(){
+                context.AKP48.client.say(channel, "Hi! I'm "+context.AKP48.client.nick+", and I'm here to help! Speaking of help... say .help to get some!");
+                joined.push(channel);
             });
         }
     }
@@ -114,10 +115,11 @@ Config.prototype.removeChannel = function(context) {
     var parted = [];
 
     for (var i = 0; i < channels.length; i++) {
-        if(context.AKP48.configManager.isInChannel(channels[i], context.AKP48)) {
-            context.AKP48.configManager.removeChannel(channels[i]);
-            context.AKP48.client.part(channels[i], function(){
-                parted.push(channels[i]);
+        var channel = channels[i];
+        if(context.AKP48.configManager.isInChannel(channel, context.AKP48)) {
+            context.AKP48.configManager.removeChannel(channel);
+            context.AKP48.client.part(channel, function(){
+                parted.push(channel);
             });
         }
     }
