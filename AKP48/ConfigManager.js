@@ -259,8 +259,7 @@ ConfigManager.prototype.addChannel = function (channel) {
  */
 ConfigManager.prototype.removeChannel = function (channel) {
     if(this.channelConfig[channel]) {
-        this.channelConfig[channel] = null;
-        delete this.channelConfig[channel];
+        this.channelConfig[channel].disabled = true;
         this.saveConfigFiles();
     }
 };
