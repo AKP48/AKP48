@@ -124,9 +124,9 @@ Config.prototype.removeChannel = function(context) {
     }
 
     if(parted.length) {
-        context.AKP48.client.notice("Left "+parted.join(", "));
+        context.AKP48.client.notice(context.nick, "Left "+parted.join(", "));
     } else {
-        context.AKP48.client.notice("Did not leave any channels!");
+        context.AKP48.client.notice(context.nick, "Did not leave any channels!");
     }
 };
 
