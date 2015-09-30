@@ -85,7 +85,7 @@ Config.prototype.addChannel = function(context) {
         if(!context.AKP48.configManager.isInChannel(channel, context.AKP48)) {
             context.AKP48.configManager.addChannel(channel);
             context.AKP48.client.join(channel, function(){
-                context.AKP48.client.say(channel, "Hi! I'm "+context.AKP48.client.nick+", and I'm here to help! Speaking of help... say .help to get some!");
+                context.AKP48.client.say(channel, "Hi! I'm "+context.AKP48.client.getNick()+", and I'm here to help! Speaking of help... say .help to get some!");
             });
             joined.push(channel);
         }

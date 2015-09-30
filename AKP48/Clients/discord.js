@@ -29,7 +29,6 @@ function DiscordClient(logger, AKP48, client) {
     this.log = logger.child({module: "DiscordClient"});
     this.AKP48 = AKP48;
     this.client = (client || null);
-    this.nick = "";
 
     this.initialize();
 }
@@ -65,7 +64,6 @@ DiscordClient.prototype.initialize = function () {
 DiscordClient.prototype.handleReady = function () {
     var config = this.AKP48.configManager.getServerConfig();
     this.log.info("Ready to begin! Serving in " + this.client.channels.length + " channels");
-    this.nick = this.client.getUser("username", config.name).username;
 };
 
 /**
@@ -174,6 +172,14 @@ DiscordClient.prototype.changeNick = function (nick) {
  */
 DiscordClient.prototype.getRawClient = function () {
     return this.client;
+};
+
+/**
+ * Get the nick we're currently using.
+ * @return {String} The nick we are using.
+ */
+DiscordClient.prototype.getNick = function () {
+    return this.client.getUser("username", config.name).username;
 };
 
 module.exports = DiscordClient;
