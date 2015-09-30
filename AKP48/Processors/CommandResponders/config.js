@@ -29,27 +29,16 @@ function Config() {
     this.aliases = ['config', 'conf'];
 
     //The required power level for this command. TODO: Change this once config is ready.
-    this.powerLevel = "root";
-
-    //this gets filled upon command execution.
-    this.perms = {};
+    this.powerLevel = "serverOp";
 }
 
 Config.prototype.execute = function(context) {
-
-    //TODO: Make this command work again.
-    return true;
-
     if(!context.arguments.length) {
         this.help(context);
         return true;
     }
 
     switch(context.arguments[0].toLowerCase()) {
-        case "help":
-        case "?":
-            this.help(context);
-            break;
         case "addserver":
         case "connect":
         case "newserver":
@@ -77,8 +66,8 @@ Config.prototype.execute = function(context) {
 };
 
 Config.prototype.addChannel = function(context) {
-    // If the user isn't root or server op, exit now.
-    if(!this.perms.userServerOp && !this.perms.userGlobalRoot) {
+    // If the user isn't at least server op, exit now.
+    if (!context.AKP48.configManager.hasPermission(context, "serverOp")) {
         return true;
     }
 
@@ -89,21 +78,28 @@ Config.prototype.addChannel = function(context) {
     }
 
     var channels = context.arguments.slice(1);
+    var joined = [];
 
     channels.forEach(function(channel) {
-        if(!config.isInChannel(channel, context.getClient().uuid) && channel.isChannel()) {
-            config.addChannel(channel, context.getClient().uuid);
+        if(!context.AKP48.configManager.isInChannel(channel, context.AKP48) && channel.isChannel()) {
+            context.AKP48.configManager.addChannel(channel);
             context.AKP48.client.join(channel, function(){
                 context.AKP48.client.say(channel, "Hi! I'm "+context.AKP48.client.nick+", and I'm here to help! Speaking of help... say .help to get some!");
-                context.AKP48.client.notice(context.nick, "Joined "+channel+".");
+                joined.push(channel);
             });
         }
     });
+
+    if(joined.length) {
+        context.AKP48.client.notice(context.nick, "Joined "+joined.join(", "));
+    } else {
+        context.AKP48.client.notice(context.nick, "Did not join any channels!");
+    }
 };
 
 Config.prototype.removeChannel = function(context) {
-    // If the user isn't root or server op, exit now.
-    if(!this.perms.userServerOp && !this.perms.userGlobalRoot) {
+    // If the user isn't at least server op, exit now.
+    if (!context.AKP48.configManager.hasPermission(context, "serverOp")) {
         return true;
     }
 
@@ -115,19 +111,27 @@ Config.prototype.removeChannel = function(context) {
 
     var channels = context.arguments.slice(1);
 
+    var parted = [];
+
     channels.forEach(function(channel) {
-        if(config.isInChannel(channel, context.getClient().uuid) && channel.isChannel()) {
-            config.removeChannel(channel, context.getClient().uuid);
+        if(context.AKP48.configManager.isInChannel(channel, context.AKP48)) {
+            context.AKP48.configManager.removeChannel(channel);
             context.AKP48.client.part(channel, function(){
-                context.AKP48.client.notice(context.nick, "Parted "+channel+".");
+                parted.push(channel);
             });
         }
     });
+
+    if(parted.length) {
+        context.AKP48.client.notice("Left "+parted.join(", "));
+    } else {
+        context.AKP48.client.notice("Did not leave any channels!");
+    }
 };
 
 Config.prototype.addServer = function(context) {
     // If the user isn't root, exit now.
-    if(!this.perms.userGlobalRoot) {
+    if (!context.AKP48.configManager.hasPermission(context, "root")) {
         return true;
     }
 
@@ -159,7 +163,7 @@ Config.prototype.addServer = function(context) {
 
 Config.prototype.removeServer = function(context) {
     // If the user isn't root, exit now.
-    if(!this.perms.userGlobalRoot) {
+    if (!context.AKP48.configManager.hasPermission(context, "root")) {
         return true;
     }
 
@@ -167,6 +171,11 @@ Config.prototype.removeServer = function(context) {
 };
 
 Config.prototype.help = function(context) {
+    // If the user isn't at least server op, exit now.
+    if (!context.AKP48.configManager.hasPermission(context, "serverOp")) {
+        return true;
+    }
+
     //TODO: help.
 };
 
