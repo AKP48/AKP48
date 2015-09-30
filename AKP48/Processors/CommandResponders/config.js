@@ -29,7 +29,7 @@ function Config() {
     this.aliases = ['config', 'conf'];
 
     //The required power level for this command. TODO: Change this once config is ready.
-    this.powerLevel = "serverOp";
+    this.powerLevel = "serverMod";
 }
 
 Config.prototype.execute = function(context) {
@@ -67,7 +67,7 @@ Config.prototype.execute = function(context) {
 
 Config.prototype.addChannel = function(context) {
     // If the user isn't at least server op, exit now.
-    if (!context.AKP48.configManager.hasPermission(context, "serverOp")) {
+    if (!context.AKP48.configManager.hasPermission(context, "serverMod")) {
         return true;
     }
 
@@ -99,7 +99,7 @@ Config.prototype.addChannel = function(context) {
 
 Config.prototype.removeChannel = function(context) {
     // If the user isn't at least server op, exit now.
-    if (!context.AKP48.configManager.hasPermission(context, "serverOp")) {
+    if (!context.AKP48.configManager.hasPermission(context, "serverMod")) {
         return true;
     }
 
@@ -172,7 +172,7 @@ Config.prototype.removeServer = function(context) {
 
 Config.prototype.help = function(context) {
     // If the user isn't at least server op, exit now.
-    if (!context.AKP48.configManager.hasPermission(context, "serverOp")) {
+    if (!context.AKP48.configManager.hasPermission(context, "serverMod")) {
         return true;
     }
 
