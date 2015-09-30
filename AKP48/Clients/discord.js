@@ -126,11 +126,29 @@ DiscordClient.prototype.privmsg = function (user, msg) {
 };
 
 /**
- * Disconnect from the IRC server.
+ * Disconnect from the server.
  * @param  {String} message The disconnect message to use.
  */
 DiscordClient.prototype.disconnect = function (message) {
     this.client.logout();
+};
+
+/**
+ * Join a channel. Does not actually do anything for DiscordClient.
+ * @param  {String} channel The channel to join.
+ */
+DiscordClient.prototype.join = function (channel) {
+    this.log.error("Joining channels is not supported in DiscordClient!");
+    return;
+};
+
+/**
+ * Leave a channel. Does not actually do anything for DiscordClient.
+ * @param  {String} channel The channel to leave.
+ */
+DiscordClient.prototype.part = function (channel) {
+    this.log.error("Leaving channels is not supported in DiscordClient!");
+    return;
 };
 
 /**
