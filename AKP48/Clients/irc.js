@@ -134,7 +134,15 @@ IRCClient.prototype.handleMessage = function (nick, to, text, message) {
  * @param  {Object} message The full IRC message object.
  */
 IRCClient.prototype.handleInvite = function (channel, from, message) {
-    //TODO: Also this.
+    var self = this;
+    //join channel
+    this.ircClient.join(channel, function(){
+        self.say(channel, "Thanks for inviting me, "+from+"! I'm glad to be here. For more information about me, say \'.help\'.");
+        self.log.info("Joined channel "+channel+" after invite from "+from+".");
+    });
+
+    //save channel to config
+    this.AKP48.configManager.addChannel(channel);
 };
 
 /**

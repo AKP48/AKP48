@@ -240,6 +240,9 @@ ConfigManager.prototype.isInChannel = function (channel, AKP48) {
  * @param {String} channel The channel to add.
  */
 ConfigManager.prototype.addChannel = function (channel) {
+    //protect against channel configs being overwritten.
+    if(this.channelConfig[channel]){return;}
+
     var config = {
         "commandDelimiters": ["."],
         "disabled": false,
