@@ -111,7 +111,10 @@ IRCClient.prototype.handleAction = function (nick, to, text, message) {
  * @param  {String} reason  The reason for kicking.
  */
 IRCClient.prototype.handleKick = function (channel, nick, by, reason) {
-    //TODO: This.
+    if(nick == this.ircClient.nick) {
+        this.AKP48.configManager.removeChannel(channel);
+        this.log.info("Kicked from channel "+channel+" by "+by+" for \""+reason+"\".");
+    }
 };
 
 /**
