@@ -29,27 +29,16 @@ function Config() {
     this.aliases = ['config', 'conf'];
 
     //The required power level for this command. TODO: Change this once config is ready.
-    this.powerLevel = "root";
-
-    //this gets filled upon command execution.
-    this.perms = {};
+    this.powerLevel = "serverMod";
 }
 
 Config.prototype.execute = function(context) {
-
-    //TODO: Make this command work again.
-    return true;
-
     if(!context.arguments.length) {
         this.help(context);
         return true;
     }
 
     switch(context.arguments[0].toLowerCase()) {
-        case "help":
-        case "?":
-            this.help(context);
-            break;
         case "addserver":
         case "connect":
         case "newserver":
@@ -77,8 +66,8 @@ Config.prototype.execute = function(context) {
 };
 
 Config.prototype.addChannel = function(context) {
-    // If the user isn't root or server op, exit now.
-    if(!this.perms.userServerOp && !this.perms.userGlobalRoot) {
+    // If the user isn't at least server op, exit now.
+    if (!context.AKP48.configManager.hasPermission(context, "serverMod")) {
         return true;
     }
 
@@ -89,21 +78,29 @@ Config.prototype.addChannel = function(context) {
     }
 
     var channels = context.arguments.slice(1);
+    var joined = [];
 
-    channels.forEach(function(channel) {
-        if(!config.isInChannel(channel, context.getClient().uuid) && channel.isChannel()) {
-            config.addChannel(channel, context.getClient().uuid);
+    for (var i = 0; i < channels.length; i++) {
+        var channel = channels[i];
+        if(!context.AKP48.configManager.isInChannel(channel, context.AKP48)) {
+            context.AKP48.configManager.addChannel(channel);
             context.AKP48.client.join(channel, function(){
-                context.AKP48.client.say(channel, "Hi! I'm "+context.AKP48.client.nick+", and I'm here to help! Speaking of help... say .help to get some!");
-                context.AKP48.client.notice(context.nick, "Joined "+channel+".");
+                context.AKP48.client.say(channel, "Hi! I'm "+context.AKP48.client.getNick()+", and I'm here to help! Speaking of help... say .help to get some!");
             });
+            joined.push(channel);
         }
-    });
+    }
+
+    if(joined.length) {
+        context.AKP48.client.notice(context.nick, "Joined "+joined.join(", "));
+    } else {
+        context.AKP48.client.notice(context.nick, "Did not join any channels!");
+    }
 };
 
 Config.prototype.removeChannel = function(context) {
-    // If the user isn't root or server op, exit now.
-    if(!this.perms.userServerOp && !this.perms.userGlobalRoot) {
+    // If the user isn't at least server op, exit now.
+    if (!context.AKP48.configManager.hasPermission(context, "serverMod")) {
         return true;
     }
 
@@ -115,19 +112,27 @@ Config.prototype.removeChannel = function(context) {
 
     var channels = context.arguments.slice(1);
 
-    channels.forEach(function(channel) {
-        if(config.isInChannel(channel, context.getClient().uuid) && channel.isChannel()) {
-            config.removeChannel(channel, context.getClient().uuid);
-            context.AKP48.client.part(channel, function(){
-                context.AKP48.client.notice(context.nick, "Parted "+channel+".");
-            });
+    var parted = [];
+
+    for (var i = 0; i < channels.length; i++) {
+        var channel = channels[i];
+        if(context.AKP48.configManager.isInChannel(channel, context.AKP48)) {
+            context.AKP48.configManager.removeChannel(channel);
+            context.AKP48.client.part(channel);
+            parted.push(channel);
         }
-    });
+    }
+
+    if(parted.length) {
+        context.AKP48.client.notice(context.nick, "Left "+parted.join(", "));
+    } else {
+        context.AKP48.client.notice(context.nick, "Did not leave any channels!");
+    }
 };
 
 Config.prototype.addServer = function(context) {
     // If the user isn't root, exit now.
-    if(!this.perms.userGlobalRoot) {
+    if (!context.AKP48.configManager.hasPermission(context, "root")) {
         return true;
     }
 
@@ -137,37 +142,91 @@ Config.prototype.addServer = function(context) {
         return true;
     }
 
-    //time to parse the server information.
-    //format: user!nick:pass@server:port#chan#chan#chan
-    var user, nick, pass, server, port = "";
-    var channels = [];
+    //remove "addserver" from arguments
+    context.arguments.shift();
 
-    var tempParse = context.arguments[1].split("@");
+    var servers = [];
 
-    pass = tempParse[0].split(":")[1];
-    user = tempParse[0].split(":")[0].split("!")[0];
-    nick = tempParse[0].split(":")[0].split("!")[1];
-    tempParse = tempParse[1].split("#");
-    server = tempParse[0].split(":")[0];
-    port = tempParse[0].split(":")[1];
-    tempParse.shift();
-    channels = tempParse;
+    for (var i = 0; i < context.arguments.length; i++) {
+        //time to parse the server information.
+        //format: user!nick:pass@server:port#chan#chan#chan
+        var user, nick, pass, server, port = "";
+        var channels = [];
 
-    //string should be parsed. time to check and see what we got.
-    //TODO: finish this.
+        var tempParse = context.arguments[i].split("@");
+
+        pass = tempParse[0].split(":")[1];
+        user = tempParse[0].split(":")[0].split("!")[0];
+        nick = tempParse[0].split(":")[0].split("!")[1];
+        tempParse = tempParse[1].split("#");
+        server = tempParse[0].split(":")[0];
+        port = tempParse[0].split(":")[1];
+        tempParse.shift();
+        channels = tempParse;
+
+        var svr = {
+            addr: (server || ""),
+            port: (port || "6667"),
+            user: (user || "AKP48"),
+            pass: (pass || null),
+            nick: (nick || "AKP48"),
+            chan: (channels || [])
+        }
+
+        servers.push(svr);
+    }
+
+    for (var i = 0; i < servers.length; i++) {
+        var configInfo = context.AKP48.configManager.createServerConfig(servers[i]);
+        context.AKP48.instanceManager.startInstance(configInfo.uuid, configInfo.path);
+    }
+
+    return true;
 };
 
 Config.prototype.removeServer = function(context) {
     // If the user isn't root, exit now.
-    if(!this.perms.userGlobalRoot) {
+    if (!context.AKP48.configManager.hasPermission(context, "root")) {
         return true;
     }
 
-    //TODO: remove server.
+    var validator = require('validator');
+
+    //remove command from arguments
+    context.arguments.shift();
+
+    for (var i = 0; i < context.arguments.length; i++) {
+        if(validator.isUUID(context.arguments[i])) {
+            var id = context.arguments[i];
+            var instance = context.AKP48.instanceManager.getInstance(id);
+            if(instance) {
+                instance.configManager.disableInstance();
+                context.AKP48.instanceManager.stopInstance(id, "Goodbye! :3");
+            }
+        }
+    }
 };
 
 Config.prototype.help = function(context) {
-    //TODO: help.
+    // If the user isn't at least server op, exit now.
+    if (!context.AKP48.configManager.hasPermission(context, "serverMod")) {
+        return true;
+    }
+
+    context.AKP48.client.notice("Help for config command:")
+
+    if(context.AKP48.configManager.hasPermission(context, "root")) {
+        //send out root permission stuff here.
+        context.AKP48.client.notice("addServer: takes a list of servers in the following format: user!nick:pass@server:port#chan#chan#chan");
+        context.AKP48.client.notice("removeServer: takes a list of server config UUIDs.");
+    }
+
+    if(context.AKP48.configManager.hasPermission(context, "serverMod")) {
+        //send out serverMod permission stuff here.
+        context.AKP48.client.notice("addChannel: takes a list of channel names.");
+        context.AKP48.client.notice("removeChannel: takes a list of channel names.");
+        context.AKP48.client.notice("help: Shows this message.");
+    }
 };
 
 module.exports = Config;

@@ -29,7 +29,6 @@ function DiscordClient(logger, AKP48, client) {
     this.log = logger.child({module: "DiscordClient"});
     this.AKP48 = AKP48;
     this.client = (client || null);
-    this.nick = "";
 
     this.initialize();
 }
@@ -65,7 +64,6 @@ DiscordClient.prototype.initialize = function () {
 DiscordClient.prototype.handleReady = function () {
     var config = this.AKP48.configManager.getServerConfig();
     this.log.info("Ready to begin! Serving in " + this.client.channels.length + " channels");
-    this.nick = this.client.getUser("username", config.name).username;
 };
 
 /**
@@ -126,11 +124,29 @@ DiscordClient.prototype.privmsg = function (user, msg) {
 };
 
 /**
- * Disconnect from the IRC server.
+ * Disconnect from the server.
  * @param  {String} message The disconnect message to use.
  */
 DiscordClient.prototype.disconnect = function (message) {
     this.client.logout();
+};
+
+/**
+ * Join a channel. Does not actually do anything for DiscordClient.
+ * @param  {String} channel The channel to join.
+ */
+DiscordClient.prototype.join = function (channel) {
+    this.log.error("Joining channels is not supported in DiscordClient!");
+    return;
+};
+
+/**
+ * Leave a channel. Does not actually do anything for DiscordClient.
+ * @param  {String} channel The channel to leave.
+ */
+DiscordClient.prototype.part = function (channel) {
+    this.log.error("Leaving channels is not supported in DiscordClient!");
+    return;
 };
 
 /**
@@ -156,6 +172,14 @@ DiscordClient.prototype.changeNick = function (nick) {
  */
 DiscordClient.prototype.getRawClient = function () {
     return this.client;
+};
+
+/**
+ * Get the nick we're currently using.
+ * @return {String} The nick we are using.
+ */
+DiscordClient.prototype.getNick = function () {
+    return this.client.getUser("username", config.name).username;
 };
 
 module.exports = DiscordClient;

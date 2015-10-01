@@ -52,7 +52,7 @@ function Context(message, AKP48, logger) {
 Context.prototype.initialize = function (nick, to, text, AKP48) {
     //Before we do anything else, check to see if we sent this message.
     //We can safely toss this out if we are the sender.
-    if(nick === AKP48.client.nick){
+    if(nick === AKP48.client.getNick()){
         this.log.debug({
             reason: "Captured message was sent from self."
         }, "Context failed to build.");
@@ -60,7 +60,7 @@ Context.prototype.initialize = function (nick, to, text, AKP48) {
     }
 
     //if the channel name is the same as our nickname, it's a PRIVMSG.
-    if(to === AKP48.client.nick) {
+    if(to === AKP48.client.getNick()) {
         //set private message and channel fields.
         this.isPM = true;
         this.channel = nick;

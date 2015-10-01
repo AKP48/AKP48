@@ -16,6 +16,8 @@
  */
 
 var path = require('path');
+var fs = require('fs');
+var uuid = require('node-uuid');
 var jsonfile = require('jsonfile');
 jsonfile.spaces = 4;
 
@@ -48,7 +50,7 @@ ConfigManager.prototype.getServerConfig = function () {
  */
 ConfigManager.prototype.setServerConfig = function (serverConfig) {
     var filePath = path.resolve(this.configPath, "server.json");
-    jsonfile.writeFile(filePath, this.serverConfig);
+    jsonfile.writeFileSync(filePath, this.serverConfig);
 };
 
 /**
@@ -66,7 +68,7 @@ ConfigManager.prototype.getChannelConfig = function () {
  */
 ConfigManager.prototype.setChannelConfig = function (channelConfig) {
     var filePath = path.resolve(this.configPath, "channels.json");
-    jsonfile.writeFile(filePath, this.channelConfig);
+    jsonfile.writeFileSync(filePath, this.channelConfig);
 };
 
 /**
@@ -84,7 +86,7 @@ ConfigManager.prototype.getPermissionsConfig = function () {
  */
 ConfigManager.prototype.setPermissionsConfig = function (permissionsConfig) {
     var filePath = path.resolve(this.configPath, "permissions.json");
-    jsonfile.writeFile(filePath, this.permissionsConfig);
+    jsonfile.writeFileSync(filePath, this.permissionsConfig);
 };
 
 /**
@@ -102,7 +104,7 @@ ConfigManager.prototype.getGlobalConfig = function () {
  */
 ConfigManager.prototype.setGlobalConfig = function (globalConfig) {
     var filePath = path.resolve(this.configPath, "../global.json");
-    jsonfile.writeFile(filePath, this.globalConfig);
+    jsonfile.writeFileSync(filePath, this.globalConfig);
 };
 
 /**
@@ -259,8 +261,7 @@ ConfigManager.prototype.addChannel = function (channel) {
  */
 ConfigManager.prototype.removeChannel = function (channel) {
     if(this.channelConfig[channel]) {
-        this.channelConfig[channel] = null;
-        delete this.channelConfig[channel];
+        this.channelConfig[channel].disabled = true;
         this.saveConfigFiles();
     }
 };
@@ -273,6 +274,62 @@ ConfigManager.prototype.saveConfigFiles = function () {
     this.setChannelConfig(this.channelConfig);
     this.setPermissionsConfig(this.permissionsConfig);
     this.setGlobalConfig(this.globalConfig);
+};
+
+/**
+ * Creates a server config from parameters.
+ * @param  {Object} server The parameters to use.
+ * @return {Object}        Information about the created config.
+ */
+ConfigManager.prototype.createServerConfig = function (server) {
+    var id = uuid.v4();
+    var confPath = path.resolve(this.configPath, "..", id);
+    fs.mkdirSync(confPath);
+
+    //set up server config
+    var svrConf = {
+        address: server.addr,
+        port: (server.port || ""),
+        nick: (server.nick || "AKP48-Clone"),
+        username: (server.user || "AKP48-Clone"),
+        realname: "An AKP48 Clone",
+        password: (server.pass || ""),
+        clientType: "irc"
+    };
+
+    //write server config
+    var filePath = path.resolve(confPath, "server.json");
+    jsonfile.writeFileSync(filePath, svrConf);
+
+    //set up channel config
+    var chanConf = {};
+    for (var i = 0; i < server.chan.length; i++) {
+        chanConf["#"+server.chan[i]] = {
+            "commandDelimiters": [
+                "."
+            ],
+            "disabled": false,
+            "alert": false
+        }
+    }
+
+    //write channel config
+    filePath = path.resolve(confPath, "channels.json");
+    jsonfile.writeFileSync(filePath, chanConf);
+
+    //write permissions config
+    filePath = path.resolve(confPath, "permissions.json");
+    jsonfile.writeFileSync(filePath, {});
+
+    return {
+        uuid: id,
+        path: confPath
+    };
+};
+
+ConfigManager.prototype.disableInstance = function () {
+    this.serverConfig.disabled = true;
+    this.saveConfigFiles();
 };
 
 module.exports = ConfigManager;

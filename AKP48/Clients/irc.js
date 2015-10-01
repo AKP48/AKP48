@@ -28,7 +28,6 @@ function IRCClient(logger, AKP48, client) {
     this.log = logger.child({module: "IRCClient"});
     this.AKP48 = AKP48;
     this.ircClient = (client || null);
-    this.nick = "";
 
     this.initialize();
 }
@@ -87,7 +86,6 @@ IRCClient.prototype.initialize = function () {
  */
 IRCClient.prototype.handleRegister = function () {
     var config = this.AKP48.configManager.getServerConfig();
-    this.nick = this.ircClient.nick;
     this.log.info("Connected to " + config.address + ":" + config.port + " with nick '" + this.ircClient.nick + "'");
 };
 
@@ -196,6 +194,24 @@ IRCClient.prototype.disconnect = function (message) {
 };
 
 /**
+ * Join an IRC channel.
+ * @param  {String}   channel  The channel to join.
+ * @param  {Function} callback Callback to call when finished.
+ */
+IRCClient.prototype.join = function (channel, callback) {
+    this.ircClient.join(channel, callback);
+};
+
+/**
+ * Leave an IRC channel.
+ * @param  {String}   channel  The channel to leave.
+ * @param  {Function} callback Callback to call when finished.
+ */
+IRCClient.prototype.part = function (channel, callback) {
+    this.ircClient.part(channel, callback);
+};
+
+/**
  * Get the channels this client is connected to.
  * @return {Array} An array of channel names.
  */
@@ -217,6 +233,14 @@ IRCClient.prototype.changeNick = function (nick) {
  */
 IRCClient.prototype.getRawClient = function () {
     return this.ircClient;
+};
+
+/**
+ * Get the nick we're currently using.
+ * @return {String} The nick we are using.
+ */
+IRCClient.prototype.getNick = function () {
+    return this.ircClient.nick;
 };
 
 module.exports = IRCClient;
