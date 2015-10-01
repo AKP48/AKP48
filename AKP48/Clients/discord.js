@@ -62,7 +62,6 @@ DiscordClient.prototype.initialize = function () {
  * Handle a ready message.
  */
 DiscordClient.prototype.handleReady = function () {
-    var config = this.AKP48.configManager.getServerConfig();
     this.log.info("Ready to begin! Serving in " + this.client.channels.length + " channels");
 };
 
@@ -179,6 +178,7 @@ DiscordClient.prototype.getRawClient = function () {
  * @return {String} The nick we are using.
  */
 DiscordClient.prototype.getNick = function () {
+    var config = this.AKP48.configManager.getServerConfig();
     return this.client.getUser("username", config.name).username;
 };
 
