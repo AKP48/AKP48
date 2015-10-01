@@ -142,24 +142,46 @@ Config.prototype.addServer = function(context) {
         return true;
     }
 
-    //time to parse the server information.
-    //format: user!nick:pass@server:port#chan#chan#chan
-    var user, nick, pass, server, port = "";
-    var channels = [];
+    //remove "addserver" from arguments
+    context.arguments.shift();
 
-    var tempParse = context.arguments[1].split("@");
+    var servers = [];
 
-    pass = tempParse[0].split(":")[1];
-    user = tempParse[0].split(":")[0].split("!")[0];
-    nick = tempParse[0].split(":")[0].split("!")[1];
-    tempParse = tempParse[1].split("#");
-    server = tempParse[0].split(":")[0];
-    port = tempParse[0].split(":")[1];
-    tempParse.shift();
-    channels = tempParse;
+    for (var i = 0; i < context.arguments.length; i++) {
+        //time to parse the server information.
+        //format: user!nick:pass@server:port#chan#chan#chan
+        var user, nick, pass, server, port = "";
+        var channels = [];
 
-    //string should be parsed. time to check and see what we got.
-    //TODO: finish this.
+        var tempParse = context.arguments[i].split("@");
+
+        pass = tempParse[0].split(":")[1];
+        user = tempParse[0].split(":")[0].split("!")[0];
+        nick = tempParse[0].split(":")[0].split("!")[1];
+        tempParse = tempParse[1].split("#");
+        server = tempParse[0].split(":")[0];
+        port = tempParse[0].split(":")[1];
+        tempParse.shift();
+        channels = tempParse;
+
+        var svr = {
+            addr: (server || ""),
+            port: (port || "6667"),
+            user: (user || "AKP48"),
+            pass: (pass || null),
+            nick: (nick || "AKP48"),
+            chan: (channels || [])
+        }
+
+        servers.push(svr);
+    }
+
+    for (var i = 0; i < servers.length; i++) {
+        var configInfo = context.AKP48.configManager.createServerConfig(servers[i]);
+        context.AKP48.instanceManager.startInstance(configInfo.uuid, configInfo.path);
+    }
+
+    return true;
 };
 
 Config.prototype.removeServer = function(context) {
@@ -168,7 +190,21 @@ Config.prototype.removeServer = function(context) {
         return true;
     }
 
-    //TODO: remove server.
+    var validator = require('validator');
+
+    //remove command from arguments
+    context.arguments.shift();
+
+    for (var i = 0; i < context.arguments.length; i++) {
+        if(validator.isUUID(context.arguments[i])) {
+            var id = context.arguments[i];
+            var instance = context.AKP48.instanceManager.getInstance(id);
+            if(instance) {
+                instance.configManager.disableInstance();
+                context.AKP48.instanceManager.stopInstance(id, "Goodbye! :3");
+            }
+        }
+    }
 };
 
 Config.prototype.help = function(context) {

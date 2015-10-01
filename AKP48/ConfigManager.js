@@ -16,6 +16,8 @@
  */
 
 var path = require('path');
+var fs = require('fs');
+var uuid = require('node-uuid');
 var jsonfile = require('jsonfile');
 jsonfile.spaces = 4;
 
@@ -272,6 +274,62 @@ ConfigManager.prototype.saveConfigFiles = function () {
     this.setChannelConfig(this.channelConfig);
     this.setPermissionsConfig(this.permissionsConfig);
     this.setGlobalConfig(this.globalConfig);
+};
+
+/**
+ * Creates a server config from parameters.
+ * @param  {Object} server The parameters to use.
+ * @return {Object}        Information about the created config.
+ */
+ConfigManager.prototype.createServerConfig = function (server) {
+    var id = uuid.v4();
+    var confPath = path.resolve(this.configPath, "..", id);
+    fs.mkdirSync(confPath);
+
+    //set up server config
+    var svrConf = {
+        address: server.addr,
+        port: (server.port || ""),
+        nick: (server.nick || "AKP48-Clone"),
+        username: (server.user || "AKP48-Clone"),
+        realname: "An AKP48 Clone",
+        password: (server.pass || ""),
+        clientType: "irc"
+    };
+
+    //write server config
+    var filePath = path.resolve(confPath, "server.json");
+    jsonfile.writeFileSync(filePath, svrConf);
+
+    //set up channel config
+    var chanConf = {};
+    for (var i = 0; i < server.chan.length; i++) {
+        chanConf["#"+server.chan[i]] = {
+            "commandDelimiters": [
+                "."
+            ],
+            "disabled": false,
+            "alert": false
+        }
+    }
+
+    //write channel config
+    filePath = path.resolve(confPath, "channels.json");
+    jsonfile.writeFileSync(filePath, chanConf);
+
+    //write permissions config
+    filePath = path.resolve(confPath, "permissions.json");
+    jsonfile.writeFileSync(filePath, {});
+
+    return {
+        uuid: id,
+        path: confPath
+    };
+};
+
+ConfigManager.prototype.disableInstance = function () {
+    this.serverConfig.disabled = true;
+    this.saveConfigFiles();
 };
 
 module.exports = ConfigManager;
