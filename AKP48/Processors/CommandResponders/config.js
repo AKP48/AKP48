@@ -213,7 +213,20 @@ Config.prototype.help = function(context) {
         return true;
     }
 
-    //TODO: help.
+    context.AKP48.client.notice("Help for config command:")
+
+    if(context.AKP48.configManager.hasPermission(context, "root")) {
+        //send out root permission stuff here.
+        context.AKP48.client.notice("addServer: takes a list of servers in the following format: user!nick:pass@server:port#chan#chan#chan");
+        context.AKP48.client.notice("removeServer: takes a list of server config UUIDs.");
+    }
+
+    if(context.AKP48.configManager.hasPermission(context, "serverMod")) {
+        //send out serverMod permission stuff here.
+        context.AKP48.client.notice("addChannel: takes a list of channel names.");
+        context.AKP48.client.notice("removeChannel: takes a list of channel names.");
+        context.AKP48.client.notice("help: Shows this message.");
+    }
 };
 
 module.exports = Config;
