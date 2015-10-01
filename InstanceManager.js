@@ -33,6 +33,7 @@ function InstanceManager(logger) {
 InstanceManager.prototype.startInstance = function (uuid, configFolder, logger, client) {
     var AKP48 = require('./AKP48/AKP48');
     var ConfigManager = require('./AKP48/ConfigManager');
+    logger = (logger || this.log);
 
     if(!uuid || uuid==null) {
         uuid = uuid.v4();
@@ -46,7 +47,9 @@ InstanceManager.prototype.startInstance = function (uuid, configFolder, logger, 
         client: (client || null)
     }
 
-    this.instances[uuid] = new AKP48(options, logger);
+    if(!options.configManager.getServerConfig().disabled) {
+        this.instances[uuid] = new AKP48(options, logger);
+    }
 };
 
 /**
@@ -106,6 +109,14 @@ InstanceManager.prototype.reloadAll = function () {
     this.instances.each(function(instance){
         self.reloadInstance(instance.uuid);
     });
+};
+
+InstanceManager.prototype.getInstance = function (uuid) {
+    if(this.instances[uuid]) {
+        return this.instances[uuid];
+    }
+
+    return null;
 };
 
 module.exports = InstanceManager;
