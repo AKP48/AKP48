@@ -327,8 +327,32 @@ ConfigManager.prototype.createServerConfig = function (server) {
     };
 };
 
+/**
+ * Disable the instance that this ConfigManager is associated with.
+ */
 ConfigManager.prototype.disableInstance = function () {
     this.serverConfig.disabled = true;
+    this.saveConfigFiles();
+};
+
+/**
+ * Set the isBot status of a user.
+ * @param {String}  user  The user to set status for.
+ * @param {Boolean} isBot Whether or not they should be a bot.
+ */
+ConfigManager.prototype.setIsBot = function (user, isBot) {
+    var perms = this.getPermissions(user);
+    if(!perms) {
+        //if no perms and bot status is false, just return. No need to do anything.
+        if(!isBot) {return true;}
+        this.permissionsConfig[user] = {
+            isBot: true
+        };
+    } else {
+        perms.isBot = isBot;
+        this.permissionsConfig[user] = perms;
+    }
+
     this.saveConfigFiles();
 };
 

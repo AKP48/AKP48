@@ -57,6 +57,14 @@ Config.prototype.execute = function(context) {
         case "removechannel":
             this.removeChannel(context);
             break;
+        case "blacklist":
+        case "addbot":
+            this.blacklistBot(context);
+            break;
+        case "unblacklist":
+        case "removebot":
+            this.unblacklistBot(context);
+            break;
         default:
             this.help(context);
             break;
@@ -138,7 +146,7 @@ Config.prototype.addServer = function(context) {
 
     // If we don't have any parameters, send the user an appropriate message and exit.
     if(context.arguments.length < 2) {
-        context.AKP48.client.notice(context.nick, "Wrong command usage!"); //TODO: better message.
+        context.AKP48.client.notice(context.nick, "Not enough arguments!");
         return true;
     }
 
@@ -207,6 +215,54 @@ Config.prototype.removeServer = function(context) {
     }
 };
 
+Config.prototype.blacklistBot = function (context) {
+    // If the user isn't at least server op, exit now.
+    if (!context.AKP48.configManager.hasPermission(context, "serverMod")) {
+        return true;
+    }
+
+    // If we don't have any parameters, send the user an appropriate message and exit.
+    if(context.arguments.length < 2) {
+        context.AKP48.client.notice(context.nick, "Not enough arguments!");
+        return true;
+    }
+
+    //remove command from arguments
+    context.arguments.shift();
+
+    for (var i = 0; i < context.arguments.length; i++) {
+        var bot = context.arguments[i];
+        context.AKP48.configManager.setIsBot(bot, true);
+    }
+
+    context.AKP48.client.notice(context.nick, "Blacklisted "+context.arguments.join(", "));
+    return true;
+};
+
+Config.prototype.unblacklistBot = function (context) {
+    // If the user isn't at least server op, exit now.
+    if (!context.AKP48.configManager.hasPermission(context, "serverMod")) {
+        return true;
+    }
+
+    // If we don't have any parameters, send the user an appropriate message and exit.
+    if(context.arguments.length < 2) {
+        context.AKP48.client.notice(context.nick, "Not enough arguments!");
+        return true;
+    }
+
+    //remove command from arguments
+    context.arguments.shift();
+
+    for (var i = 0; i < context.arguments.length; i++) {
+        var bot = context.arguments[i];
+        context.AKP48.configManager.setIsBot(bot, false);
+    }
+
+    context.AKP48.client.notice(context.nick, "Unblacklisted "+context.arguments.join(", "));
+    return true;
+};
+
 Config.prototype.help = function(context) {
     // If the user isn't at least server op, exit now.
     if (!context.AKP48.configManager.hasPermission(context, "serverMod")) {
@@ -225,6 +281,8 @@ Config.prototype.help = function(context) {
         //send out serverMod permission stuff here.
         context.AKP48.client.notice("addChannel: takes a list of channel names.");
         context.AKP48.client.notice("removeChannel: takes a list of channel names.");
+        context.AKP48.client.notice("blacklist: takes a list of usermasks.");
+        context.AKP48.client.notice("unblacklist: takes a list of usermasks.");
         context.AKP48.client.notice("help: Shows this message.");
     }
 };
