@@ -1,0 +1,10 @@
+{
+    "polyfill_init": "INITIALIZIN POLYFILL...",
+    "polyfill_notFound": "%S NOT FINDZ. ADDIN...",
+    "polyfill_finishedInit": "FINISHD INITIALIZIN POLYFILL.",
+    "instanceManager_startInstance": "STARTIN INSTANCE.",
+    "instanceManager_stopInstance": "STOPPIN INSTANCE.",
+    "instanceManager_shutdown": "LAST INSTANCE STOPPD, SHUTTIN DOWN.",
+    "instanceManager_reload": "RELOADIN INSTANCE.",
+    "caughtException": "EXCEPSHUN CAUGHT: %S"
+}

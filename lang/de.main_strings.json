@@ -1,0 +1,10 @@
+{
+    "polyfill_init": "Initialisieren Polyfill ...",
+    "polyfill_notFound": "%s nicht gefunden. Hinzufügen ...",
+    "polyfill_finishedInit": "Beendet die Initialisierung Polyfill.",
+    "instanceManager_startInstance": "Startinstanz.",
+    "instanceManager_stopInstance": "Stoppen Instanz.",
+    "instanceManager_shutdown": "Letzte Instanz gestoppt wird, heruntergefahren.",
+    "instanceManager_reload": "Nachladen Instanz.",
+    "caughtException": "Ausnahme abgefangen: %s"
+}

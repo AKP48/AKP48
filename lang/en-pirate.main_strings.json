@@ -2,5 +2,9 @@
     "polyfill_init": "Startin' the Polyfill...",
     "polyfill_notFound": "%s ain't been found! I'm addin' 'er now, matey!",
     "polyfill_finishedInit": "The Polyfill's all done now, cap'n!",
+    "instanceManager_startInstance": "Starting instance.",
+    "instanceManager_stopInstance": "Stopping instance.",
+    "instanceManager_shutdown": "Last instance stopped, shutting down.",
+    "instanceManager_reload": "Reloading instance.",
     "caughtException": "We caught us an exception, cap'n! %s"
 }

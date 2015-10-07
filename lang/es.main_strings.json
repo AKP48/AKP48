@@ -1,0 +1,10 @@
+{
+    "polyfill_init": "Iniciando Polyfill ...",
+    "polyfill_notFound": "%s no encontrado. Adición de ...",
+    "polyfill_finishedInit": "Terminado inicializar Polyfill.",
+    "instanceManager_startInstance": "A partir de instancia.",
+    "instanceManager_stopInstance": "Detener instancia.",
+    "instanceManager_shutdown": "Última instancia detuvo, cerrando.",
+    "instanceManager_reload": "Recarga instancia.",
+    "caughtException": "Excepción llamó: %s"
+}

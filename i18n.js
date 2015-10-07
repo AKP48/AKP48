@@ -39,7 +39,7 @@ i18n.prototype.getString = function (key, file, locale) {
     var localeArray = (this.strings[locale] || this.strings[this.defaultLocale] || this.strings["en-us"]);
 
     if(localeArray[file]) {
-        return (localeArray[file][key] || "");
+        return (localeArray[file][key] || this.strings["en-us"][file][key] || ""); //TODO: Make this throw an error or something.
     }
 
     return "";

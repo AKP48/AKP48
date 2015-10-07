@@ -1,0 +1,10 @@
+{
+    "polyfill_init": "Initialisation Polyfill ...",
+    "polyfill_notFound": "%s introuvable. Ajout ...",
+    "polyfill_finishedInit": "Fini initialisation Polyfill.",
+    "instanceManager_startInstance": "À partir exemple.",
+    "instanceManager_stopInstance": "Arrêt exemple.",
+    "instanceManager_shutdown": "Dernier exemple arrêté, arrêter.",
+    "instanceManager_reload": "Rechargement exemple.",
+    "caughtException": "Exception pris: %s"
+}

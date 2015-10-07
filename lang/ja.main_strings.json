@@ -1,0 +1,10 @@
+{
+    "polyfill_init": "Polyfillを初期化しています...",
+    "polyfill_notFound": "％sが見つかりません。追加しています...",
+    "polyfill_finishedInit": "Polyfillを初期化を完了。",
+    "instanceManager_startInstance": "インスタンスを起動します。",
+    "instanceManager_stopInstance": "インスタンスを停止します。",
+    "instanceManager_shutdown": "最後のインスタンスをシャットダウンして、停止しました。",
+    "instanceManager_reload": "インスタンスをリロードします。",
+    "caughtException": "例外がキャッチ：％s"
+}
