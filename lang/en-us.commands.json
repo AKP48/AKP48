@@ -1,3 +1,5 @@
 {
-    
+    "none": "none",
+    "alert_current": "Currently alerting: ",
+    "alert_changes": "Alert changes: "
 }
