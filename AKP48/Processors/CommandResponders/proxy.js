@@ -56,7 +56,7 @@ Proxy.prototype.execute = function(context) {
     } else {
 
         //if not, create context from message.
-        var message = new Message(context.nick, context.to, context.arguments.join(" "), context.message.user,
+        var message = new Message(context.nick, channel, context.arguments.join(" "), context.message.user,
                                   context.message.host, context.message.prefix, false, true);
         var context = new Context(message, context.AKP48, this.logger);
 
