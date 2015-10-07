@@ -18,13 +18,13 @@
 // TODO: make this use various permissions, show only channels you have permissions for
 function Alert() {
     //the name of the command.
-    this.name = "Alert";
+    this.name = i18n.getString("alert_name", "commands");
 
     //help text to show for this command.
-    this.helpText = "Adds/Removes channels the bot will alert for updates. Will reply with all alerted channels on empty message.";
+    this.helpText = i18n.getString("alert_help", "commands");
 
     //usage message. only include the parameters. the command name will be automatically added.
-    this.usageText = "[+|-] | [[-]channel]...";
+    this.usageText = i18n.getString("alert_usage", "commands");
 
     //ways to call this command.
     this.aliases = ['alert', 'notify'];
