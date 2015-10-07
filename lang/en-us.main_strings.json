@@ -2,5 +2,9 @@
     "polyfill_init": "Initializing Polyfill...",
     "polyfill_notFound": "%s not found. Adding...",
     "polyfill_finishedInit": "Finished initializing Polyfill.",
+    "instanceManager_startInstance": "Starting instance.",
+    "instanceManager_stopInstance": "Stopping instance.",
+    "instanceManager_shutdown": "Last instance stopped, shutting down.",
+    "instanceManager_reload": "Reloading instance.",
     "caughtException": "Exception caught: %s"
 }
