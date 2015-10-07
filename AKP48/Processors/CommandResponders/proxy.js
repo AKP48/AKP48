@@ -46,33 +46,29 @@ Proxy.prototype.execute = function(context) {
     //remove channel from arguments
     context.arguments.splice(0, 1);
 
-    //Check to see if we're in the channel, or if the channel might be a person.
-    if(!channel.isChannel() || context.AKP48.configManager.isInChannel(channel, context.AKP48)) {
-        //Check to see if we want an action
-        if(context.arguments[0] == "/me") {
-            //if so, send an action
-            context.arguments.splice(0, 1);
-            context.AKP48.client.action(channel, context.arguments.join(" "));
-            //tell the user we were successful.
-            context.AKP48.client.notice(context.nick, "Action successfully sent to "+channel+"!");
-        } else {
-
-            //if not, create context from message.
-            var message = new Message(context.nick, context.to, context.arguments.join(" "), context.message.user,
-                                      context.message.host, context.message.prefix, false, true);
-            var context = new Context(message, context.AKP48, this.logger);
-
-            //if the context is a command, process it, otherwise, send the message to the proper channel.
-            if(context.hasCommand && context.isContext) {
-                return new ContextProcessor(context, this.logger);
-            } else {
-                context.AKP48.client.say(channel, context.text);
-                //tell the user we were successful.
-                context.AKP48.client.notice(context.nick, "Message successfully sent to "+channel+"!");
-            }
-        }
+    //Check to see if we want an action
+    if(context.arguments[0] == "/me") {
+        //if so, send an action
+        context.arguments.splice(0, 1);
+        context.AKP48.client.action(channel, context.arguments.join(" "));
+        //tell the user we were successful.
+        context.AKP48.client.notice(context.nick, "Attempted to send action to "+channel+"!");
     } else {
-        context.AKP48.client.notice(context.nick, "Could not send message to "+channel+"!");
+
+        //if not, create context from message.
+        var message = new Message(context.nick, channel, context.arguments.join(" "), context.message.user,
+                                  context.message.host, context.message.prefix, false, true);
+        var context = new Context(message, context.AKP48, this.logger);
+
+        //if the context is a command, process it, otherwise, send the message to the proper channel.
+        if(context.hasCommand && context.isContext) {
+            return new ContextProcessor(context, this.logger);
+            context.AKP48.client.notice(context.nick, "Attempted to run command in "+channel+"!");
+        } else {
+            context.AKP48.client.say(channel, context.text);
+            //tell the user we were successful.
+            context.AKP48.client.notice(context.nick, "Attempted to send message to "+channel+"!");
+        }
     }
     return true;
 };
