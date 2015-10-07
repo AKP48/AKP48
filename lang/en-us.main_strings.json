@@ -1,0 +1,6 @@
+{
+    "polyfill_init": "Initializing Polyfill...",
+    "polyfill_notFound": "%s not found. Adding...",
+    "polyfill_finishedInit": "Finished initializing Polyfill.",
+    "caughtException": "Exception caught: %s"
+}
