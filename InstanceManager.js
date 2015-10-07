@@ -38,7 +38,7 @@ InstanceManager.prototype.startInstance = function (uuid, configFolder, logger, 
     if(!uuid || uuid==null) {
         uuid = uuid.v4();
     }
-    this.log.info({uuid:uuid}, "Starting instance.");
+    this.log.info({uuid:uuid}, i18n.getString("instanceManager_startInstance"));
 
     var options = {
         instanceManager: this,
@@ -58,7 +58,7 @@ InstanceManager.prototype.startInstance = function (uuid, configFolder, logger, 
  */
 InstanceManager.prototype.stopInstance = function (uuid, message) {
     if(this.instances[uuid]) {
-        this.log.info({uuid:uuid}, "Stopping instance.");
+        this.log.info({uuid:uuid}, i18n.getString("instanceManager_stopInstance"));
         this.instances[uuid].stop(message);
         delete(this.instances[uuid]);
     }
@@ -66,7 +66,7 @@ InstanceManager.prototype.stopInstance = function (uuid, message) {
     if(!Object.keys(this.instances).length) {
         var self = this;
         setTimeout(function(){
-            self.log.info("Last instance stopped, shutting down.");
+            self.log.info(i18n.getString("instanceManager_shutdown"));
             process.exit(0);
         }, 500);
     }
@@ -81,7 +81,7 @@ InstanceManager.prototype.reloadInstance = function (uuid) {
         this.stopInstance(uuid, "");
         this.startInstance(uuid, path.resolve("data/config", uuid), this.log);
     } else {
-        this.log.info({uuid:uuid}, "Reloading instance.");
+        this.log.info({uuid:uuid}, i18n.getString("instanceManager_reload"));
         new (require('./AKP48/Helpers/hotreload'))(this.log).clearCache();
         var tempClient = this.instances[uuid].client.getRawClient();
         this.instances[uuid].destroy();

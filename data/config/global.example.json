@@ -1,5 +1,6 @@
 {
     "productionMode": true, // If productionMode is true, AKP48 cannot crash completely.
+    "locale": "en-us", // The locale to use for messages. This is used to load translated strings for logging and messages that AKP48 sends.
     "log": {
         "logToFile": true, // Whether or not to save logs to a file.
         "level": "trace" // Level to log at. Can be "trace", "debug", "info", "error", "fatal".

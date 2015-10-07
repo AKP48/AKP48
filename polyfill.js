@@ -20,8 +20,10 @@ var crypto = require('crypto');
 function Polyfill(logger) {
   var log = logger.child({module: "Polyfill"});
 
+  log.info(i18n.getString("polyfill_init"));
+
   if (!String.prototype.repeat) {
-    log.trace("String.prototype.repeat not found. Adding...");
+    log.trace(i18n.getString("polyfill_notFound"), "String.prototype.repeat");
     String.prototype.repeat = function(count) {
       'use strict';
       if (this == null) {
@@ -64,7 +66,7 @@ function Polyfill(logger) {
   }
 
   if (!String.prototype.prepend) {
-    log.trace("String.prototype.prepend not found. Adding...");
+    log.trace(i18n.getString("polyfill_notFound"), "String.prototype.prepend");
     // Prepend only if str is not empty
     String.prototype.prepend = function(text) {
       var str = this.toString();
@@ -73,7 +75,7 @@ function Polyfill(logger) {
   }
 
   if (!String.prototype.append) {
-    log.trace("String.prototype.append not found. Adding...");
+    log.trace(i18n.getString("polyfill_notFound"), "String.prototype.append");
     // Append only if str is not empty
     String.prototype.append = function(text) {
       var str = this.toString();
@@ -82,14 +84,14 @@ function Polyfill(logger) {
   }
 
   if (!String.prototype.sha1) {
-    log.trace("String.prototype.sha1 not found. Adding...");
+    log.trace(i18n.getString("polyfill_notFound"), "String.prototype.sha1");
     String.prototype.sha1 = function() {
       return crypto.createHash('sha1').update(this.toString()).digest('hex');
     }
   }
 
   if (!String.prototype.decodeHTML) {
-    log.trace("String.prototype.decodeHTML not found. Adding...");
+    log.trace(i18n.getString("polyfill_notFound"), "String.prototype.decodeHTML");
     String.prototype.decodeHTML = function() {
       var map = {"gt":">" /* , … */};
       return this.replace(/&(#(?:x[0-9a-f]+|\d+)|[a-z]+);?/gi, function($0, $1) {
@@ -103,7 +105,7 @@ function Polyfill(logger) {
   }
 
   if (!Array.prototype.randomElement) {
-    log.trace("Array.prototype.randomElement not found. Adding...");
+    log.trace(i18n.getString("polyfill_notFound"), "Array.prototype.randomElement");
     var chance = new (require('chance'));
     Array.prototype.randomElement = function(low, high) {
       low = low || 0;
@@ -116,7 +118,7 @@ function Polyfill(logger) {
   }
 
   if (!String.prototype.contains) {
-    log.trace("String.prototype.contains not found. Adding...");
+    log.trace(i18n.getString("polyfill_notFound"), "String.prototype.contains");
     String.prototype.contains = function(needle) {
       return this.indexOf(needle) !== -1;
     }
@@ -124,7 +126,7 @@ function Polyfill(logger) {
 
   // Register startsWith function
   if (!String.prototype.startsWith) {
-    log.trace("String.prototype.startsWith not found. Adding...");
+    log.trace(i18n.getString("polyfill_notFound"), "String.prototype.startsWith");
     Object.defineProperty(String.prototype, 'startsWith', {
       value: function(searchString, position) {
         position = position || 0;
@@ -134,7 +136,7 @@ function Polyfill(logger) {
   }
 
   if (!String.prototype.endsWith) {
-    log.trace("String.prototype.endsWith not found. Adding...");
+    log.trace(i18n.getString("polyfill_notFound"), "String.prototype.endsWith");
     Object.defineProperty(String.prototype, 'endsWith', {
       value: function(searchString, position) {
         var subjectString = this.toString();
@@ -149,7 +151,7 @@ function Polyfill(logger) {
   }
 
   if (!String.prototype.isChannel) {
-    log.trace("String.prototype.isChannel not found. Adding...");
+    log.trace(i18n.getString("polyfill_notFound"), "String.prototype.isChannel");
     String.prototype.isChannel = function() {
       return (this.startsWith("#") || this.startsWith("+") || this.startsWith("&") || this.startsWith("!")) // Starts with #, +, & or !
         && !(this.contains(" ") || this.contains(",") || this.contains(":")) // Does not contain <space>, <colon> or <comma>
@@ -158,7 +160,7 @@ function Polyfill(logger) {
   }
 
   if (!String.prototype.pluralize) {
-    log.trace("String.prototype.pluralize not found. Adding...");
+    log.trace(i18n.getString("polyfill_notFound"), "String.prototype.pluralize");
     String.prototype.pluralize = function(count, plural) {
       if (plural == null)
         plural = this + 's';
@@ -168,7 +170,7 @@ function Polyfill(logger) {
   }
 
   if (!Object.prototype.each) {
-    log.trace("Object.prototype.each not found. Adding...");
+    log.trace(i18n.getString("polyfill_notFound"), "Object.prototype.each");
     Object.prototype.each = function(callback, thisArg) {
       'use strict';
       if (this == null) throw new TypeError('Object.prototype.each called on null or undefined');
@@ -181,7 +183,7 @@ function Polyfill(logger) {
   }
 
   if (!Array.prototype.each) {
-    log.trace("Array.prototype.each not found. Adding...");
+    log.trace(i18n.getString("polyfill_notFound"), "Array.prototype.each");
     Array.prototype.each = function(callback, thisArg) {
       'use strict';
       if (this == null) throw new TypeError('Object.prototype.each called on null or undefined');
@@ -192,7 +194,7 @@ function Polyfill(logger) {
   }
 
   if (!Object.prototype.some) {
-    log.trace("Object.prototype.some not found. Adding...");
+    log.trace(i18n.getString("polyfill_notFound"), "Object.prototype.some");
     // Return true to stop looping
     Object.prototype.some = function(callback, thisArg) {
       'use strict';
@@ -206,7 +208,7 @@ function Polyfill(logger) {
   }
 
   if (!Object.prototype.every) {
-    log.trace("Object.prototype.every not found. Adding...");
+    log.trace(i18n.getString("polyfill_notFound"), "Object.prototype.every");
     // Return false to stop looping
     Object.prototype.every = function(callback, thisArg) {
       'use strict';
@@ -220,13 +222,14 @@ function Polyfill(logger) {
   }
 
   if (!Math.log10) {
-    log.trace("Math.log10 not found. Adding...");
+    log.trace(i18n.getString("polyfill_notFound"), "Math.log10");
     Math.log10 = Math.log10 || function(x) {
       return Math.log(x) / Math.LN10;
     };
   }
 
   if(!Object.prototype.isEmpty) {
+    log.trace(i18n.getString("polyfill_notFound"), "Object.prototype.isEmpty");
     Object.prototype.isEmpty = function() {
       for(var prop in this) {
           if(this.hasOwnProperty(prop))
@@ -237,7 +240,7 @@ function Polyfill(logger) {
     }
   }
 
-  log.info("Finished initializing Polyfill.");
+  log.info(i18n.getString("polyfill_finishedInit"));
 }
 
 module.exports = Polyfill;
