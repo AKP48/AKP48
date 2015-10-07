@@ -1,0 +1,6 @@
+{
+    "polyfill_init": "Startin' the Polyfill...",
+    "polyfill_notFound": "%s ain't been found! I'm addin' 'er now, matey!",
+    "polyfill_finishedInit": "The Polyfill's all done now, cap'n!",
+    "caughtException": "We caught us an exception, cap'n! %s"
+}
