@@ -95,12 +95,12 @@ DiscordClient.prototype.say = function (channel, msg, directedAt) {
 
     //parse out any client commands that might be for Discord.
     if(message.toLowerCase().startsWith("/tts ")) {
-        message = message.slice(0,5);
+        message = message.slice(5);
         tts = true;
     }
 
     if(message.toLowerCase().startsWith("/tableflip ")) {
-      message = message.slice(0,11);
+      message = message.slice(11);
       message = message + " (╯°□°）╯︵ ┻━┻";
     }
 
