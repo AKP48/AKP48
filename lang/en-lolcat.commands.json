@@ -1,0 +1,8 @@
+{
+    "none": "NUNN",
+    "alert_name": "ALURT",
+    "alert_help": "ADDZ/REMOVEZ CHANNELS TEH BOT WILL ALURT 4 UPDATEZ. WILL REPLY WIF ALL ALURTD CHANNELS ON EMPTY MESAGE.",
+    "alert_usage": "[+|-] | [[-]CHANNUL]...",
+    "alert_current": "CURRENTLY ALURTIN: ",
+    "alert_changes": "ALURT CHANGEZ: "
+}

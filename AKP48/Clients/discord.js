@@ -88,10 +88,23 @@ DiscordClient.prototype.handleMessage = function (message) {
  * @param  {String} directedAt Who this message should be directed at.
  */
 DiscordClient.prototype.say = function (channel, msg, directedAt) {
+    var tts = false;
     var message = (directedAt ? ("@" + directedAt + ": ") : "");
     message += c.stripColorsAndStyle(msg);
     var channel = (this.client.getChannel("name", channel) || this.client.getPMChannel("id", channel) || this.client.getUser("id", channel));
-    this.client.sendMessage(channel, message);
+
+    //parse out any client commands that might be for Discord.
+    if(message.toLowerCase().startsWith("/tts ")) {
+        message = message.slice(5);
+        tts = true;
+    }
+
+    if(message.toLowerCase().startsWith("/tableflip ")) {
+      message = message.slice(11);
+      message = message + " (╯°□°）╯︵ ┻━┻";
+    }
+
+    this.client.sendMessage(channel, message, tts);
 };
 
 /**
@@ -109,7 +122,7 @@ DiscordClient.prototype.notice = function (user, msg) {
  * @param  {String} msg     The message to send.
  */
 DiscordClient.prototype.action = function (channel, msg) {
-    this.say(channel, "/me "+msg); //discord doesn't support actions yet.
+    this.say(channel, "*"+msg+"*"); //discord's official client handles /me by using markdown to make the text italic.
 };
 
 /**

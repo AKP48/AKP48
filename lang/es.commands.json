@@ -1,0 +1,8 @@
+{
+    "none": "ninguno",
+    "alert_name": "Alerta",
+    "alert_help": "Añade/Elimina los canales el bot alerta para actualizaciones. Responderá con todos los canales alertados sobre mensaje vacío.",
+    "alert_usage": "[+|-] | [[-]canal]...",
+    "alert_current": "Actualmente alerta: ",
+    "alert_changes": "Cambios Alerta: "
+}

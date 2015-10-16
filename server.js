@@ -26,6 +26,8 @@ var validator = require('validator');
 var config = require('./data/config/global');
 var InstanceManager = require('./InstanceManager');
 var GitProcessor = require('./GitProcessor');
+var i18n = new (require('./i18n'))(config.locale || "en-us");
+GLOBAL.i18n = i18n;
 
 if(!config.productionMode) {
     require('longjohn');
@@ -49,13 +51,13 @@ if(config.log && config.log.logToFile) {
 var log = bunyan.createLogger({
     name: 'AKP48',
     module: 'Server',
+    lang: (config.locale || "en-us"),
     streams: streams,
     serializers: {
         err: bunyan.stdSerializers.err
     }
 });
 
-log.info("Initializing polyfill...");
 require('./polyfill.js')(log);
 
 //Initialize an InstanceManager.
@@ -89,6 +91,6 @@ fs.readdir(path.resolve("data/config"), function(err, files) {
 //todo: better exception handling plz
 if(config.productionMode) {
     process.on('uncaughtException', function(err) {
-        log.fatal({err: err}, "Exception caught: %s", err);
+        log.fatal({err: err}, i18n.getString("caughtException"), err);
     });
 }

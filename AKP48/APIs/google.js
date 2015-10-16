@@ -38,10 +38,12 @@ function Google(logger, APIConfig) {
  */
 Google.prototype.shorten_url = function(url, callback, thisArg) {
     this.log.info("Attempting to shorten URL using goo.gl.");
+    var log = this.log;
     this.urlshortener.url.insert({ resource: { longUrl: url } }, function (err, response) {
       if(response && response.id) {
           callback.call(thisArg, response.id);
       } else {
+          log.error(err, "Could not shorten URL.");
           callback.call(thisArg, null);
       }
     });

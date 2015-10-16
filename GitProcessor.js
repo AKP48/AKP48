@@ -110,11 +110,11 @@ GitProcessor.prototype.shouldUpdate = function(branch) {
  */
 GitProcessor.prototype.startListening = function() {
     if (this.githubListener) {
-        this.log.error("Attempted to listen while already listening.");
+        this.log.error(i18n.getString("gitProcessor_noListen"));
         return;
     }
 
-    this.log.info({repo: this.repository, port: this.port, branch: this.branch}, "Initializing GitHub Webhook listener");
+    this.log.info({repo: this.repository, port: this.port, branch: this.branch}, i18n.getString("gitProcessor_initListener"));
 
     this.githubListener = GitHooks({
         path: this.path,
@@ -129,7 +129,7 @@ GitProcessor.prototype.startListening = function() {
         if (data.deleted) {
             return;
         }
-        self.log.info({head_commit_message: data.head_commit.message, ref: ref}, "GitHub Webhook received.");
+        self.log.info({head_commit_message: data.head_commit.message, ref: ref}, i18n.getString("gitProcessor_receiveWebhook"));
         var branch = ref.substring(ref.indexOf('/', 5) + 1);
         if (self.shouldUpdate(branch)) {
             self.handle(branch, data);
@@ -143,14 +143,15 @@ GitProcessor.prototype.startListening = function() {
  * @param  {Object} data   The Webhook.
  */
 GitProcessor.prototype.handle = function (branch, data) {
-    this.log.info({branch: branch}, "Handling Webhook.");
+    this.log.info({branch: branch}, i18n.getString("gitProcessor_handleWebhook"));
     var manager = this.instanceManager;
     // Alert channels of update
-    var commits_string = " commit".pluralize(data.commits.length).prepend(data.commits.length);
+    var commits_string = i18n.getString("gitProcessor_commit").pluralize(data.commits.length, i18n.getString("gitProcessor_commits")).prepend(data.commits.length + " ");
     this.googleAPI.shorten_url(data.compare, function(url) {
-        var message = c.pink("[GitHub]").append(" ").append(commits_string).append(data.forced && !data.created ? " force" : "").append(" pushed to")
-            .append(data.created ? " new" : "").append(" ").append(data.ref.startsWith("refs/tags/") ? "tag" : "branch").append(" ").append(c.bold(branch))
-            .append(" by ").append(data.pusher.name).append(" (").append(url).append(")");
+        if(!url){url = data.compare;}
+        var message = c.pink("[GitHub]").append(" ").append(commits_string).append(data.forced && !data.created ? " " + i18n.getString("gitProcessor_force") : "").append(" "+i18n.getString("gitProcessor_pushedTo"))
+            .append(data.created ? " "+i18n.getString("gitProcessor_new") : "").append(" ").append(data.ref.startsWith("refs/tags/") ? i18n.getString("gitProcessor_tag") : i18n.getString("gitProcessor_branch")).append(" ").append(c.bold(branch))
+            .append(" "+i18n.getString("gitProcessor_by")+" ").append(data.pusher.name).append(" (").append(url).append(")");
 
         for (var i = 0; i < data.commits.length && i < 3; i++) {
             var _c = data.commits[data.commits.length - 1 - i];
@@ -160,7 +161,7 @@ GitProcessor.prototype.handle = function (branch, data) {
             message += "\n".append(commit_message);
         };
 
-        this.log.info({message: message}, "Alerting clients of Git changes.");
+        this.log.info({message: message}, i18n.getString("gitProcessor_alert"));
 
         manager.instances.each(function (instance) {
             instance.getAlertChannels().each(function(channel){
@@ -185,7 +186,7 @@ GitProcessor.prototype.handle = function (branch, data) {
 
         var shutdown = changing_branch;
         var npm = changing_branch;
-        var hot_files = ['server.js', 'GitProcessor.js', 'InstanceManager.js'];
+        var hot_files = ['server.js', 'GitProcessor.js', 'InstanceManager.js', 'i18n.js'];
 
         if (!shutdown) {
             data.commits.some(function (commit) {
@@ -201,7 +202,7 @@ GitProcessor.prototype.handle = function (branch, data) {
             });
         }
 
-        this.log.info("Updating to branch: ".append(branch));
+        this.log.info(i18n.getString("gitProcessor_updateToBranch").append(branch));
 
         // Fetch, Checkout
         if (!this.gitAPI.checkout(branch)) {
@@ -209,12 +210,12 @@ GitProcessor.prototype.handle = function (branch, data) {
         }
 
         if (npm) {
-            this.log.info("Executing npm install.");
+            this.log.info(i18n.getString("gitProcessor_npmInstall"));
             exec('npm install');
         }
 
         if (shutdown) {
-            manager.shutdownAll("I'm updating! :3");
+            manager.shutdownAll(i18n.getString("gitProcessor_updating"));
         } else {
             manager.reloadAll();
         }
