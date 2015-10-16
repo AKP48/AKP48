@@ -2,7 +2,10 @@
   "name": "AKP48",
   "version": "2.1.2",
   "description": "",
-  "main": "index.js",
+  "main": "server.js",
+  "scripts": {
+    "start": "node server.js"
+  },
   "author": "Austin Peterson (austin@akpwebdesign.com)",
   "license": "GPL",
   "private": true,
