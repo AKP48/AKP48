@@ -1,0 +1,3 @@
+[submodule "lang"]
+	path = lang
+	url = git@github.com:AKP48/AKP48-i18n.git
