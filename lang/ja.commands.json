@@ -1,8 +1,0 @@
-{
-    "none": "なし",
-    "alert_name": "Alert",
-    "alert_help": "Adds/Removes channels the bot will alert for updates. Will reply with all alerted channels on empty message.",
-    "alert_usage": "[+|-] | [[-]channel]...",
-    "alert_current": "現在アラート： ",
-    "alert_changes": "アラートの変更： "
-}

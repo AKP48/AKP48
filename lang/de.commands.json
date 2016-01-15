@@ -1,8 +1,0 @@
-{
-    "none": "keine",
-    "alert_name": "Alert",
-    "alert_help": "Adds/Removes channels the bot will alert for updates. Will reply with all alerted channels on empty message.",
-    "alert_usage": "[+|-] | [[-]channel]...",
-    "alert_current": "Derzeit Alarmierung: ",
-    "alert_changes": "Alarm Änderungen: "
-}
