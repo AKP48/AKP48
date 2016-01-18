@@ -1,8 +1,0 @@
-{
-    "none": "none",
-    "alert_name": "Alert",
-    "alert_help": "Puts in/takes out channels th' bot'll alert for updatin'. If ya don't put a message in, it'll tell ya what channels're bein' alerted.",
-    "alert_usage": "[+|-] | [[-]channel]...",
-    "alert_current": "Currently alertin': ",
-    "alert_changes": "Alerts are changin': "
-}

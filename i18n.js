@@ -27,19 +27,17 @@ function i18n(locale) {
 /**
  * Get an internationalized string.
  * @param  {String} key    The string to get.
- * @param  {String} file   Optional. The file to look in.
  * @param  {String} locale Optional. The locale to use.
  * @return {String}        The string to use.
  */
-i18n.prototype.getString = function (key, file, locale) {
-    if(!file) {file = "main_strings";}
+i18n.prototype.getString = function (key, locale) {
     if(!locale) {locale = this.defaultLocale;}
 
     //try to get proper locale string, fall back to en-us string, fall back to empty string.
     var localeArray = (this.strings[locale] || this.strings[this.defaultLocale] || this.strings["en-us"]);
 
-    if(localeArray[file]) {
-        return (localeArray[file][key] || this.strings["en-us"][file][key] || ""); //TODO: Make this throw an error or something.
+    if(localeArray) {
+        return (localeArray[key] || this.strings["en-us"][key] || ""); //TODO: Make this throw an error or something.
     }
 
     return "";
