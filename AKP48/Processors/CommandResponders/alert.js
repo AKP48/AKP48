@@ -18,13 +18,13 @@
 // TODO: make this use various permissions, show only channels you have permissions for
 function Alert() {
     //the name of the command.
-    this.name = i18n.getString("alert_name", "commands");
+    this.name = i18n.getString("alert_name");
 
     //help text to show for this command.
-    this.helpText = i18n.getString("alert_help", "commands");
+    this.helpText = i18n.getString("alert_help");
 
     //usage message. only include the parameters. the command name will be automatically added.
-    this.usageText = i18n.getString("alert_usage", "commands");
+    this.usageText = i18n.getString("alert_usage");
 
     //ways to call this command.
     this.aliases = ['alert', 'notify'];
@@ -66,10 +66,10 @@ Alert.prototype.execute = function(context) {
     }
 
     var nick = context.nick;
-    var noneString = i18n.getString("none", "commands");
+    var noneString = i18n.getString("none");
 
     if (context.arguments.length == 0) {
-        context.AKP48.client.notice(nick, i18n.getString("alert_current", "commands") + (context.AKP48.alert.join(", ") || noneString));
+        context.AKP48.client.notice(nick, i18n.getString("alert_current") + (context.AKP48.alert.join(", ") || noneString));
     } else {
         context.arguments.each(function (arg) {
             if (arg.startsWith("-")) {
@@ -82,7 +82,7 @@ Alert.prototype.execute = function(context) {
             }
         });
         var message = results.join(", ");
-        context.AKP48.client.notice(nick, i18n.getString("alert_changes", "commands") + (message || noneString));
+        context.AKP48.client.notice(nick, i18n.getString("alert_changes") + (message || noneString));
     }
     return true;
 };
