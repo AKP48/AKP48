@@ -209,6 +209,9 @@ GitProcessor.prototype.handle = function (branch, data) {
             return;
         }
 
+        //attempt to update submodules.
+        this.gitAPI.updateSubmodules();
+
         if (npm) {
             this.log.info(i18n.getString("gitProcessor_npmInstall"));
             exec('npm install');

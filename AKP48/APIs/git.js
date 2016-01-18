@@ -97,6 +97,13 @@ Git.prototype.checkout = function(branch) {
     return true;
 };
 
+/**
+ * Attempts to update Git submodules.
+ */
+Git.prototype.updateSubmodules = function () {
+  exec('git submodule update');
+};
+
 module.exports = Git;
 // Name of this API. Will be used to reference the API from other modules.
 module.exports.apiName = "Git";

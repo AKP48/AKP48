@@ -37,7 +37,7 @@ i18n.prototype.getString = function (key, locale) {
     var localeArray = (this.strings[locale] || this.strings[this.defaultLocale] || this.strings["en-us"]);
 
     if(localeArray) {
-        return (localeArray[key] || this.strings["en-us"][key] || ""); //TODO: Make this throw an error or something.
+        return (localeArray[key]["message"] || this.strings[this.defaultLocale][key]["message"] || this.strings["en-us"][key]["message"] || ""); //TODO: Make this throw an error or something.
     }
 
     return "";
