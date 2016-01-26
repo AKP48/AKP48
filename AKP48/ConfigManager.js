@@ -217,7 +217,8 @@ ConfigManager.prototype.isCommandDisabled = function (context) {
     var command = context.command;
 
     var perms = this.getPermissions(user);
-    var chanConf = this.getChannelConfig(channel);
+    var chanConf = this.getChannelConfig()[channel];
+    if(!chanConf) {chanConf = {}}; //just in case
     var svrConf = this.getServerConfig();
 
     //if our user has commands disabled for them, then we will check those.
