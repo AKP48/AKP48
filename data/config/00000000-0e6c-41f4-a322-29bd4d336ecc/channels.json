@@ -11,6 +11,10 @@
             "."
         ],
         "disabled": false,
-        "alert": true
+        "alert": true,
+        "disabledCommands": [
+          "rainbow",
+          "daft"
+        ]
     }
 }

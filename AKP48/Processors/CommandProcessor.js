@@ -95,6 +95,12 @@ CommandProcessor.prototype.process = function (context) {
         return;
     }
 
+    //if the command has been disabled for this user/channel/server...
+    if(context.AKP48.configManager.isCommandDisabled(context)) {
+        this.log.trace("Dropping command, command has been disabled.");
+        return;
+    }
+
     //TODO: Flood protection.
 
     //Add the commands object into the context, for easy access from within commands.
