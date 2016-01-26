@@ -65,6 +65,12 @@ Config.prototype.execute = function(context) {
         case "removebot":
             this.unblacklistBot(context);
             break;
+        case "disableCommand":
+            this.disableCommand(context);
+            break;
+        case "enableCommand":
+            this.enableCommand(context);
+            break;
         default:
             this.help(context);
             break;
@@ -263,6 +269,90 @@ Config.prototype.unblacklistBot = function (context) {
     return true;
 };
 
+Config.prototype.disableCommand = function (context) {
+  // If the user isn't at least a channel mod, exit now.
+  if (!context.AKP48.configManager.hasPermission(context, "channelMod")) {
+    return true;
+  }
+
+  // If we don't have enough parameters, send the user an appropriate message and exit.
+  if(context.arguments.length < 2) {
+    context.AKP48.client.notice(context.nick, "Usage: disableCommand <command> [global|usermask]");
+  }
+
+  //remove command from arguments
+  context.arguments.shift();
+
+  var info = {
+    cmd: context.arguments[0].toLowerCase(),
+    type: "user",
+    chan: context.arguments[1]
+  }
+
+  if(channel.toLowerCase() == "global") {
+    info.type = "server";
+    info.chan = "global";
+    //if we don't have permission for the server, exit now.
+    if(!context.AKP48.configManager.hasPermission(context, "serverMod")) {return true;}
+  }
+
+  if(!info.chan) {
+    info.chan = context.channel;
+    info.type = "channel";
+  }
+
+  if(info.chan == context.nick) {
+    info.type = "user";
+    info.chan = context.usermask;
+    //if we don't have permission for the server, exit now.
+    if(!context.AKP48.configManager.hasPermission(context, "serverMod")) {return true;}
+  }
+
+  context.AKP48.configManager.disableCommand(info);
+};
+
+Config.prototype.enableCommand = function (context) {
+  // If the user isn't at least a channel mod, exit now.
+  if (!context.AKP48.configManager.hasPermission(context, "channelMod")) {
+    return true;
+  }
+
+  // If we don't have enough parameters, send the user an appropriate message and exit.
+  if(context.arguments.length < 2) {
+    context.AKP48.client.notice(context.nick, "Usage: enableCommand <command> [global|usermask]");
+  }
+
+  //remove command from arguments
+  context.arguments.shift();
+
+  var info = {
+    cmd: context.arguments[0].toLowerCase(),
+    type: "user",
+    chan: context.arguments[1]
+  }
+
+  if(channel.toLowerCase() == "global") {
+    info.type = "server";
+    info.chan = "global";
+    //if we don't have permission for the server, exit now.
+    if(!context.AKP48.configManager.hasPermission(context, "serverMod")) {return true;}
+  }
+
+  if(!info.chan) {
+    info.chan = context.channel;
+    info.type = "channel";
+  }
+
+  if(info.chan == context.nick) {
+    info.type = "user";
+    info.chan = context.usermask;
+    //if we don't have permission for the server, exit now.
+    if(!context.AKP48.configManager.hasPermission(context, "serverMod")) {return true;}
+  }
+
+  context.AKP48.configManager.enableCommand(info);
+};
+
 Config.prototype.help = function(context) {
     // If the user isn't at least server op, exit now.
     if (!context.AKP48.configManager.hasPermission(context, "serverMod")) {
@@ -273,17 +363,19 @@ Config.prototype.help = function(context) {
 
     if(context.AKP48.configManager.hasPermission(context, "root")) {
         //send out root permission stuff here.
-        context.AKP48.client.notice("addServer: takes a list of servers in the following format: user!nick:pass@server:port#chan#chan#chan");
-        context.AKP48.client.notice("removeServer: takes a list of server config UUIDs.");
+        context.AKP48.client.notice(context.nick, "addServer: takes a list of servers in the following format: user!nick:pass@server:port#chan#chan#chan");
+        context.AKP48.client.notice(context.nick, "removeServer: takes a list of server config UUIDs.");
     }
 
     if(context.AKP48.configManager.hasPermission(context, "serverMod")) {
         //send out serverMod permission stuff here.
-        context.AKP48.client.notice("addChannel: takes a list of channel names.");
-        context.AKP48.client.notice("removeChannel: takes a list of channel names.");
-        context.AKP48.client.notice("blacklist: takes a list of usermasks.");
-        context.AKP48.client.notice("unblacklist: takes a list of usermasks.");
-        context.AKP48.client.notice("help: Shows this message.");
+        context.AKP48.client.notice(context.nick, "addChannel: takes a list of channel names.");
+        context.AKP48.client.notice(context.nick, "removeChannel: takes a list of channel names.");
+        context.AKP48.client.notice(context.nick, "blacklist: takes a list of usermasks.");
+        context.AKP48.client.notice(context.nick, "unblacklist: takes a list of usermasks.");
+        context.AKP48.client.notice(context.nick, "disableCommand: disables the use of a command for a user, channel, or the entire server.");
+        context.AKP48.client.notice(context.nick, "enableCommand: enables the use of a command for a user, channel, or the entire server.");
+        context.AKP48.client.notice(context.nick, "help: Shows this message.");
     }
 };
 

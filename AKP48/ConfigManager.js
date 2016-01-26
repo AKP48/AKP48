@@ -204,6 +204,114 @@ ConfigManager.prototype.hasPermission = function (context, minPowerLevel) {
 };
 
 /**
+ * Disables a command.
+ * @param  {Object} info       Describes what to disable.
+ * @param  {String} info.cmd   The command to disable.
+ * @param  {String} info.type  "server", "channel", or "user".
+ * @param  {String} info.chan  The user or channel to disable the command in, if needed.
+ */
+ConfigManager.prototype.disableCommand = function (info) {
+    if(info.type == "server") {
+      var svrConf = this.getServerConfig();
+      if(!svrConf.disabledCommands) {svrConf.disabledCommands = [];}
+
+      //as long as the command we want to disable isn't already disabled...
+      if(!(svrConf.disabledCommands.indexOf(info.cmd) > -1)) {
+        //disable the command.
+        svrConf.disabledCommands.push(info.cmd);
+      }
+
+      //then save the config back.
+      this.setServerConfig(svrConf);
+    }
+
+    if(info.type == "channel") {
+      var chanConf = this.getChannelConfig();
+      if(!chanConf[info.chan].disabledCommands) {chanConf[info.chan].disabledCommands = [];}
+
+      //as long as the command we want to disable isn't already disabled...
+      if(!(chanConf[info.chan].disabledCommands.indexOf(info.cmd) > -1)) {
+        //disable the command.
+        chanConf[info.chan].disabledCommands.push(info.cmd);
+      }
+
+      //then save the config back.
+      this.setChannelConfig(chanConf);
+    }
+
+    if(info.type == "user") {
+      var userConf = this.getPermissionsConfig();
+      if(!userConf[info.chan]) {userConf[info.chan] = {};}
+      if(!userConf[info.chan].disabledCommands) {userConf[info.chan].disabledCommands = [];}
+
+      //as long as the command we want to disable isn't already disabled...
+      if(!(userConf[info.chan].disabledCommands.indexOf(info.cmd) > -1)) {
+        //disable the command.
+        userConf[info.chan].disabledCommands.push(info.cmd);
+      }
+
+      //then save the config back.
+      this.setPermissionsConfig(userConf);
+    }
+};
+
+/**
+ * Enables a command.
+ * @param  {Object} info       Describes what to enable.
+ * @param  {String} info.cmd   The command to enable.
+ * @param  {String} info.type  "server", "channel", or "user".
+ * @param  {String} info.chan  The user or channel to enable the command in, if needed.
+ */
+ConfigManager.prototype.enableCommand = function (info) {
+    if(info.type == "server") {
+      var svrConf = this.getServerConfig();
+      //if we don't have any disabled commands, nothing to do.
+      if(!svrConf.disabledCommands) {return;}
+
+      //as long as the command we want to enable is actually disabled...
+      var index = svrConf.disabledCommands.indexOf(info.cmd);
+      if(index > -1) {
+        //remove from disabled commands.
+        svrConf.disabledCommands.splice(index, 1);
+      }
+
+      //then save the config back.
+      this.setServerConfig(svrConf);
+    }
+
+    if(info.type == "channel") {
+      var chanConf = this.getChannelConfig();
+      if(!chanConf[info.chan].disabledCommands) {return;}
+
+      //as long as the command we want to enable is actually disabled...
+      var index = chanConf[info.chan].disabledCommands.indexOf(info.cmd);
+      if(index > -1) {
+        //remove from disabled commands.
+        chanConf[info.chan].disabledCommands.splice(index, 1);
+      }
+
+      //then save the config back.
+      this.setChannelConfig(chanConf);
+    }
+
+    if(info.type == "user") {
+      var userConf = this.getPermissionsConfig();
+      if(!userConf[info.chan]) {return;}
+      if(!userConf[info.chan].disabledCommands) {return;}
+
+      //as long as the command we want to enable is actually disabled...
+      var index = userConf[info.chan].disabledCommands.indexOf(info.cmd);
+      if(index > -1) {
+        //remove from disabled commands.
+        userConf[info.chan].disabledCommands.splice(index, 1);
+      }
+
+      //then save the config back.
+      this.setPermissionsConfig(userConf);
+    }
+};
+
+/**
  * Whether or not a command is disabled.
  * @param  {String}  context The context to check.
  * @return {Boolean}         True if the command is disabled, else false.
