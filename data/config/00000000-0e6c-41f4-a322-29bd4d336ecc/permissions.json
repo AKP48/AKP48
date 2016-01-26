@@ -6,6 +6,10 @@
             "#AKP": 1,
             "#botplace": 1,
             "global": 9001 // Global power level will override individual power levels.
-        }
+        },
+        "disabledCommands": [
+          "rainbow",
+          "daft"
+        ]
     }
 }

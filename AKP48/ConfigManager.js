@@ -204,6 +204,48 @@ ConfigManager.prototype.hasPermission = function (context, minPowerLevel) {
 };
 
 /**
+ * Whether or not a command is disabled.
+ * @param  {String}  context The context to check.
+ * @return {Boolean}         True if the command is disabled, else false.
+ */
+ConfigManager.prototype.isCommandDisabled = function (context) {
+    //if we don't even have a command, there's no command to be disabled.
+    if(!context.hasCommand) {return false;}
+
+    var user = context.usermask;
+    var channel = context.channel;
+    var command = context.command;
+
+    var perms = this.getPermissions(user);
+    var chanConf = this.getChannelConfig(channel);
+    var svrConf = this.getServerConfig();
+
+    //if our user has commands disabled for them, then we will check those.
+    if(perms.disabledCommands) {
+      if(perms.disabledCommands.indexOf(command) > -1) {
+        return true;
+      }
+    }
+
+    //check server config for disabled commands.
+    if(svrConf.disabledCommands) {
+      if(svrConf.disabledCommands.indexOf(command) > -1) {
+        return true;
+      }
+    }
+
+    //check channel config for disabled commands.
+    if(chanConf.disabledCommands) {
+      if(chanConf.disabledCommands.indexOf(command) > -1) {
+        return true;
+      }
+    }
+
+    //must not be disabled if we reached here.
+    return false;
+};
+
+/**
  * Whether or not a user is banned in a channel.
  * @param  {String}  user    The usermask of the user.
  * @param  {String}  channel The channel.

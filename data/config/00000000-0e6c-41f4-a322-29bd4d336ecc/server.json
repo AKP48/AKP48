@@ -6,5 +6,9 @@
     "realname": "AKP48-Clone: The fake man's bot.",
     "password": "",
     "clientType": "irc",
-    "disabled": true
+    "disabled": true,
+    "disabledCommands": [
+      "rainbow",
+      "daft"
+    ]
 }
